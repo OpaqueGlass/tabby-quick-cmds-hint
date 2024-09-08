@@ -1,0 +1,46 @@
+{
+  "name": "tabby-auto-complete",
+  "version": "1.0.0",
+  "description": "It's a basic complete plugin for tabby",
+  "author": "OpaqueGlass <opaqueglass@126.com>",
+  "license": "AGPLv3",
+  "keywords": [
+    "tabby-plugin"
+  ],
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "webpack --progress --color",
+    "watch": "webpack --progress --color --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@angular/animations": "^18.2.3",
+    "@angular/common": "^18.2.3",
+    "@angular/core": "^18.2.3",
+    "@angular/forms": "^18.2.3",
+    "@angular/platform-browser": "^18.2.3",
+    "@ng-bootstrap/ng-bootstrap": "^17.0.1",
+    "@types/node": "^22.5.4",
+    "@types/webpack-env": "^1.16.0",
+    "apply-loader": "^2.0.0",
+    "clippyjs": "^0.0.3",
+    "css-loader": "^7.1.2",
+    "node-sass": "^9.0.0",
+    "pug": "^3.0.3",
+    "pug-loader": "^2.4.0",
+    "rxjs": "^7.3.0",
+    "sass-loader": "^16.0.1",
+    "style-loader": "^4.0.0",
+    "tabby-core": "^1.0.197-nightly.1",
+    "tabby-settings": "^1.0.197-nightly.1",
+    "tabby-terminal": "^1.0.197-nightly.1",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.5.4",
+    "webpack": "^5.24.4",
+    "webpack-cli": "^5.1.4"
+  }
+}
