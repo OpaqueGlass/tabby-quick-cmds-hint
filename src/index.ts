@@ -10,6 +10,8 @@ import { AutoCompleteSettingsTabProvider } from './settingsTabProvider'
 import { AutoCompleteSettingsTabComponent } from 'components/autoCompleteSettingsTab'
 import { TerminalDecorator } from 'tabby-terminal'
 import { AutoCompleteTerminalDecorator } from 'terminalDecorator'
+import { AutoCompleteHintMenuComponent } from 'components/autoCompleteHintMenu'
+import { AddMenuService } from 'services/insertMenu'
 
 
 
@@ -27,7 +29,9 @@ import { AutoCompleteTerminalDecorator } from 'terminalDecorator'
         { provide: TerminalDecorator, useClass: AutoCompleteTerminalDecorator, multi: true },
     ],
     declarations: [
-        AutoCompleteSettingsTabComponent
+        AutoCompleteSettingsTabComponent,
+        AutoCompleteHintMenuComponent,
+        AddMenuService
     ],
 })
 export default class AutoCompleteModule { }

@@ -1,0 +1,14 @@
+.autocomplete-list
+    div helloworld
+    ng-container(*ngFor='let option of options; let i = index')
+        .autocomplete-item(
+            [data-index]='i',
+            [data-content]='option.content',
+            [class.highlight]='i === currentItemIndex'
+        )
+            span.name {{option.name}}
+            span.type {{option.type}}
+    ng-container(*ngIf='options.length > 0')
+        .autocomplete-footer {{options[currentItemIndex].desp}}
+    ng-container(*ngIf='options.length === 0')
+        .autocomplete-footer No results found
