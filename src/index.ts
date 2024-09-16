@@ -31,7 +31,7 @@ import { AddMenuService } from 'services/insertMenu'
     declarations: [
         AutoCompleteSettingsTabComponent,
         AutoCompleteHintMenuComponent,
-        AddMenuService
+        AddMenuService,
     ],
 })
 export default class AutoCompleteModule { }

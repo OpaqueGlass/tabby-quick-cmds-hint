@@ -1,0 +1,30 @@
+.autocomplete-list {
+    position: absolute;
+    z-index: 1000; /* 确保浮动层显示在前面 */
+    max-width: 650px;
+    background-color: rgb(8, 2, 36);
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); */
+    border: 1px solid #ddd;
+    display: none; /* 初始时隐藏 */
+    color: #ddd;
+}
+
+.autocomplete-item {
+    padding: 8px;
+    cursor: pointer;
+    width: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 45vw;
+}
+
+.autocomplete-item.highlight {
+    background-color: #6b1294;
+}
+
+.autocomplete-footer {
+    padding: 8px;
+    background-color: #0c0333;
+    border-top: 1px solid #ddd;
+}

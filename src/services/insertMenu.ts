@@ -4,20 +4,24 @@ import {
     EmbeddedViewRef,
     Inject,
     Injectable,
-    ComponentFactoryResolver
+    ComponentFactoryResolver,
+    ComponentRef,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { AutoCompleteHintMenuComponent } from '../components/autoCompleteHintMenu';
+import { ContentProviderService } from './contentProvider';
 
 @Injectable({
 providedIn: 'root'
 })
 export class AddMenuService {
+    private componentRef: ComponentRef<AutoCompleteHintMenuComponent>;
     constructor(
         private appRef: ApplicationRef,
         private injector: Injector,
         private componentFactoryResolver: ComponentFactoryResolver,
-        @Inject(DOCUMENT) private document: Document
+        @Inject(DOCUMENT) private document: Document,
+        private contentProvider: ContentProviderService,
     ) {}
 
     // 插入组件的方法
@@ -28,16 +32,25 @@ export class AddMenuService {
         
         if (target) {
             const componentFactory = this.componentFactoryResolver.resolveComponentFactory(AutoCompleteHintMenuComponent);
-            const componentRef = componentFactory.create(this.injector);
-            // 将组件加入 Angular 的变更检测
-            this.appRef.attachView(componentRef.hostView);
-
-            // 获取组件的 DOM 元素
-            const domElem = (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
-
-            // 使用 Renderer2 安全地插入元素
+            this.componentRef = componentFactory.create(this.injector);
+            this.appRef.attachView(this.componentRef.hostView);
+            const domElem = (this.componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
             target.appendChild(domElem);
         }
+    }
+
+    public showMenu() {
+        this.componentRef.instance.showAutocompleteList(this.document.querySelector('.xterm-helper-textarea'));
+    }
+
+    public hideMenu() {
+        this.componentRef.instance.hideAutocompleteList();
+    }
+
+    public sendCurrentText(text: string) {
+        // 获取结果
+        this.componentRef.instance.setContent(this.contentProvider.getContentList(text));
+        this.componentRef.instance.showAutocompleteList(this.document.querySelector('.xterm-helper-textarea'));
     }
 
     public setMenuContent() {

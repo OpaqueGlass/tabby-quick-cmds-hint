@@ -1,5 +1,5 @@
 .autocomplete-list
-    div helloworld
+    div {{ mainText }}
     ng-container(*ngFor='let option of options; let i = index')
         .autocomplete-item(
             [data-index]='i',
@@ -8,7 +8,7 @@
         )
             span.name {{option.name}}
             span.type {{option.type}}
-    ng-container(*ngIf='options.length > 0')
+    ng-container(*ngIf='options.length > 0 && currentItemIndex != -1')
         .autocomplete-footer {{options[currentItemIndex].desp}}
     ng-container(*ngIf='options.length === 0')
         .autocomplete-footer No results found
