@@ -16,6 +16,7 @@ providedIn: 'root'
 })
 export class AddMenuService {
     private componentRef: ComponentRef<AutoCompleteHintMenuComponent>;
+    private lastCmd: string;
     constructor(
         private appRef: ApplicationRef,
         private injector: Injector,
@@ -48,9 +49,19 @@ export class AddMenuService {
     }
 
     public sendCurrentText(text: string) {
+        if (this.lastCmd === text) {
+            // 和上一个一致，无需处理
+            return;
+        }
+        if (text.length < 3) {
+            this.hideMenu();
+            return;
+        }
         // 获取结果
         this.componentRef.instance.setContent(this.contentProvider.getContentList(text));
         this.componentRef.instance.showAutocompleteList(this.document.querySelector('.xterm-helper-textarea'));
+        this.componentRef.instance.test(text);
+        this.lastCmd = text;
     }
 
     public setMenuContent() {

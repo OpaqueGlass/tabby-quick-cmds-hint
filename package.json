@@ -47,6 +47,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "fuse.js": "^7.0.0",
     "strip-ansi": "^7.1.0"
   }
 }

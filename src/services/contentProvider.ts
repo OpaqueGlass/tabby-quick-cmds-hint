@@ -5,6 +5,7 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { ConfigService } from 'tabby-core';
 import { OptionItem } from 'api/pluginType';
+import Fuse from 'fuse.js';
 
 @Injectable({
 providedIn: 'root'
@@ -15,7 +16,7 @@ export class ContentProviderService {
         @Inject(DOCUMENT) private document: Document
     ) {}
 
-    public getContentList(inputCmd: String): OptionItem[] {
+    public getContentList(inputCmd: string): OptionItem[] {
         const result: OptionItem[] = [];
         const envBasicInfo = {config: this.config};
         result.push(...QuickCmdContentProvider.getQuickCmdList(inputCmd, envBasicInfo));
@@ -28,18 +29,24 @@ interface EnvBasicInfo {
 }
 
 class QuickCmdContentProvider {
-    static getQuickCmdList(inputCmd: String, envBasicInfo: EnvBasicInfo): OptionItem[] {
+    static getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): OptionItem[] {
         const result: OptionItem[] = [];
-        for (let oneCmd of envBasicInfo.config.store.qc.cmds) {
-            if (oneCmd.name.includes(inputCmd)) {
-                result.push({
-                    name: oneCmd.name,
-                    content: oneCmd.text + oneCmd.appendCR ? "\n" : "",
-                    desp: "",
-                    type: "q"   
-                } as OptionItem);
-            }
-        }
+        const options = {
+            keys: ['name'], // 搜索的字段
+            threshold: 0.4, // 控制匹配的模糊度
+            includeScore: true // 包含得分
+        };
+        const dataList = envBasicInfo.config.store.qc.cmds.map((oneCmd) => {
+            return {
+                name: oneCmd.name,
+                content: oneCmd.text + oneCmd.appendCR ? "\n" : "",
+                desp: "",
+                type: "q"
+            } as OptionItem;
+        });
+        const fuse = new Fuse(dataList, options);
+        // console.log("匹配结果", fuse.search(inputCmd));
+        result.push(...fuse.search(inputCmd).map((value)=>value.item as OptionItem));
         return result;
     }
 }
