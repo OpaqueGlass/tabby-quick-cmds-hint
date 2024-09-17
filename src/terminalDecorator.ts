@@ -18,9 +18,13 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         let currentLine = ''; // 用于存储当前正在键入的行
         console.log("tab内容判断", tab);
         console.log("tab内容判断", tab.element.nativeElement);
-        this.addMenuService.setMenuContent();
         let isCmdStatus = false;
-        console.log(this.hintMenu)
+        tab.addEventListenerUntilDestroyed(tab.element.nativeElement.querySelector(".xterm-helper-textarea"), 'focusout', () => {
+            this.addMenuService.hideMenu();
+            console.log("focus out,")
+        }, true);
+        
+        // 为xterm添加focusout事件监听
         tab.input$.pipe(bufferTime(300)).subscribe((buffers: Buffer[]) => {
             // TODO: 还需要判断当前是否是输入命令的状态，其他vim文本输入等情况不做处理
             // 将接收到的缓冲区内容拼接起来
@@ -69,8 +73,8 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
             const resplitStringArray = outputString.split("\n");
 
             const lastRowString = resplitStringArray[resplitStringArray.length - 1];
-            console.log("最后一行", lastRowString);
-            console.log("最后一行", temp);
+            // console.log("最后一行 r", lastRowString);
+            // console.log("最后一行 c", temp);
             // console.log("对象内", tab.output$.forEach);
             // console.log("全体输出", Buffer.from(outputString, "utf-8").toString());
             if (lastRowString.match(new RegExp("]1337;CurrentDir="))) {

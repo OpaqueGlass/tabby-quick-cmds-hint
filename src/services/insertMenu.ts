@@ -38,6 +38,7 @@ export class AddMenuService {
             const domElem = (this.componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
             target.appendChild(domElem);
         }
+        // this.document.addEventListener('keydown', this.handleKeyDown.bind(this), true);
     }
 
     public showMenu() {
@@ -64,8 +65,14 @@ export class AddMenuService {
         this.lastCmd = text;
     }
 
-    public setMenuContent() {
-        console.log("设置内容");
+    private handleKeyDown(event: KeyboardEvent) {
+        const key = event.key;
+        console.log("handle key down");
+    
+        
+
     }
+
+
 }
   
