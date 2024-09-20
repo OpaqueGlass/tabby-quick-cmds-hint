@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core'
 import { bufferTime } from 'rxjs'
 import { AddMenuService } from 'services/insertMenu';
 import { TerminalDecorator, BaseTerminalTabComponent, BaseSession, BaseTerminalProfile } from 'tabby-terminal'
-import stripAnsi from 'strip-ansi';
-import { sleep } from 'utils/commonUtils';
+import { resetAndClearXterm, sleep } from 'utils/commonUtils';
+import { Terminal } from '@xterm/xterm';
+import { Unicode11Addon } from '@xterm/addon-unicode11';
 
 @Injectable()
 export class AutoCompleteTerminalDecorator extends TerminalDecorator {
@@ -26,10 +27,18 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
             this.addMenuService.hideMenu();
             console.log("focus out,")
         }, true);
-        
+
+        const xterm = new Terminal({
+            allowTransparency: true,
+            allowProposedApi: true,
+        });
+        xterm.loadAddon(new Unicode11Addon());
+        xterm.unicode.activeVersion = "11";
+        xterm.open(document.createElement("div"));
+
         // 为xterm添加focusout事件监听
         tab.input$.pipe(bufferTime(300)).subscribe((buffers: Buffer[]) => {
-            // TODO: 还需要判断当前是否是输入命令的状态，其他vim文本输入等情况不做处理
+            // 还需要判断当前是否是输入命令的状态，其他vim文本输入等情况不做处理
             // 将接收到的缓冲区内容拼接起来
             const inputString = Buffer.concat(buffers).toString();
 
@@ -45,6 +54,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
                 // 判定停止用户命令输入状态
                 if (isCmdStatus == true) {
                     isCmdStatus = false;
+                    resetAndClearXterm(xterm);
                     console.log("判定停止用户输入状态");
                     this.addMenuService.hideMenu();
                 }
@@ -57,37 +67,47 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
                 console.log("字符串中包含退格");
                 currentLine = this.processBackspaces(currentLine);
             }
-            console.log("当前行", currentLine);
+            // console.log("输入组当前行", currentLine);
             
         });
-        let temp = "";
-        const regex = /[\x08\x1b]((\[\??\d+[hl])|([=<>a-kzNM78])|([\(\)][a-b0-2])|(\[\d{0,2}\w)|(\[\d+;\d+[hfy]?)|(\[;?[hf])|(#[3-68])|([01356]n)|(O[mlnp-z]?)|(\/Z)|(\d+)|(\[\?\d;\d0c)|(\d;\dR))/gi
-
-        
+        let justInput = false;
 
         tab.output$.pipe(bufferTime(300)).subscribe((data: string[]) => {
             // 需要注意，输出也有补充部分（补充当前行的输出），这个可能不能直接判定
-            const outputString = data.join('');
-
-            const cleanedOutputString = this.cleanupOutput(temp + outputString);
-            temp = cleanedOutputString;
-            const templist = temp.split("\n");
-            temp = templist.pop() || "";
-
-            const resplitStringArray = outputString.split("\n");
-
-            const lastRowString = resplitStringArray[resplitStringArray.length - 1];
-            // console.log("最后一行 r", lastRowString);
-            // console.log("最后一行 c", temp);
-            // console.log("对象内", tab.output$.forEach);
-            // console.log("全体输出", Buffer.from(outputString, "utf-8").toString());
-            if (lastRowString.match(new RegExp("]1337;CurrentDir="))) {
-                isCmdStatus = true;
-                temp = "";
-            }
-            if (isCmdStatus) {
-                this.addMenuService.sendCurrentText(temp);
-            }
+            let outputString = data.join('');
+            console.log("本次获取内容", outputString);
+            // if (data[data.length - 1]?.match(new RegExp("]1337;CurrentDir="))) {
+            //     outputString = data[data.length - 1];
+            // }
+            outputString = this.outputStrPreprocess(outputString, xterm);
+            xterm.write(outputString, ()=>{
+                // 文本过多时需要先等待上屏，或者，咱们对过多的内容截断一下？
+                if (outputString.match(new RegExp("]1337;CurrentDir="))) {
+                    resetAndClearXterm(xterm);
+                    const regExp = /\x1b\]1337;CurrentDir=.*?\x07/g;
+                    const matches = outputString.match(regExp);
+                    if (matches) {
+                        console.log("有匹配", matches[0]);
+                        const endIndex = outputString.indexOf(matches[0]) + matches[0].length;
+                        resetAndClearXterm(xterm);
+                        console.log("截断内容", outputString.slice(endIndex));
+                        xterm.write(outputString.slice(endIndex));
+                    }
+                    isCmdStatus = true;
+                    justInput = true;
+                } else {
+                    justInput = false;
+                }
+                // 刚判定输入时，会获取到 user:$
+                if (isCmdStatus && !justInput) {
+                    xterm.selectAll();
+                    const xtermStr = xterm.getSelection();
+                    console.log("xterm", xtermStr.trim());
+                    xterm.clearSelection();
+                    this.addMenuService.sendCurrentText(xtermStr.trim());
+                }
+            });
+            
             // console.log("当前是否用户输入状态", isCmdStatus);
         });
         tab.sessionChanged$.subscribe(session => {
@@ -100,12 +120,14 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         }
     }
 
-    private cleanupOutput (data: string): string {
-        // console.log("原data", data);
-        // console.log("strip处理后", stripAnsi(data));
-        // console.log("processBackspaces", this.processBackspaces(stripAnsi(data));
-        // TODO \x15 之前的，包含，都需要删除
-        return this.processBackspaces(stripAnsi(data));
+    private outputStrPreprocess(output: string, xterm: Terminal) {
+        // [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+        let regExp = /(\x1b\[C){24}/g;
+        if (output.match(regExp)) {
+            output = output.replace(regExp, "");
+            resetAndClearXterm(xterm);
+        }
+        return output;
     }
 
     private processBackspaces(input: string) {
@@ -117,7 +139,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
                 if (result.length > 0) {
                     result.pop();
                 }
-            } else if (char === "\x15") {
+            } else if (char === "\x15" || char === "\u0015") {
                 result = [];
             } else {
                 // 非退格字符，直接加入结果

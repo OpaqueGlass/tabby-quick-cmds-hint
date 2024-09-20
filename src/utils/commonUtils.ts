@@ -1,3 +1,4 @@
+import { Terminal } from "@xterm/xterm";
 import { BaseTabComponent, SplitTabComponent } from "tabby-core";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 
@@ -76,4 +77,10 @@ export async function sendInput({tab, cmd, appendCR = false,
         }
 
     }
+}
+
+export function resetAndClearXterm(xterm: Terminal) {
+    console.log("清屏");
+    xterm.clear();
+    xterm.write('\x1b[2J');
 }

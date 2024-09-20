@@ -7,7 +7,8 @@ export class AutoCompleteConfigProvider extends ConfigProvider {
             agent: 'OGAutoComplete',
         },
         hotkeys: {
-            'stop-autoComplete': [],
+            'ogautocomplete_stop': [],
+            'ogautocomplete_dev': [],
         },
     }
 }

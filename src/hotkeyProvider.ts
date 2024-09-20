@@ -3,12 +3,16 @@ import { HotkeyDescription, HotkeyProvider } from 'tabby-core'
 
 /** @hidden */
 @Injectable()
-export class QuickCmdsHotkeyProvider extends HotkeyProvider {
+export class AutoCompleteHotkeyProvider extends HotkeyProvider {
     hotkeys: HotkeyDescription[] = [
         {
-            id: 'ogautocomplete.stop',
+            id: 'ogautocomplete_stop',
             name:'Stop AutoComplete Or Reopen it',
         },
+        {
+            id: "ogautocomplete_dev",
+            name: "Open Dev Tools",
+        }
     ]
 
     constructor (
@@ -16,7 +20,7 @@ export class QuickCmdsHotkeyProvider extends HotkeyProvider {
 
     async provide (): Promise<HotkeyDescription[]> {
         return [
-            // ...this.hotkeys
+            ...this.hotkeys
         ]
     }
 }

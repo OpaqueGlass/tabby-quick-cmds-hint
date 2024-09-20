@@ -47,7 +47,8 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "fuse.js": "^7.0.0",
-    "strip-ansi": "^7.1.0"
+    "@xterm/addon-unicode11": "^0.8.0",
+    "@xterm/xterm": "^5.4.0",
+    "fuse.js": "^7.0.0"
   }
 }
