@@ -39,7 +39,7 @@ class QuickCmdContentProvider {
         const dataList = envBasicInfo.config.store.qc.cmds.map((oneCmd) => {
             return {
                 name: oneCmd.name,
-                content: oneCmd.text + oneCmd.appendCR ? "\n" : "",
+                content: oneCmd.text,
                 desp: "",
                 type: "q"
             } as OptionItem;

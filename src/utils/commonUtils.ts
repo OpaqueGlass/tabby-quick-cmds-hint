@@ -2,16 +2,37 @@ import { BaseTabComponent, SplitTabComponent } from "tabby-core";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 
 
+export function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 /**
  * 
  * @param tab terminal标签页
  * @param cmd 待输入的命令 请注意 \\s将被认为延迟输入，\\x将被认为是16进制字符
+ * @param appendCR 是否在命令后追加回车
+ * @param singleLine 是否忽略换行，而一次只输入一行
+ * @param clearFirst 是否在输入前清空终端
+ * 
  */
-export async function sendInput(tab: BaseTabComponent, cmd: string, appendCR: boolean = false,
-    singleLine: boolean = false
-) {
+export async function sendInput({tab, cmd, appendCR = false,
+    singleLine = false, clearFirst = false, refocus = true}: {
+    tab: BaseTabComponent | SplitTabComponent,
+    cmd: string,
+    appendCR?: boolean,
+    singleLine?: boolean,
+    clearFirst?: boolean,
+    refocus?: boolean
+}) {
     if (tab instanceof SplitTabComponent) {
-        this._send((tab as SplitTabComponent).getFocusedTab(), cmd)
+        sendInput({
+            tab: (tab as SplitTabComponent).getFocusedTab(),
+            cmd: cmd,
+            appendCR: appendCR,
+            singleLine: singleLine,
+            clearFirst: clearFirst,
+            refocus: refocus
+        });
     }
     if (tab instanceof BaseTerminalTabComponent) {
         let currentTab = tab as BaseTerminalTabComponent<BaseTerminalProfile>;
@@ -19,6 +40,10 @@ export async function sendInput(tab: BaseTabComponent, cmd: string, appendCR: bo
         console.log("Sending " + cmd);
 
         let cmds = cmd.split(/(?:\r\n|\r|\n)/)
+
+        if (clearFirst) {
+            currentTab.sendInput("\u0015");
+        }
 
         for (let i = 0; i < cmds.length; i++) {
             let cmd = cmds[i];
@@ -29,7 +54,7 @@ export async function sendInput(tab: BaseTabComponent, cmd: string, appendCR: bo
                 cmd = cmd.replace('\\s', '');
                 let sleepTime = parseInt(cmd);
 
-                await this.sleep(sleepTime);
+                await sleep(sleepTime);
 
                 console.log('sleep time: ' + sleepTime);
                 continue;
@@ -44,6 +69,10 @@ export async function sendInput(tab: BaseTabComponent, cmd: string, appendCR: bo
                 cmd = cmd + "\n";
             }
             currentTab.sendInput(cmd);
+            // 点击会导致失去聚焦，可能这里也需要携带参数
+            if (refocus) {
+                currentTab.frontend.focus();
+            }
         }
 
     }

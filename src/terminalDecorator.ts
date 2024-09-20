@@ -3,6 +3,7 @@ import { bufferTime } from 'rxjs'
 import { AddMenuService } from 'services/insertMenu';
 import { TerminalDecorator, BaseTerminalTabComponent, BaseSession, BaseTerminalProfile } from 'tabby-terminal'
 import stripAnsi from 'strip-ansi';
+import { sleep } from 'utils/commonUtils';
 
 @Injectable()
 export class AutoCompleteTerminalDecorator extends TerminalDecorator {
@@ -19,7 +20,9 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         console.log("tab内容判断", tab);
         console.log("tab内容判断", tab.element.nativeElement);
         let isCmdStatus = false;
-        tab.addEventListenerUntilDestroyed(tab.element.nativeElement.querySelector(".xterm-helper-textarea"), 'focusout', () => {
+        tab.addEventListenerUntilDestroyed(tab.element.nativeElement.querySelector(".xterm-helper-textarea"), 'focusout', async () => {
+            // 这里需要延迟，否则无法点击上屏
+            await sleep(200);
             this.addMenuService.hideMenu();
             console.log("focus out,")
         }, true);
@@ -54,6 +57,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
                 console.log("字符串中包含退格");
                 currentLine = this.processBackspaces(currentLine);
             }
+            console.log("当前行", currentLine);
             
         });
         let temp = "";
@@ -100,6 +104,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         // console.log("原data", data);
         // console.log("strip处理后", stripAnsi(data));
         // console.log("processBackspaces", this.processBackspaces(stripAnsi(data));
+        // TODO \x15 之前的，包含，都需要删除
         return this.processBackspaces(stripAnsi(data));
     }
 
@@ -112,6 +117,8 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
                 if (result.length > 0) {
                     result.pop();
                 }
+            } else if (char === "\x15") {
+                result = [];
             } else {
                 // 非退格字符，直接加入结果
                 result.push(char);

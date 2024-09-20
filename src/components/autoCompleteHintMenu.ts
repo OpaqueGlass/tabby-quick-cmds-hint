@@ -1,6 +1,7 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core'
 import { OptionItem } from '../api/pluginType'
 import { AppService } from 'tabby-core';
+import { sendInput } from 'utils/commonUtils';
 
 @Component({
     template: require('./autoCompleteHintMenu.pug'),
@@ -109,8 +110,16 @@ export class AutoCompleteHintMenuComponent {
      * @param type 类型：0 仅上屏 1上屏并回车
      */
     inputItem(index: number, type: number) {
-        console.log(`Selected index: ${index}, type: ${type}`);
-        // 你的逻辑...
+        console.log(`Selected index: ${index}, type: ${type}, content: ${JSON.stringify(this.options)}`);
+        sendInput({
+            tab: this.app.activeTab,
+            cmd: this.options[index].content,
+            appendCR: type == 1,
+            singleLine: false,
+            clearFirst: true,
+            refocus: true
+        });
+        // 上屏完毕可能还需要调用focus
     }
 
 }
