@@ -2,6 +2,15 @@ import { Terminal } from "@xterm/xterm";
 import { BaseTabComponent, SplitTabComponent } from "tabby-core";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 
+export function cleanTerminalText(input: string) {
+    const cleanNotVisibleExp = /[\x1b\x07]\[(?:[0-9]{1,2}(?:;[0-9]{1,2})*)?[a-zA-Z]|[\x1b\x07]\].*?\x07|[\x1b\x07]\[\?.*?[hl]/g;
+    
+
+    let result = input.replace(cleanNotVisibleExp, '');
+    
+    return result;
+}
+
 
 export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));

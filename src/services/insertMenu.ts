@@ -60,7 +60,7 @@ export class AddMenuService {
         }
         // 获取结果
         this.componentRef.instance.setContent(this.contentProvider.getContentList(text));
-        this.componentRef.instance.showAutocompleteList(this.document.querySelector('.xterm-helper-textarea'));
+        this.componentRef.instance.showAutocompleteList(this.document.querySelector('.content-tab-active.active .focused .xterm-helper-textarea'));
         this.componentRef.instance.test(text);
         this.lastCmd = text;
     }
