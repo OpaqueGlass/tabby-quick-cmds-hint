@@ -1,7 +1,7 @@
 import {
     Injectable,
 } from '@angular/core';
-import { ConfigService, HostWindowService, HotkeysService } from 'tabby-core';
+import { HostWindowService, HotkeysService } from 'tabby-core';
 
 @Injectable({
 providedIn: 'root'

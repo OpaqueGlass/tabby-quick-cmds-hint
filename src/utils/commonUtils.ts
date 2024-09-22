@@ -78,6 +78,9 @@ export async function sendInput({tab, cmd, appendCR = false,
             if (i != cmds.length - 1) {
                 cmd = cmd + "\n";
             }
+            if (appendCR) {
+                cmd = cmd + "\n";
+            }
             currentTab.sendInput(cmd);
             // 点击会导致失去聚焦，可能这里也需要携带参数
             if (refocus) {
@@ -92,4 +95,26 @@ export function resetAndClearXterm(xterm: Terminal) {
     console.log("清屏");
     xterm.clear();
     xterm.write('\x1b[2J');
+}
+
+export function generateUUID() {
+    let uuid = '';
+    let i = 0;
+    let random = 0;
+
+    for (i = 0; i < 36; i++) {
+        if (i === 8 || i === 13 || i === 18 || i === 23) {
+            uuid += '-';
+        } else if (i === 14) {
+            uuid += '4';
+        } else {
+            random = Math.random() * 16 | 0;
+            if (i === 19) {
+                random = (random & 0x3) | 0x8;
+            }
+            uuid += (random).toString(16);
+        }
+    }
+
+    return uuid;
 }

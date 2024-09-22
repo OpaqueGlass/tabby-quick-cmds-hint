@@ -12,6 +12,8 @@ export class AutoCompleteHintMenuComponent {
     showStatus: boolean = false;
     options: OptionItem[] = [];
     currentItemIndex: number = -1;
+    recentTargetElement: HTMLElement;
+    isShowing: boolean = false;
     constructor(
         private renderer: Renderer2,
         private elRef: ElementRef,
@@ -54,7 +56,16 @@ export class AutoCompleteHintMenuComponent {
     // 在输入框的事件中调用此函数
     showAutocompleteList(targetElement: HTMLElement) {
         const listEl = this.elRef.nativeElement.children[0];
-        const targetRect = targetElement.getBoundingClientRect();
+        this.recentTargetElement = targetElement;
+        this.adjustPosition();
+        // 显示自动完成列表
+        this.renderer.setStyle(listEl, 'display', 'block');
+        this.isShowing = true;
+    }
+
+    adjustPosition() {
+        const listEl = this.elRef.nativeElement.children[0];
+        const targetRect = this.recentTargetElement.getBoundingClientRect();
 
         // 获取窗口的高度
         const viewportHeight = window.innerHeight;
@@ -77,9 +88,6 @@ export class AutoCompleteHintMenuComponent {
         this.renderer.setStyle(listEl, 'top', `${topPosition}px`);
         this.renderer.setStyle(listEl, 'left', `${targetRect.left}px`);
         // this.renderer.setStyle(listEl, 'width', `${targetRect.width}px`);
-
-        // 显示自动完成列表
-        this.renderer.setStyle(listEl, 'display', 'block');
     }
 
     // 隐藏自动完成列表
@@ -87,21 +95,43 @@ export class AutoCompleteHintMenuComponent {
         this.clearContent();
         const listEl = this.elRef.nativeElement.children[0];
         this.renderer.setStyle(listEl, 'display', 'none');
+        this.isShowing = false;
     }
 
     selectUp() {
+        if (!this.isShowing) {
+            console.log("不再显示")
+            return null;
+        }
         if (this.currentItemIndex >= 0) {
             this.currentItemIndex--;
+        } else {
+            console.log("???", this.currentItemIndex);
+            return null;
         }
+        return this.currentItemIndex;
     }
     selectDown() {
+        if (!this.isShowing) {
+            return null;
+        }
         if (this.currentItemIndex < this.options.length - 1) {
             this.currentItemIndex++;
+        } else {
+            return null;
         }
+        return this.currentItemIndex;
     }
 
     getCurrentItem() {
+        if (this.currentItemIndex < 0) {
+            return null;
+        }
         return this.options[this.currentItemIndex];
+    }
+
+    getCurrentIndex() {
+        return this.currentItemIndex;
     }
 
     /**
@@ -119,6 +149,9 @@ export class AutoCompleteHintMenuComponent {
             clearFirst: true,
             refocus: true
         });
+        if (type == 1) {
+            this.hideAutocompleteList();
+        }
         // 上屏完毕可能还需要调用focus
     }
 

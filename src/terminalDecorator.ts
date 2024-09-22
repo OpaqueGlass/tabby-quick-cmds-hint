@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core'
-import { bufferTime, flatMap, last } from 'rxjs'
+import { bufferTime } from 'rxjs'
 import { AddMenuService } from 'services/insertMenu';
 import { TerminalDecorator, BaseTerminalTabComponent, BaseSession, BaseTerminalProfile } from 'tabby-terminal'
-import { cleanTerminalText, resetAndClearXterm, sleep } from 'utils/commonUtils';
-import { Terminal } from '@xterm/xterm';
-import { Unicode11Addon } from '@xterm/addon-unicode11';
-import stripAnsi from 'strip-ansi';
+import { cleanTerminalText, generateUUID, sleep } from 'utils/commonUtils';
+
 
 @Injectable()
 export class AutoCompleteTerminalDecorator extends TerminalDecorator {
@@ -63,17 +61,18 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         let justInput = false;
         let recentPrefixLength = 0;
         let recentCleanPrefix = null;
+        let recentUuid;
 
 
-        tab.output$.pipe(bufferTime(1000)).subscribe((data: string[]) => {
+        tab.output$.pipe(bufferTime(300)).subscribe((data: string[]) => {
             const outputString = data.join('');
             const allStateStr = tab.frontend.saveState();
-            console.log("STATE STR", JSON.stringify(allStateStr));
+            // console.log("STATE STR", JSON.stringify(allStateStr));
             const lines = allStateStr.trim().split("\n");
             const lastSerialLinesStr = lines.slice(-1).join("\n");
-            console.log("最后几行", lastSerialLinesStr);
+            // console.log("最后几行", lastSerialLinesStr);
 
-            console.log("本次获取内容", JSON.stringify(outputString), outputString);
+            // console.log("本次获取内容", JSON.stringify(outputString), outputString);
 
             // 
             
@@ -97,27 +96,23 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
                 }
                 console.log("更新：清理后命令前缀", recentCleanPrefix);
                 isCmdStatus = true;
+                recentUuid = generateUUID();
             }
 
             const cleanedLastSerialLinesStr = cleanTerminalText(lastSerialLinesStr);
-            console.log("清理后，最近几行", cleanedLastSerialLinesStr, "PREFIX", recentCleanPrefix)
+            // console.log("清理后，最近几行", cleanedLastSerialLinesStr, "PREFIX", recentCleanPrefix)
             if (recentCleanPrefix && cleanedLastSerialLinesStr.includes(recentCleanPrefix)) {
                 const firstValieIndex = cleanedLastSerialLinesStr.lastIndexOf(recentCleanPrefix) + recentCleanPrefix.length;
                 let cmd = cleanedLastSerialLinesStr.slice(firstValieIndex);
                 console.log("命令为", cmd);
                 if (cmd && tab.hasFocus) {
                     console.log("menue seding", cmd);
-                    this.addMenuService.sendCurrentText(cmd);
+                    this.addMenuService.sendCurrentText(cmd, recentUuid);
                 } else if (tab.hasFocus) {
                     console.log("menue close");
                     this.addMenuService.hideMenu();
                 }
             }
-            
-
-            
-
-            
         });
         tab.sessionChanged$.subscribe(session => {
             if (session) {
