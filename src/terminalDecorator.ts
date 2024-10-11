@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { bufferTime } from 'rxjs'
 import { AddMenuService } from 'services/insertMenu';
-import { TerminalDecorator, BaseTerminalTabComponent, BaseSession, BaseTerminalProfile } from 'tabby-terminal'
+import { TerminalDecorator, BaseTerminalTabComponent, BaseTerminalProfile } from 'tabby-terminal'
 import { cleanTerminalText, generateUUID, sleep } from 'utils/commonUtils';
 
 
@@ -23,7 +23,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         tab.addEventListenerUntilDestroyed(tab.element.nativeElement.querySelector(".xterm-helper-textarea"), 'focusout', async () => {
             // 这里需要延迟，否则无法点击上屏
             await sleep(200);
-            this.addMenuService.hideMenu();
+            // this.addMenuService.hideMenu();
             console.log("focus out,")
         }, true);
         
@@ -58,8 +58,6 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
                 currentLine = this.processBackspaces(currentLine);
             }
         });
-        let justInput = false;
-        let recentPrefixLength = 0;
         let recentCleanPrefix = null;
         let recentUuid;
 
@@ -114,14 +112,14 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
                 }
             }
         });
-        tab.sessionChanged$.subscribe(session => {
-            if (session) {
-                this.attachToSession(session)
-            }
-        })
-        if (tab.session) {
-            this.attachToSession(tab.session)
-        }
+        // tab.sessionChanged$.subscribe(session => {
+        //     if (session) {
+        //         this.attachToSession(session)
+        //     }
+        // })
+        // if (tab.session) {
+        //     this.attachToSession(tab.session)
+        // }
     }
 
     
@@ -147,11 +145,11 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         return result.join('');
     }
 
-    private attachToSession (session: BaseSession) {
-        // session.output$.subscribe(data => {
-        //     if (data.includes('command not found')) {
-        //         //
-        //     }
-        // })
-    }
+    // private attachToSession (session: BaseSession) {
+    //     // session.output$.subscribe(data => {
+    //     //     if (data.includes('command not found')) {
+    //     //         //
+    //     //     }
+    //     // })
+    // }
 }

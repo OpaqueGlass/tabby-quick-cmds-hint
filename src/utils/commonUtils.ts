@@ -2,6 +2,10 @@ import { Terminal } from "@xterm/xterm";
 import { BaseTabComponent, SplitTabComponent } from "tabby-core";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 
+export function isValidStr(input: string) {
+    return input !== undefined && input !== null && input !== '';
+}
+
 export function cleanTerminalText(input: string) {
     const cleanNotVisibleExp = /[\x1b\x07]\[(?:[0-9]{1,2}(?:;[0-9]{1,2})*)?[a-zA-Z]|[\x1b\x07]\].*?\x07|[\x1b\x07]\[\?.*?[hl]/g;
     

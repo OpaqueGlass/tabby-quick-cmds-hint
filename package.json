@@ -1,8 +1,8 @@
 {
-  "name": "tabby-auto-complete",
+  "name": "tabby-quick-cmds-hint",
   "version": "1.0.0",
-  "description": "It's a basic complete plugin for tabby",
-  "author": "OpaqueGlass <opaqueglass@126.com>",
+  "description": "It's a simple complete hint plugin for tabby",
+  "author": "OpaqueGlass",
   "license": "AGPLv3",
   "keywords": [
     "tabby-plugin"
@@ -50,6 +50,8 @@
     "@xterm/addon-unicode11": "^0.8.0",
     "@xterm/xterm": "^5.4.0",
     "fuse.js": "^7.0.0",
+    "js-yaml": "^4.1.0",
+    "openai": "^4.67.1",
     "strip-ansi": "^7.1.0"
   }
 }

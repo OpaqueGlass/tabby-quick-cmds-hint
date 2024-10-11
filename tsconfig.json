@@ -10,10 +10,10 @@
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
       "sourceMap": true,
-      "noUnusedParameters": true,
+      "noUnusedParameters": false,
       "noImplicitReturns": true,
       "noFallthroughCasesInSwitch": true,
-      "noUnusedLocals": true,
+      "noUnusedLocals": false,
       "declaration": true,
       "declarationDir": "dist",
       "lib": [

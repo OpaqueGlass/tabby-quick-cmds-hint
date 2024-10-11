@@ -1,30 +1,47 @@
-.autocomplete-list {
+.og-autocomplete-list {
     position: absolute;
     z-index: 1000; /* 确保浮动层显示在前面 */
     max-width: 650px;
     background-color: rgb(8, 2, 36);
-    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); */
     border: 1px solid #ddd;
-    display: none; /* 初始时隐藏 */
+    display: none;
     color: #ddd;
+    border-radius: 7px;
+    overflow: hidden;
 }
 
-.autocomplete-item {
-    padding: 8px;
+.og-autocomplete-item {
+    /* padding: 2px; */
+    margin-bottom: 1px;
     cursor: pointer;
     width: auto;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: flex;
+    flex-direction: row;
     max-width: 45vw;
 }
 
-.autocomplete-item.highlight {
+.og-autocomplete-item.highlight {
     background-color: #7b14aa;
 }
 
-.autocomplete-footer {
+.og-autocomplete-item:hover {
+    background-color: #7e14afa9;
+
+}
+
+.og-autocomplete-footer {
     padding: 8px;
     background-color: #0c0333;
     border-top: 1px solid #ddd;
+}
+
+.og-autocomplete-item .og-ac-type {
+    background-color: #b235eb;
+    color: #fff;
+    padding: 4px;
+}
+
+.og-autocomplete-item .og-ac-name {
+    color: #ddd;
+    padding: 4px;
 }

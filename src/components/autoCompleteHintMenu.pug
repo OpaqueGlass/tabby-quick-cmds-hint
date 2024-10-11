@@ -1,15 +1,15 @@
-.autocomplete-list
+.og-autocomplete-list
     div {{ mainText }}
     ng-container(*ngFor='let option of options; let i = index')
-        .autocomplete-item(
+        .og-autocomplete-item(
             [data-index]='i',
             [data-content]='option.content',
             [class.highlight]='i === currentItemIndex',
             (click)='inputItem(i, 0)'
         )
-            span.name {{option.name}}
-            span.type {{option.type}}
-    ng-container(*ngIf='options.length > 0 && currentItemIndex != -1')
-        .autocomplete-footer {{options[currentItemIndex].desp}}
+            div.og-ac-type {{option.type}}
+            div.og-ac-name {{option.name}}
+    ng-container(*ngIf='options.length > 0 && currentItemIndex != -1 && isValidStr(options[currentItemIndex]?.desp)')
+        .og-autocomplete-footer {{options[currentItemIndex].desp}}
     ng-container(*ngIf='options.length === 0')
-        .autocomplete-footer No results found
+        .og-autocomplete-footer No results found

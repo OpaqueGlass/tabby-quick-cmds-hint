@@ -110,14 +110,17 @@ export class AddMenuService {
             }
         } else if (key === 'Enter') {
             const currentIndex = this.componentRef.instance.currentItemIndex;
+            // TODO: 我们可能还需要判定是否有其他窗口显示在其上
             if (currentIndex != -1) {
                 this.componentRef.instance.inputItem(currentIndex, 1);
                 actFlag = true;
             }
         } else if (key === 'Escape') {
             this.recentBlockedUuid = this.recentUuid;
-            this.hideMenu();
-            // this.componentRef.instance.escape();
+            if (this.componentRef.instance.isShowing) {
+                this.hideMenu();
+                actFlag = true;
+            }
         } else if (key === 'Tab') {
             const currentIndex = this.componentRef.instance.currentItemIndex;
             if (currentIndex != -1) {

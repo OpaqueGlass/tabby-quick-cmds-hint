@@ -1,4 +1,13 @@
-h3 settingpanel
+h3 AutoComplete
+
+.form-line
+    .header
+        .title(translate) Warn when closing active connections
+    toggle(
+        [(ngModel)]='config.store.ssh.warnOnClose',
+        (ngModelChange)='config.save()',
+    )
+
 
 .form-line
     .header

@@ -1,7 +1,7 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core'
 import { OptionItem } from '../api/pluginType'
 import { AppService } from 'tabby-core';
-import { sendInput } from 'utils/commonUtils';
+import { isValidStr, sendInput } from 'utils/commonUtils';
 
 @Component({
     template: require('./autoCompleteHintMenu.pug'),
@@ -153,6 +153,10 @@ export class AutoCompleteHintMenuComponent {
             this.hideAutocompleteList();
         }
         // 上屏完毕可能还需要调用focus
+    }
+
+    isValidStr(input: string) {
+        return isValidStr(input);
     }
 
 }
