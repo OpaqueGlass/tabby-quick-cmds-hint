@@ -2,9 +2,11 @@ h3 AutoComplete
 
 .form-line
     .header
-        .title(translate) Warn when closing active connections
-    toggle(
-        [(ngModel)]='config.store.ssh.warnOnClose',
+        .title Enable debug mode and detailed logs
+        .description 显示详细日志和调错信息 0 All, 3 ErrorOnly, 4 No
+    input.form-control(
+        type='number',
+        [(ngModel)]='config.store.ogAutoCompletePlugin.debugLevel',
         (ngModelChange)='config.save()',
     )
 
@@ -14,7 +16,7 @@ h3 AutoComplete
         .title Agent type
         .description Select agent appearance
     select.form-control(
-        [(ngModel)]='config.store.clippyPlugin.agent',
+        [(ngModel)]='config.store.ogAutoCompletePlugin.agent',
         (ngModelChange)='config.save()'
     )
         option([ngValue]='agent', *ngFor='let agent of agents') {{agent}}

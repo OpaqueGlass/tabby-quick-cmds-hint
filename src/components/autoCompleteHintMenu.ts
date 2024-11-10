@@ -37,12 +37,6 @@ export class AutoCompleteHintMenuComponent {
     test(text: string) {
         this.mainText = text;
     }
-
-    testEcho() {
-        console.log("Echoed")
-        return true;
-    }
-
     ajustPosition() {
 
     }

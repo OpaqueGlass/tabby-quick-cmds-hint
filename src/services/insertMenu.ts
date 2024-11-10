@@ -10,6 +10,7 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { AutoCompleteHintMenuComponent } from '../components/autoCompleteHintMenu';
 import { ContentProviderService } from './contentProvider';
+import { MyLogger } from './myLogService';
 
 @Injectable({
 providedIn: 'root'
@@ -27,6 +28,7 @@ export class AddMenuService {
         private componentFactoryResolver: ComponentFactoryResolver,
         @Inject(DOCUMENT) private document: Document,
         private contentProvider: ContentProviderService,
+        private logger: MyLogger
     ) {
         document.addEventListener("keydown", this.handleKeyDown.bind(this), true);
         document.addEventListener("keyup", this.handleKeyUp.bind(this), true);
@@ -34,7 +36,7 @@ export class AddMenuService {
 
     // 插入组件的方法
     public insertComponent() {
-        console.log("插入组件");
+        this.logger.log("插入提示菜单组件");
         // 获取目标 DOM 元素
         const target = this.document.querySelector('app-root');
         
@@ -57,9 +59,10 @@ export class AddMenuService {
     }
 
     public sendCurrentText(text: string, uuid?: string) {
+        // TODO: 加入快捷键或用户强制触发，这时不进行这些判定，并重置uuid
         if (this.lastCmd === text) {
             // 和上一个一致，无需处理
-            console.log("和上一个一致，无需处理");
+            this.logger.log("和上一个一致，无需处理");
             return;
         }
         if (text.length < 3) {
@@ -67,23 +70,30 @@ export class AddMenuService {
             return;
         }
         if (uuid && this.recentBlockedUuid === uuid) {
-            console.log("uuid被阻止");
+            this.logger.log("uuid被阻止");
             return;
         }
         
         this.recentUuid = uuid;
         
         this.recentCmd = text;
+
+        const cmdHintList = this.contentProvider.getContentList(text);
         // 获取结果
-        this.componentRef.instance.setContent(this.contentProvider.getContentList(text));
-        this.componentRef.instance.showAutocompleteList(this.document.querySelector('.content-tab-active.active .focused .xterm-helper-textarea'));
+        this.componentRef.instance.setContent(cmdHintList);
+        // 无结果隐藏
+        if (cmdHintList == null || cmdHintList.length == 0) {
+            this.hideMenu();
+        } else {
+            this.componentRef.instance.showAutocompleteList(this.document.querySelector('.content-tab-active.active .focused .xterm-helper-textarea'));
+        }
         this.componentRef.instance.test(text);
         this.lastCmd = text;
     }
 
     private handleKeyUp(event: KeyboardEvent) {
         const key = event.key;
-        console.log("handle key up");
+        this.logger.log("handle key up");
         if (key === this.recentBlockedKeyup) {
             this.recentBlockedKeyup = null;
             event.preventDefault();

@@ -3,8 +3,9 @@ import { ConfigProvider } from 'tabby-core'
 /** @hidden */
 export class AutoCompleteConfigProvider extends ConfigProvider {
     defaults = {
-        clippyPlugin: {
+        ogAutoCompletePlugin: {
             agent: 'OGAutoComplete',
+            debugLevel: 3,
         },
         hotkeys: {
             'ogautocomplete_stop': [],

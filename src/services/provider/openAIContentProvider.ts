@@ -14,7 +14,7 @@ export class OpenAIContentProvider {
     constructor() {
         this.openai = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
-            baseURL: 'https://api.openai.com/v4'
+            baseURL: 'https://api.openai.com/v1'
         });
     }
     
@@ -29,6 +29,7 @@ export class OpenAIContentProvider {
         //     };
         // });
         // return quickCmdList;
+        return null;
     }
 
     async askForCmd(inputCmd: string, envBasicInfo: EnvBasicInfo, openai: OpenAI):  Promise<string[]> {
@@ -53,7 +54,7 @@ Each command should be provided in the following YAML format:
 
         `;
         const response = await this.initiateConversation(prompt, this.openai);
-
+        return null;
     }
 
     async initiateConversation(prompt: string, openai: OpenAI): Promise<string> {

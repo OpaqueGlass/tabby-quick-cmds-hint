@@ -7,15 +7,7 @@ import { ConfigService } from 'tabby-core'
 export class AutoCompleteSettingsTabComponent {
     agents = [
         'Bonzi',
-        'Clippy',
-        'F1',
-        'Genie',
-        'Genius',
-        'Links',
-        'Merlin',
-        'Peedy',
-        'Rocky',
-        'Rover',
+        
     ]
     constructor (
         public config: ConfigService,
