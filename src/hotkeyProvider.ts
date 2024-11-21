@@ -12,6 +12,10 @@ export class AutoCompleteHotkeyProvider extends HotkeyProvider {
         {
             id: "ogautocomplete_dev",
             name: "Open Dev Tools",
+        },
+        {
+            id: "ogautocomplete_init_scripts",
+            name: "Init AutoComplete",
         }
     ]
 

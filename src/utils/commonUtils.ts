@@ -1,5 +1,5 @@
 import { Terminal } from "@xterm/xterm";
-import { BaseTabComponent, SplitTabComponent } from "tabby-core";
+import { AppService, BaseTabComponent, SplitTabComponent } from "tabby-core";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 
 export function isValidStr(input: string) {
@@ -50,18 +50,28 @@ export async function sendInput({tab, cmd, appendCR = false,
     }
     if (tab instanceof BaseTerminalTabComponent) {
         let currentTab = tab as BaseTerminalTabComponent<BaseTerminalProfile>;
-        console.log("tab", currentTab);
-        console.log("Sending " + cmd);
+        console.debug("tab", currentTab);
+        console.debug("Sending " + cmd);
 
         let cmds = cmd.split(/(?:\r\n|\r|\n)/)
 
         if (clearFirst) {
-            currentTab.sendInput("\u0015");
+            // const endKeyEvent = new KeyboardEvent('keydown', {
+            //     key: 'End',
+            //     code: 'End',
+            //     keyCode: 35,
+            //     which: 35,
+            //     bubbles: true,
+            //     cancelable: true
+            // });
+            // window.document.dispatchEvent(endKeyEvent);
+            // currentTab.sendInput("\u0015"); //Ctrl + E
+            currentTab.sendInput("\u0003"); //Ctrl + c
         }
 
         for (let i = 0; i < cmds.length; i++) {
             let cmd = cmds[i];
-            console.log("Sending " + cmd);
+            console.debug("Sending " + cmd);
 
 
             if (cmd.startsWith('\\s')) {
@@ -70,7 +80,7 @@ export async function sendInput({tab, cmd, appendCR = false,
 
                 await sleep(sleepTime);
 
-                console.log('sleep time: ' + sleepTime);
+                console.debug('sleep time: ' + sleepTime);
                 continue;
             }
 
@@ -99,6 +109,19 @@ export function resetAndClearXterm(xterm: Terminal) {
     console.log("清屏");
     xterm.clear();
     xterm.write('\x1b[2J');
+}
+
+export function inputInitScripts(app: AppService) {
+    const scripts = ` if [[ -z "$DIR_REPORTING_ENABLED" ]]; then export DIR_REPORTING_ENABLED=1; if [[ $SHELL == */bash ]]; then export PS1="$PS1\\[\\e]1337;CurrentDir=$(pwd)\a\]"; elif [[ $SHELL == */zsh ]]; then precmd() { echo -n "\\x1b]1337;CurrentDir=$(pwd)\\x07"; }; elif [[ $SHELL == */fish ]]; then fish -c 'function __tabby_working_directory_reporting --on-event fish_prompt; echo -en "\e]1337;CurrentDir=$PWD\\x7"; end'; else echo "Unsupported shell"; fi; fi`;
+    // 需要转义 "， /等，另外，前导空格可以避免写入history
+    const bashCommand = ` if [[ -z "$DIR_REPORTING_ENABLED" ]]; then export DIR_REPORTING_ENABLED=1; if [[ $SHELL == */bash ]]; then export PS1="$PS1\\[\\e]1337;CurrentDir=$(pwd)\\a\\]"; elif [[ $SHELL == */zsh ]]; then precmd() { echo -n "\\x1b]1337;CurrentDir=$(pwd)\\x07"; }; elif [[ $SHELL == */fish ]]; then fish -c 'function __tabby_working_directory_reporting --on-event fish_prompt; echo -en "\\e]1337;CurrentDir=$PWD\\x7"; end'; else echo "Unsupported shell"; fi; fi`;
+
+    sendInput({
+        "tab": app.activeTab,
+        "cmd": bashCommand,
+        "appendCR": true,
+    });
+
 }
 
 export function generateUUID() {

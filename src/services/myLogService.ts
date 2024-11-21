@@ -11,10 +11,8 @@ export class MyLogger {
         log: LogService,
         private configService: ConfigService
       ) {
-        this.logger = log.create('quick-cmds-hint');
         this.name = 'quick-cmds-hint';
         // tabby的Logger不支持,继续传参，只能类似%d这样的模板字符串，我们这边还是自定义省心点
-        this.logger.info('Logger created');
         this.logLevel = configService.store.ogAutoCompletePlugin.debugLevel;
     }
 

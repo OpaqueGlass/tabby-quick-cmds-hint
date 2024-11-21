@@ -10,6 +10,15 @@ h3 AutoComplete
         (ngModelChange)='config.save()',
     )
 
+.form-line
+    .header
+        .title(translate) Try to run init scripts when session connected.
+        .description(translate) 在每次连接后，自动尝试运行初始化脚本
+    toggle(
+        [(ngModel)]='config.store.ogAutoCompletePlugin.autoInit',
+        (ngModelChange)='config.save()',
+    )
+
 
 .form-line
     .header

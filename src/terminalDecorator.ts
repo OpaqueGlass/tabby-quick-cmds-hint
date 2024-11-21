@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core'
 import { bufferTime } from 'rxjs'
 import { AddMenuService } from 'services/insertMenu';
 import { MyLogger } from 'services/myLogService';
-import { ConfigService } from 'tabby-core';
+import { AppService, ConfigService } from 'tabby-core';
 import { TerminalDecorator, BaseTerminalTabComponent, BaseTerminalProfile } from 'tabby-terminal'
-import { cleanTerminalText, generateUUID, sleep } from 'utils/commonUtils';
+import { cleanTerminalText, generateUUID, inputInitScripts, sleep } from 'utils/commonUtils';
 
 
 @Injectable()
@@ -13,17 +13,34 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
     constructor (
         private addMenuService: AddMenuService,
         private configService: ConfigService,
-        private logger: MyLogger
+        private logger: MyLogger,
+        private app: AppService,
     ) {
         super()
         addMenuService.insertComponent();
     }
 
     attach (tab: BaseTerminalTabComponent<BaseTerminalProfile>): void {
+        // TODO: 这里最好是区分一下终端，给个实例什么的，另外，可能可以通过currentPwd判断是否
         let currentLine = ''; // 用于存储当前正在键入的行
         this.logger.log("tab内容判断", tab);
         this.logger.log("tab内容判断", tab.element.nativeElement);
         let isCmdStatus = false;
+        tab.sessionChanged$.subscribe(session => {
+            this.logger.log("tab内容判断sessionChanged", tab.session?.supportsWorkingDirectory(), tab.title);
+            this.logger.log("tab内容判断sessionChanged", session?.supportsWorkingDirectory());
+            // 这个changed涉及重新连接什么的，所以，如果为false时没有，如果为session undefined就是没连上
+            // 可以考虑给上自动加入脚本，但windows就hh
+            if (session?.supportsWorkingDirectory()) {
+                // 如果已经有了，就不需要操作，隐藏标签？
+            } else if (session && !session?.supportsWorkingDirectory()) {
+                // 提示添加
+                // 或者自动加入
+                if (this.configService.store.ogAutoCompletePlugin.autoInit) {
+                    setTimeout(()=>{inputInitScripts(this.app);}, 300);
+                }
+            }
+        });
         tab.addEventListenerUntilDestroyed(tab.element.nativeElement.querySelector(".xterm-helper-textarea"), 'focusout', async () => {
             // 这里需要延迟，否则无法点击上屏
             await sleep(200);
