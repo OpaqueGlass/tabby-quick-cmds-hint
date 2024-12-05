@@ -78,6 +78,7 @@ export class AddMenuService {
         
         this.recentCmd = text;
 
+        // 改成异步的，另外，除了结果外还需要回传传过去的text、uuid、tab-id信息，避免插入到错误的tab提示中
         const cmdHintList = this.contentProvider.getContentList(text);
         // 获取结果
         this.componentRef.instance.setContent(cmdHintList);

@@ -2,6 +2,7 @@ import { OptionItem, EnvBasicInfo } from "../../api/pluginType";
 import Fuse from 'fuse.js';
 
 export class QuickCmdContentProvider {
+    
     static getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): OptionItem[] {
         const result: OptionItem[] = [];
         const options = {
