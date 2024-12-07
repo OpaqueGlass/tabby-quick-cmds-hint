@@ -1,8 +1,11 @@
 import { ConfigService } from 'tabby-core';
+import { BaseTerminalProfile, BaseTerminalTabComponent } from 'tabby-terminal';
 
 interface EnvBasicInfo {
     config: ConfigService;
     document: Document;
+    tab: BaseTerminalTabComponent<BaseTerminalProfile>;
+    tabId: string;
 }
 
 interface ProviderInitInfo {

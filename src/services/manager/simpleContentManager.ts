@@ -17,7 +17,7 @@ export class SimpleManager extends BaseManager {
         public configService: ConfigService
     ) {
         super(tab, logger, addMenuService, configService);
-        console.log("test", this.logger, tab)
+        this.logger.log("test", this.logger, tab)
     }
     handleInput = (buffers: Buffer[]) => {
         // 还需要判断当前是否是输入命令的状态，其他vim文本输入等情况不做处理
@@ -90,7 +90,7 @@ export class SimpleManager extends BaseManager {
                 if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
                     this.logger.log("menue seding", cmd);
                 }
-                this.addMenuService.sendCurrentText(cmd, this.recentUuid);
+                this.addMenuService.sendCurrentText(cmd, this.recentUuid, this.sessionUniqueId, this.tab);
             } else if (this.tab.hasFocus) {
                 if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
                     this.logger.log("menue close");
@@ -98,5 +98,10 @@ export class SimpleManager extends BaseManager {
                 this.addMenuService.hideMenu();
             }
         }
+    }
+    handleSessionChanged = (session) => {
+        this.logger.log("session changed", session);
+        this.addMenuService.hideMenu();
+        this.sessionUniqueId = generateUUID();
     }
 }

@@ -44,7 +44,6 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         });
         // END
 
-
         tab.addEventListenerUntilDestroyed(tab.element.nativeElement.querySelector(".xterm-helper-textarea"), 'focusout', async () => {
             // 这里需要延迟，否则无法点击上屏
             await sleep(200);
@@ -55,6 +54,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         const mangager = new SimpleManager(tab, this.logger, this.addMenuService, this.configService);
         tab.input$.pipe(bufferTime(300)).subscribe(mangager.handleInput);
         tab.output$.pipe(bufferTime(300)).subscribe(mangager.handleOutput);
+        tab.sessionChanged$.subscribe(mangager.handleSessionChanged);
         // ????
         // tab.sessionChanged$.subscribe(session => {
         //     if (session) {

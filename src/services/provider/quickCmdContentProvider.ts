@@ -1,9 +1,17 @@
 import { OptionItem, EnvBasicInfo } from "../../api/pluginType";
 import Fuse from 'fuse.js';
+import { BaseContentProvider, OptionItemResultWrap } from "./baseProvider";
+import { MyLogger } from "services/myLogService";
 
-export class QuickCmdContentProvider {
+export class QuickCmdContentProvider extends BaseContentProvider {
+    protected static providerTypeKey: string = "q";
+    constructor(
+        protected logger: MyLogger
+    ) {
+        super(logger);
+    }
     
-    static getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): OptionItem[] {
+    async getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
         const result: OptionItem[] = [];
         const options = {
             keys: ['name'], // 搜索的字段
@@ -15,12 +23,15 @@ export class QuickCmdContentProvider {
                 name: oneCmd.name,
                 content: oneCmd.text,
                 desp: "",
-                type: "q"
+                type: QuickCmdContentProvider.providerTypeKey
             } as OptionItem;
         });
         const fuse = new Fuse(dataList, options);
         // console.log("匹配结果", fuse.search(inputCmd));
         result.push(...fuse.search(inputCmd).map((value)=>value.item as OptionItem));
-        return result;
+        return {
+            optionItem: result,
+            envBasicInfo: envBasicInfo
+        };
     }
 }

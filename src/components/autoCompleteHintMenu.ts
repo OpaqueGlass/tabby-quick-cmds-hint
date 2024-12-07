@@ -1,50 +1,90 @@
-import { Component, ElementRef, Renderer2 } from '@angular/core'
+import { Component, ElementRef, Inject, Input, Renderer2, SimpleChanges, type OnChanges, ChangeDetectorRef } from '@angular/core'
 import { OptionItem } from '../api/pluginType'
 import { AppService } from 'tabby-core';
 import { isValidStr, sendInput } from 'utils/commonUtils';
+import { MyLogger } from 'services/myLogService';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
     template: require('./autoCompleteHintMenu.pug'),
     styles: [require('./autoCompleteHintMenu.css')],
 })
 export class AutoCompleteHintMenuComponent {
-    mainText: string = "HelloWorld";
+    mainText: string = "Hello, world! This is the tabby-auto-complete plugin speaking~";
     showStatus: boolean = false;
     options: OptionItem[] = [];
     currentItemIndex: number = -1;
     recentTargetElement: HTMLElement;
     isShowing: boolean = false;
+    contentGroups: {[key: string]: OptionItem[]} = {};
     constructor(
         private renderer: Renderer2,
         private elRef: ElementRef,
         private app: AppService,
+        private logger: MyLogger,
+        @Inject(DOCUMENT) private document: Document,
+        private cdr: ChangeDetectorRef,
     ) {
-        this.options = [];
         this.currentItemIndex = -1;
         this.showStatus = false;
+        this.contentGroups = {
+            "q": [],// quick cmd
+            "h": [],// highlight
+            "a": [],// ai
+        }
+    }
+
+    private doRegetItems() {
+        // 记录当前的option
+        const currentOption = this.getCurrentItem();
+
+        // 按照 contentGroups中的key顺序，遍历，将结果加入到options中
+        this.options = [];
+        for (let key in this.contentGroups) {
+            this.options = this.options.concat(this.contentGroups[key]);
+        }
+        if (this.options.length == 0) {
+            this.hideAutocompleteList();
+            return;
+        } else {
+            this.showAutocompleteList(this.document.querySelector('.content-tab-active.active .focused .xterm-helper-textarea'))
+        }
+        // 调整后，仍然选择之前的option
+        if (currentOption) {
+            const newIndex = this.options.findIndex(option => option.content === currentOption.content && option.type === currentOption.type);
+            this.currentItemIndex = newIndex !== -1 ? newIndex : -1;
+        } else {
+            this.currentItemIndex = -1;
+        }
     }
 
 
-    setContent(newVal: OptionItem[]) {
-        this.options = newVal;
-        this.currentItemIndex = -1;
+    public setContent(newVal: OptionItem[]) {
+        this.contentGroups[newVal[0].type] = newVal;
+        this.logger.log("Hello", this.contentGroups)
+        this.doRegetItems();
+        // this.options = newVal;
+        // this.currentItemIndex = -1;
     }
 
-    show() {
+    public show() {
         this.showStatus = true;
     }
 
-    test(text: string) {
+    public test(text: string) {
         this.mainText = text;
     }
-    ajustPosition() {
+    public ajustPosition() {
 
     }
 
-    clearContent() {
+    private clearContent() {
         this.showStatus = false;
         this.options = [];
         this.currentItemIndex = -1;
+        for (let key in this.contentGroups) {
+            this.contentGroups[key] = [];
+        }
     }
 
     // 在输入框的事件中调用此函数
@@ -85,22 +125,24 @@ export class AutoCompleteHintMenuComponent {
     }
 
     // 隐藏自动完成列表
-    hideAutocompleteList() {
+    public hideAutocompleteList() {
         this.clearContent();
         const listEl = this.elRef.nativeElement.children[0];
-        this.renderer.setStyle(listEl, 'display', 'none');
+        if (listEl) {
+            this.renderer.setStyle(listEl, 'display', 'none');
+        }
         this.isShowing = false;
     }
 
     selectUp() {
         if (!this.isShowing) {
-            console.log("不再显示")
+            this.logger.log("不再显示")
             return null;
         }
         if (this.currentItemIndex >= 0) {
             this.currentItemIndex--;
         } else {
-            console.log("???", this.currentItemIndex);
+            this.logger.log("???", this.currentItemIndex);
             return null;
         }
         return this.currentItemIndex;
@@ -134,7 +176,7 @@ export class AutoCompleteHintMenuComponent {
      * @param type 类型：0 仅上屏 1上屏并回车
      */
     inputItem(index: number, type: number) {
-        console.log(`Selected index: ${index}, type: ${type}, content: ${JSON.stringify(this.options)}`);
+        this.logger.log(`Selected index: ${index}, type: ${type}, content: ${JSON.stringify(this.options)}`);
         sendInput({
             tab: this.app.activeTab,
             cmd: this.options[index].content,
@@ -148,9 +190,7 @@ export class AutoCompleteHintMenuComponent {
         }
         // 上屏完毕可能还需要调用focus
     }
-
-    isValidStr(input: string) {
-        return isValidStr(input);
+    isValidStr(str: string) {
+        return isValidStr(str);
     }
-
 }

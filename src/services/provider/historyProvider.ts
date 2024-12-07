@@ -1,25 +1,25 @@
 import { EnvBasicInfo, OptionItem } from "api/pluginType";
 import { MyLogger } from "services/myLogService";
-import { TerminalSessionInfo } from "./baseProvider";
+import { BaseContentProvider, OptionItemResultWrap, TerminalSessionInfo } from "./baseProvider";
 
-export class BaseContentProvider {
+export class HistoryContentProvider extends BaseContentProvider {
+    protected static providerTypeKey: string = "h";
     constructor(
-        private logger: MyLogger
+        protected logger: MyLogger
     ) {
-        
+        super(logger);
     }
-    static getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): OptionItem[] {
+    async getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
         // do sth
-        
         return null;
     }
-    static userInputCmd(inputCmd: string, terminalSessionInfo: TerminalSessionInfo): void {
+    async userInputCmd(inputCmd: string, terminalSessionInfo: TerminalSessionInfo): Promise<void> {
 
     }
-    static userSelectedCallback(inputCmd: string): void {
+    userSelectedCallback(inputCmd: string): void {
 
     }
-    private static saveCmdToDB(cmd: string): void {
+    private async saveCmdToDB(cmd: string): Promise<void> {
 
     }
 }

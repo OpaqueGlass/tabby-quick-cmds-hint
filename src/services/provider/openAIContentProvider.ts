@@ -2,6 +2,8 @@ import { OptionItem, EnvBasicInfo } from "../../api/pluginType";
 import Fuse from 'fuse.js';
 import OpenAI from "openai";
 import jsYaml from "js-yaml"
+import { BaseContentProvider, OptionItemResultWrap } from "./baseProvider";
+import { MyLogger } from "services/myLogService";
 
 interface OpenAICmdItem {
     cmd: string;
@@ -9,9 +11,13 @@ interface OpenAICmdItem {
     description: string;
 }
 
-export class OpenAIContentProvider {
+export class OpenAIContentProvider extends BaseContentProvider {
+    protected static providerTypeKey: string = "a";
     openai: OpenAI;
-    constructor() {
+    constructor(
+        protected logger: MyLogger,
+    ) {
+        super(logger);
         this.openai = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
             baseURL: 'https://api.openai.com/v1'
@@ -19,7 +25,7 @@ export class OpenAIContentProvider {
     }
     
     // TODO: 需要提供给gpt具体的终端等信息
-    async getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): Promise<OptionItem[]> {
+    async getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
         // xs
         // const quickCmdList = response.split("\n").map((cmd) => {
         //     return {

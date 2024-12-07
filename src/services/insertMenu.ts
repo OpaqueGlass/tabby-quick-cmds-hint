@@ -9,8 +9,12 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { AutoCompleteHintMenuComponent } from '../components/autoCompleteHintMenu';
-import { ContentProviderService } from './contentProvider';
 import { MyLogger } from './myLogService';
+import { BaseContentProvider, OptionItemResultWrap } from './provider/baseProvider';
+import { QuickCmdContentProvider } from './provider/quickCmdContentProvider';
+import { EnvBasicInfo } from 'api/pluginType';
+import { ConfigService } from 'tabby-core';
+import { BaseTerminalProfile, BaseTerminalTabComponent } from 'tabby-terminal';
 
 @Injectable({
 providedIn: 'root'
@@ -19,19 +23,25 @@ export class AddMenuService {
     private componentRef: ComponentRef<AutoCompleteHintMenuComponent>;
     private lastCmd: string;
     private recentUuid: string;
-    public recentCmd: string;
+    public recentCmd: string; // 仅用于对外呈现
     private recentBlockedUuid: string;
     private recentBlockedKeyup: string;
+    private currentTabId: string;
+    private contentProviderList: BaseContentProvider[]; // 选项提供列表，用于异步获取
     constructor(
         private appRef: ApplicationRef,
         private injector: Injector,
         private componentFactoryResolver: ComponentFactoryResolver,
         @Inject(DOCUMENT) private document: Document,
-        private contentProvider: ContentProviderService,
-        private logger: MyLogger
+        private logger: MyLogger,
+        private configService: ConfigService,
     ) {
         document.addEventListener("keydown", this.handleKeyDown.bind(this), true);
         document.addEventListener("keyup", this.handleKeyUp.bind(this), true);
+        this.contentProviderList = [
+            new QuickCmdContentProvider(this.logger) as BaseContentProvider,
+            
+        ];
     }
 
     // 插入组件的方法
@@ -56,11 +66,42 @@ export class AddMenuService {
 
     public hideMenu() {
         this.componentRef.instance.hideAutocompleteList();
+        this.clearCurrentTabCache();
     }
 
-    public sendCurrentText(text: string, uuid?: string) {
+    private clearCurrentTabCache() {
+        this.currentTabId = null;
+        this.recentUuid = null;
+    }
+
+    public isCurrentTabMatch(tabId: string, uuid: string) {
+        if (this.currentTabId == null) {
+            this.currentTabId = tabId;
+            return true;
+        }
+        if (uuid && uuid === this.recentBlockedUuid && this.currentTabId === tabId) {
+            return false;
+        } else if (this.currentTabId === tabId) {
+            return true;
+        }
+        return false;
+    }
+
+    private optionItemTypePostProcess(resultWrap: OptionItemResultWrap) {
+        if (resultWrap.optionItem == null || resultWrap.optionItem.length == 0) {
+            this.logger.log("Reject for empty");
+            return;
+        }
+        if (resultWrap.envBasicInfo.tabId !== this.currentTabId) {
+            this.logger.log("Reject for tabId unique", resultWrap.envBasicInfo.tabId, this.currentTabId);
+            return;
+        }
+        this.componentRef.instance.setContent(resultWrap.optionItem);
+    }
+
+    public sendCurrentText(text: string, uuid: string, tabId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>) {
         // TODO: 加入快捷键或用户强制触发，这时不进行这些判定，并重置uuid
-        if (this.lastCmd === text) {
+        if (this.lastCmd === text && this.currentTabId == tabId) {
             // 和上一个一致，无需处理
             this.logger.log("和上一个一致，无需处理");
             return;
@@ -73,21 +114,27 @@ export class AddMenuService {
             this.logger.log("uuid被阻止");
             return;
         }
-        
+        this.logger.log("进入处理", text)
         this.recentUuid = uuid;
+        this.currentTabId = tabId;
         
         this.recentCmd = text;
 
+        // TODO:异步：遍历所有
         // 改成异步的，另外，除了结果外还需要回传传过去的text、uuid、tab-id信息，避免插入到错误的tab提示中
-        const cmdHintList = this.contentProvider.getContentList(text);
-        // 获取结果
-        this.componentRef.instance.setContent(cmdHintList);
-        // 无结果隐藏
-        if (cmdHintList == null || cmdHintList.length == 0) {
-            this.hideMenu();
-        } else {
-            this.componentRef.instance.showAutocompleteList(this.document.querySelector('.content-tab-active.active .focused .xterm-helper-textarea'));
+        const envBasicInfo: EnvBasicInfo = {
+            config: this.configService,
+            document: this.document,
+            tab: tab,
+            tabId: tabId
         }
+        this.contentProviderList.forEach((provider) => {
+            provider.getQuickCmdList(text, envBasicInfo)
+             .then(this.optionItemTypePostProcess.bind(this)).catch((err)=>{
+                this.logger.error("获取快捷命令列表失败", err);
+             });
+        });
+        
         this.componentRef.instance.test(text);
         this.lastCmd = text;
     }
