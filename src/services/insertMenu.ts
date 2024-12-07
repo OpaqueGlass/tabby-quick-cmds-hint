@@ -12,9 +12,10 @@ import { AutoCompleteHintMenuComponent } from '../components/autoCompleteHintMen
 import { MyLogger } from './myLogService';
 import { BaseContentProvider, OptionItemResultWrap } from './provider/baseProvider';
 import { QuickCmdContentProvider } from './provider/quickCmdContentProvider';
-import { EnvBasicInfo } from 'api/pluginType';
+import { EnvBasicInfo, TerminalSessionInfo } from 'api/pluginType';
 import { ConfigService } from 'tabby-core';
 import { BaseTerminalProfile, BaseTerminalTabComponent } from 'tabby-terminal';
+import { HistoryContentProvider } from './provider/historyProvider';
 
 @Injectable({
 providedIn: 'root'
@@ -26,7 +27,7 @@ export class AddMenuService {
     public recentCmd: string; // 仅用于对外呈现
     private recentBlockedUuid: string;
     private recentBlockedKeyup: string;
-    private currentTabId: string;
+    private currentSessionId: string;
     private contentProviderList: BaseContentProvider[]; // 选项提供列表，用于异步获取
     constructor(
         private appRef: ApplicationRef,
@@ -40,7 +41,7 @@ export class AddMenuService {
         document.addEventListener("keyup", this.handleKeyUp.bind(this), true);
         this.contentProviderList = [
             new QuickCmdContentProvider(this.logger) as BaseContentProvider,
-            
+            new HistoryContentProvider(this.logger) as BaseContentProvider,
         ];
     }
 
@@ -70,38 +71,60 @@ export class AddMenuService {
     }
 
     private clearCurrentTabCache() {
-        this.currentTabId = null;
+        this.currentSessionId = null;
         this.recentUuid = null;
     }
 
-    public isCurrentTabMatch(tabId: string, uuid: string) {
-        if (this.currentTabId == null) {
-            this.currentTabId = tabId;
+    public isCurrentTabMatch(sessionId: string, uuid: string) {
+        if (this.currentSessionId == null) {
+            this.currentSessionId = sessionId;
             return true;
         }
-        if (uuid && uuid === this.recentBlockedUuid && this.currentTabId === tabId) {
+        if (uuid && uuid === this.recentBlockedUuid && this.currentSessionId === sessionId) {
             return false;
-        } else if (this.currentTabId === tabId) {
+        } else if (this.currentSessionId === sessionId) {
             return true;
         }
         return false;
     }
 
     private optionItemTypePostProcess(resultWrap: OptionItemResultWrap) {
+        if (resultWrap == null) {
+            this.logger.debug("Reject for no response");
+            return;
+        }
         if (resultWrap.optionItem == null || resultWrap.optionItem.length == 0) {
-            this.logger.log("Reject for empty");
+            this.logger.debug("Reject for empty");
             return;
         }
-        if (resultWrap.envBasicInfo.tabId !== this.currentTabId) {
-            this.logger.log("Reject for tabId unique", resultWrap.envBasicInfo.tabId, this.currentTabId);
+        if (resultWrap.envBasicInfo == null) {
+            this.logger.debug("Reject for envBasicInfo");
             return;
         }
+        if (resultWrap.envBasicInfo.sessionId !== this.currentSessionId) {
+            this.logger.debug("Reject for sessionId unique", resultWrap.envBasicInfo.sessionId, this.currentSessionId);
+            return;
+        }
+        this.logger.log("Provider 返回option", resultWrap.optionItem);
         this.componentRef.instance.setContent(resultWrap.optionItem);
     }
 
-    public sendCurrentText(text: string, uuid: string, tabId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>) {
+    public broadcastNewCmd(cmd: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>) {
+        const terminalSessionInfo: TerminalSessionInfo = {
+            config: this.configService,
+            tab: tab,
+            sessionId: sessionId
+        }
+        this.contentProviderList.forEach((provider) => {
+            provider.userInputCmd(cmd, terminalSessionInfo).catch((err) => {
+                this.logger.error("插入新命令失败", err);
+            });
+        });
+    }
+
+    public sendCurrentText(text: string, uuid: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>) {
         // TODO: 加入快捷键或用户强制触发，这时不进行这些判定，并重置uuid
-        if (this.lastCmd === text && this.currentTabId == tabId) {
+        if (this.lastCmd === text && this.currentSessionId == sessionId) {
             // 和上一个一致，无需处理
             this.logger.log("和上一个一致，无需处理");
             return;
@@ -116,7 +139,7 @@ export class AddMenuService {
         }
         this.logger.log("进入处理", text)
         this.recentUuid = uuid;
-        this.currentTabId = tabId;
+        this.currentSessionId = sessionId;
         
         this.recentCmd = text;
 
@@ -126,7 +149,7 @@ export class AddMenuService {
             config: this.configService,
             document: this.document,
             tab: tab,
-            tabId: tabId
+            sessionId: sessionId
         }
         this.contentProviderList.forEach((provider) => {
             provider.getQuickCmdList(text, envBasicInfo)

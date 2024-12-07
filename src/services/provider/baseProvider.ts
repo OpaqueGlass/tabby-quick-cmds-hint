@@ -1,10 +1,6 @@
-import { EnvBasicInfo, OptionItem } from "api/pluginType";
+import { EnvBasicInfo, OptionItem, TerminalSessionInfo } from "api/pluginType";
 import { MyLogger } from "services/myLogService";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
-
-export interface TerminalSessionInfo {
-
-}
 
 export interface OptionItemResultWrap {
     optionItem: OptionItem[];

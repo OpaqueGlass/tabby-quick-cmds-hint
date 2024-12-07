@@ -1,4 +1,4 @@
-import { cleanTerminalText, generateUUID } from "utils/commonUtils";
+import { cleanTerminalText, generateUUID, isValidStr } from "utils/commonUtils";
 import { BaseManager } from "./baseManager";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 import { MyLogger } from "services/myLogService";
@@ -7,6 +7,7 @@ import { ConfigService } from "tabby-core";
 
 export class SimpleManager extends BaseManager {
     private isCmdStatus: boolean;
+    private isUserImputed: boolean;
     private currentLine: string;
     private recentCleanPrefix: string;
     private recentUuid: string;
@@ -17,7 +18,8 @@ export class SimpleManager extends BaseManager {
         public configService: ConfigService
     ) {
         super(tab, logger, addMenuService, configService);
-        this.logger.log("test", this.logger, tab)
+        this.logger.log("test", this.logger, tab);
+        this.currentLine = "";
     }
     handleInput = (buffers: Buffer[]) => {
         // 还需要判断当前是否是输入命令的状态，其他vim文本输入等情况不做处理
@@ -28,9 +30,10 @@ export class SimpleManager extends BaseManager {
         }
         // ssh连接ubuntu 实测换行为\r
         if (inputString.includes("\n") || inputString.includes("\r")) {
+            const lastNewlineIndex = inputString.lastIndexOf('\r') == -1 ? inputString.lastIndexOf('\n') : inputString.lastIndexOf('\r');
+            this.logger.log("当前行内容", this.currentLine);
             // 如果输入中包含 \n 或 \r\n，说明用户已经按下了Enter，则重置currentLine，考虑到采样间隔，保留最后一行
             this.currentLine = '';
-            const lastNewlineIndex = inputString.lastIndexOf('\r') == -1 ? inputString.lastIndexOf('\n') : inputString.lastIndexOf('\r');
             this.logger.log("重置", lastNewlineIndex + 1 < inputString.length)
             if (lastNewlineIndex + 1 < inputString.length) {
                 this.currentLine = inputString.slice(lastNewlineIndex + 1);
@@ -41,6 +44,7 @@ export class SimpleManager extends BaseManager {
                 this.logger.log("判定停止用户输入状态");
                 this.addMenuService.hideMenu();
             }
+            this.isUserImputed = true;
         } else {
             // 如果输入中不包含 \n 或 \r\n，说明用户正在键入，将当前输入追加到 currentLine
             this.currentLine += inputString;
@@ -73,9 +77,32 @@ export class SimpleManager extends BaseManager {
             } else {
                 this.recentCleanPrefix = tempPrefix.trim();
             }
+            this.logger.log("近期命令列表", lines.slice(-10).join("\n"));
+            const lastMatchingLine = lines.reverse().find(line => line.includes(lastValidPrefix));
+            if (lastMatchingLine) {
+                const commandText = lastMatchingLine.split(lastValidPrefix).pop().trim();
+                this.logger.log("命令文本", commandText);
+            }
             this.logger.log("更新：清理后命令前缀", this.recentCleanPrefix);
             this.isCmdStatus = true;
             this.recentUuid = generateUUID();
+        }
+        const replayCmdPrefix = "]1337;Command="
+        if (outputString.match(new RegExp(replayCmdPrefix)) && this.isUserImputed ) {
+            this.logger.log("命令已经发送", outputString);
+            const startRegExp = /.*\x1b\]1337;Command=[^\x07]*\x07/gm;
+            const matchGroup = outputString.match(startRegExp);
+            let cmd = "";
+            if (matchGroup && matchGroup.length > 0) {
+                cmd = matchGroup[matchGroup.length - 1];
+                cmd = cmd.replace(replayCmdPrefix, "");
+                cmd = cmd.replace("\x07", "");
+                cmd = cmd.trim();
+            }
+            this.logger.log("识别到的命令", cmd);
+            if (isValidStr(cmd)) {
+                this.addMenuService.broadcastNewCmd(cmd, this.sessionUniqueId, this.tab);
+            }
         }
 
         const cleanedLastSerialLinesStr = cleanTerminalText(lastSerialLinesStr);

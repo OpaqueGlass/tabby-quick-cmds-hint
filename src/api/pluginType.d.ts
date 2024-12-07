@@ -2,14 +2,16 @@ import { ConfigService } from 'tabby-core';
 import { BaseTerminalProfile, BaseTerminalTabComponent } from 'tabby-terminal';
 
 interface EnvBasicInfo {
-    config: ConfigService;
-    document: Document;
-    tab: BaseTerminalTabComponent<BaseTerminalProfile>;
-    tabId: string;
+    config: ConfigService; // tabby提供的设置服务
+    document: Document; // window.document
+    tab: BaseTerminalTabComponent<BaseTerminalProfile>; // tabby提供的tab组件
+    sessionId: string; // 插件自行赋予的id，用于区分不同的会话，重新到相同主机连接时会变化
 }
 
-interface ProviderInitInfo {
+interface TerminalSessionInfo {
     config: ConfigService;
+    tab: BaseTerminalTabComponent<BaseTerminalProfile>;
+    sessionId: string;
 }
 export interface OptionItem {
     name: string; // 显示在候选区中的名称
