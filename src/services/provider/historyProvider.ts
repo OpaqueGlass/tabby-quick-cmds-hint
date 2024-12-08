@@ -1,6 +1,7 @@
 import { EnvBasicInfo, OptionItem, TerminalSessionInfo } from "api/pluginType";
 import { MyLogger } from "services/myLogService";
 import { BaseContentProvider, OptionItemResultWrap } from "./baseProvider";
+import Fuse from "fuse.js";
 
 export class HistoryContentProvider extends BaseContentProvider {
     protected static providerTypeKey: string = "h";
@@ -29,8 +30,38 @@ export class HistoryContentProvider extends BaseContentProvider {
         if (this.db == null) {
             return null;
         }
+        const result: OptionItem[] = [];
+        const dbList = await this.getHistoryFromDB(this.db, envBasicInfo.tab.profile.id, 10, null, null);
+        this.logger.log("db list", dbList);
+        const options = {
+            keys: ['cmd'], // 搜索的字段
+            threshold: 0.2, // 控制匹配的模糊度
+            includeScore: true // 包含得分
+        };
+        const fuse = new Fuse(dbList, options);
+        this.logger.log("匹配结果", fuse.search(inputCmd));
+        result.push(...fuse.search(inputCmd).map((value)=>{
+            return {
+                name: value.item.cmd,
+                content: value.item.cmd,
+                desp: "",
+                type: HistoryContentProvider.providerTypeKey
+            } as OptionItem
+        }));
+        this.logger.log("result", result);
+        // result.push(...dbList.map((value) => {
+        //     return {
+        //         name: value.cmd,
+        //         content: value.cmd,
+        //         desp: "",
+        //         type: HistoryContentProvider.providerTypeKey
+        //     } as OptionItem;
+        // }));
         // do sth
-        return null;
+        return {
+            optionItem: result,
+            envBasicInfo: envBasicInfo
+        } as OptionItemResultWrap;
     }
     async userInputCmd(inputCmd: string, terminalSessionInfo: TerminalSessionInfo): Promise<void> {
         if (this.db == null) {
@@ -44,13 +75,17 @@ export class HistoryContentProvider extends BaseContentProvider {
 
     }
     async openDB(): Promise<IDBDatabase> {
-        const request = indexedDB.open(this.dbName, 1);
+        const request = indexedDB.open(this.dbName, 2);
         return new Promise((resolve, reject) => {
             request.onupgradeneeded = (event) => {
                 const db = request.result;
                 if (!db.objectStoreNames.contains(this.storeName)) {
-                    db.createObjectStore(this.storeName, { keyPath: "id", autoIncrement: true });
+                    const objectStore = db.createObjectStore(this.storeName, { keyPath: "id", autoIncrement: true });
+                    objectStore.createIndex("profileId", "profileId", { unique: false });
+                    objectStore.createIndex("cmd", "cmd", { unique: false });
+                    objectStore.createIndex("time", "time", { unique: false });
                 }
+                // 升级数据库也需要在这里处理！
             };
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
@@ -122,26 +157,25 @@ export class HistoryContentProvider extends BaseContentProvider {
             };
         });
     }
-    async findExactCmdHistory(db: IDBDatabase, cmd: string, profileId: string): Promise<any> {
+    async findExactCmdHistory(db: IDBDatabase, cmd: string, profileId: string): Promise<any[]> {
         if (await this.isIndexedDBEmpty(db)) {
-            return null;
+            return [];
         }
         return new Promise((resolve, reject) => {
-            
             const transaction = db.transaction(this.storeName, "readonly");
             const store = transaction.objectStore(this.storeName);
             const index = store.index("cmd");
             const query = index.openCursor(IDBKeyRange.only(cmd));
+            const results: any[] = [];
             query.onsuccess = (event) => {
                 const cursor = query.result;
                 if (cursor) {
                     if (cursor.value.profileId === profileId) {
-                        resolve(cursor.value);
-                        return;
+                        results.push(cursor.value);
                     }
                     cursor.continue();
                 } else {
-                    resolve(null);
+                    resolve(results);
                 }
             };
             query.onerror = () => {
@@ -153,15 +187,23 @@ export class HistoryContentProvider extends BaseContentProvider {
     // 添加或更新记录
     async addOrUpdateCmdHistory(db: IDBDatabase, cmdHistory: { time: Date, cmd: string, profileId: string }): Promise<void> {
         const isEmpty = await this.isIndexedDBEmpty(db);
-        const existingRecord = await this.findExactCmdHistory(db, cmdHistory.cmd, cmdHistory.profileId);
+        const existingRecordList = await this.findExactCmdHistory(db, cmdHistory.cmd, cmdHistory.profileId);
         const transaction = db.transaction(this.storeName, "readwrite");
         const store = transaction.objectStore(this.storeName);
-    
-        if (existingRecord) {
-            existingRecord.count += 1;
-            existingRecord.time = cmdHistory.time;
-            store.put(existingRecord);
-        } else {
+        let haveExistingRecord = false;
+        // let existingRecord = null;
+        for (let i = 0; i < existingRecordList.length; i++) {
+            const record = existingRecordList[i];
+            if (record.profileId === cmdHistory.profileId) {
+                record.count += 1;
+                record.time = cmdHistory.time;
+                store.put(record);
+                haveExistingRecord = true;
+                break;
+            }
+        }
+
+        if (!haveExistingRecord){
             store.add({ ...cmdHistory, count: 1 });
         }
     

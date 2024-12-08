@@ -87,20 +87,25 @@ export class SimpleManager extends BaseManager {
             this.isCmdStatus = true;
             this.recentUuid = generateUUID();
         }
-        const replayCmdPrefix = "]1337;Command="
+        const replayCmdPrefix = "]2323;Command="
         if (outputString.match(new RegExp(replayCmdPrefix)) && this.isUserImputed ) {
             this.logger.log("命令已经发送", outputString);
-            const startRegExp = /.*\x1b\]1337;Command=[^\x07]*\x07/gm;
+            const startRegExp = /.*\x1b\]2323;Command=[^\x07]*\x07/gm;
             const matchGroup = outputString.match(startRegExp);
             let cmd = "";
             if (matchGroup && matchGroup.length > 0) {
                 cmd = matchGroup[matchGroup.length - 1];
                 cmd = cmd.replace(replayCmdPrefix, "");
                 cmd = cmd.replace("\x07", "");
-                cmd = cmd.trim();
+                // cmd = cmd.trim();
+                cmd = cmd.replace(/\s+$/, "");
             }
+            // 避免把乱七八糟的转义码当做history
             this.logger.log("识别到的命令", cmd);
-            if (isValidStr(cmd)) {
+            const cleanedCmd = cleanTerminalText(cmd);
+            this.logger.log("清理后命令(一致？)", cleanedCmd == cmd, cleanedCmd);
+            if (isValidStr(cmd) && cleanedCmd == cmd && !cmd.startsWith(" ")) {
+                this.logger.log("保存命令", cmd);
                 this.addMenuService.broadcastNewCmd(cmd, this.sessionUniqueId, this.tab);
             }
         }

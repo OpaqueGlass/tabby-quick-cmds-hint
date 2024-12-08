@@ -15,7 +15,7 @@ export class QuickCmdContentProvider extends BaseContentProvider {
         const result: OptionItem[] = [];
         const options = {
             keys: ['name'], // 搜索的字段
-            threshold: 0.4, // 控制匹配的模糊度
+            threshold: 0.3, // 控制匹配的模糊度
             includeScore: true // 包含得分
         };
         const dataList = envBasicInfo.config.store.qc.cmds.map((oneCmd) => {
@@ -27,7 +27,7 @@ export class QuickCmdContentProvider extends BaseContentProvider {
             } as OptionItem;
         });
         const fuse = new Fuse(dataList, options);
-        // console.log("匹配结果", fuse.search(inputCmd));
+        this.logger.log("匹配结果", fuse.search(inputCmd));
         result.push(...fuse.search(inputCmd).map((value)=>value.item as OptionItem));
         return {
             optionItem: result,
