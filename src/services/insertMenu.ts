@@ -164,26 +164,26 @@ export class AddMenuService {
 
     private handleKeyUp(event: KeyboardEvent) {
         const key = event.key;
-        this.logger.log("handle key up");
+        this.logger.debug("handle key up");
         if (key === this.recentBlockedKeyup) {
             this.recentBlockedKeyup = null;
             event.preventDefault();
             event.stopPropagation();
             event.stopImmediatePropagation();
-            console.log("blocked key up", key)
+            this.logger.debug("blocked key up", key)
             return;
         }
     }
 
     private handleKeyDown(event: KeyboardEvent) {
         const key = event.key;
-        console.log("handle key down");
+        this.logger.debug("handle key down");
         let actFlag = false;
         if (key === 'ArrowUp') {
             if (this.componentRef.instance.selectUp() !== null) {
                 actFlag = true;
             } else {
-                console.log("up 不操作");
+                this.logger.debug("up 不操作");
             }
         } else if (key === 'ArrowDown') {
             if (this.componentRef.instance.selectDown() !== null) {
@@ -192,13 +192,15 @@ export class AddMenuService {
         } else if (key === 'Enter') {
             const currentIndex = this.componentRef.instance.currentItemIndex;
             // TODO: 我们可能还需要判定是否有其他窗口显示在其上
-            if (currentIndex != -1) {
+            if (currentIndex != -1 && this.componentRef.instance.showingFlag) {
                 this.componentRef.instance.inputItem(currentIndex, 1);
                 actFlag = true;
+            } else {
+                this.hideMenu();
             }
         } else if (key === 'Escape') {
             this.recentBlockedUuid = this.recentUuid;
-            if (this.componentRef.instance.isShowing) {
+            if (this.componentRef.instance.showingFlag) {
                 this.hideMenu();
                 actFlag = true;
             }
@@ -218,7 +220,7 @@ export class AddMenuService {
             event.preventDefault();
             this.recentBlockedKeyup = key;
         } else {
-            console.log("No act")
+            this.logger.debug("No act")
         }
 
     }

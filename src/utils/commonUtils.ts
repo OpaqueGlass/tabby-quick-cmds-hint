@@ -56,17 +56,17 @@ export async function sendInput({tab, cmd, appendCR = false,
         let cmds = cmd.split(/(?:\r\n|\r|\n)/)
 
         if (clearFirst) {
-            // const endKeyEvent = new KeyboardEvent('keydown', {
-            //     key: 'End',
-            //     code: 'End',
-            //     keyCode: 35,
-            //     which: 35,
-            //     bubbles: true,
-            //     cancelable: true
-            // });
-            // window.document.dispatchEvent(endKeyEvent);
-            // currentTab.sendInput("\u0015"); //Ctrl + E
-            currentTab.sendInput("\u0003"); //Ctrl + c
+            const endKeyEvent = new KeyboardEvent('keydown', {
+                key: 'End',
+                code: 'End',
+                keyCode: 35,
+                which: 35,
+                bubbles: true,
+                cancelable: true
+            });
+            window.document.dispatchEvent(endKeyEvent);
+            currentTab.sendInput("\u0015"); //Ctrl + E
+            // currentTab.sendInput("\u0003"); //Ctrl + c // have stability issue
         }
 
         for (let i = 0; i < cmds.length; i++) {

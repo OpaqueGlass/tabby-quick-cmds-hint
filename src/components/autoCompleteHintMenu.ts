@@ -15,7 +15,7 @@ export class AutoCompleteHintMenuComponent {
     options: OptionItem[] = [];
     currentItemIndex: number = -1;
     recentTargetElement: HTMLElement;
-    isShowing: boolean = false;
+    showingFlag: boolean = false;
     contentGroups: {[key: string]: OptionItem[]} = {};
     constructor(
         private renderer: Renderer2,
@@ -94,20 +94,19 @@ export class AutoCompleteHintMenuComponent {
         this.adjustPosition();
         // 显示自动完成列表
         this.renderer.setStyle(listEl, 'display', 'block');
-        this.isShowing = true;
+        this.showingFlag = true;
     }
 
     adjustPosition() {
         const listEl = this.elRef.nativeElement.children[0];
         const targetRect = this.recentTargetElement.getBoundingClientRect();
-
         // 获取窗口的高度
-        const viewportHeight = window.innerHeight;
+        const viewportHeight = window.document.querySelector("ssh-tab")?.clientHeight || window.innerHeight;
 
         // 下方位置和上方位置
         const belowPosition = targetRect.bottom;
         const abovePosition = targetRect.top - listEl.offsetHeight;
-
+        this.logger.debug("height(liOffset, belowPosition, viewport)", listEl.offsetHeight, belowPosition, viewportHeight)
         // 决定显示在下方还是上方
         let topPosition: number;
         if (belowPosition + listEl.offsetHeight <= viewportHeight) {
@@ -131,11 +130,11 @@ export class AutoCompleteHintMenuComponent {
         if (listEl) {
             this.renderer.setStyle(listEl, 'display', 'none');
         }
-        this.isShowing = false;
+        this.showingFlag = false;
     }
 
     selectUp() {
-        if (!this.isShowing) {
+        if (!this.showingFlag) {
             this.logger.log("不再显示")
             return null;
         }
@@ -148,7 +147,7 @@ export class AutoCompleteHintMenuComponent {
         return this.currentItemIndex;
     }
     selectDown() {
-        if (!this.isShowing) {
+        if (!this.showingFlag) {
             return null;
         }
         if (this.currentItemIndex < this.options.length - 1) {
