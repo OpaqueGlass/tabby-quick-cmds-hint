@@ -16,6 +16,7 @@ import { EnvBasicInfo, TerminalSessionInfo } from 'api/pluginType';
 import { ConfigService } from 'tabby-core';
 import { BaseTerminalProfile, BaseTerminalTabComponent } from 'tabby-terminal';
 import { HistoryContentProvider } from './provider/historyProvider';
+import { OpenAIContentProvider } from './provider/openAIContentProvider';
 
 @Injectable({
 providedIn: 'root'
@@ -24,7 +25,7 @@ export class AddMenuService {
     private componentRef: ComponentRef<AutoCompleteHintMenuComponent>;
     private lastCmd: string;
     private recentUuid: string;
-    public recentCmd: string; // 仅用于对外呈现
+    private recentCmd: string; // 仅用于对外呈现
     private recentBlockedUuid: string;
     private recentBlockedKeyup: string;
     private currentSessionId: string;
@@ -36,13 +37,17 @@ export class AddMenuService {
         @Inject(DOCUMENT) private document: Document,
         private logger: MyLogger,
         private configService: ConfigService,
+        quickCmdContentProvider: QuickCmdContentProvider,
+        historyContentProvider: HistoryContentProvider,
+        // openAIContentProvider: OpenAIContentProvider,
     ) {
         document.addEventListener("keydown", this.handleKeyDown.bind(this), true);
         document.addEventListener("keyup", this.handleKeyUp.bind(this), true);
         this.contentProviderList = [
-            new QuickCmdContentProvider(this.logger) as BaseContentProvider,
-            new HistoryContentProvider(this.logger) as BaseContentProvider,
+            quickCmdContentProvider,
+            historyContentProvider,
         ];
+        logger.log("Add menu service init")
     }
 
     // 插入组件的方法
@@ -160,6 +165,10 @@ export class AddMenuService {
         
         this.componentRef.instance.test(text);
         this.lastCmd = text;
+    }
+
+    public getRecentCmd() {
+        return this.recentCmd;
     }
 
     private handleKeyUp(event: KeyboardEvent) {

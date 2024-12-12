@@ -1,0 +1,22 @@
+.rounded-rectangle {
+    border-radius: 15px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.rounded-rectangle.active {
+    background-color: #f0f0f0;
+    border-color: #007bff;
+}
+
+.rate-safe {
+    color: #28a745;
+}
+.rate-warn {
+    color: #ffc107;
+}
+.rate-danger {
+    color: #dc3545;
+}

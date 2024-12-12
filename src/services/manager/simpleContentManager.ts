@@ -31,10 +31,10 @@ export class SimpleManager extends BaseManager {
         // ssh连接ubuntu 实测换行为\r
         if (inputString.includes("\n") || inputString.includes("\r")) {
             const lastNewlineIndex = inputString.lastIndexOf('\r') == -1 ? inputString.lastIndexOf('\n') : inputString.lastIndexOf('\r');
-            this.logger.log("当前行内容", this.currentLine);
+            this.logger.debug("当前行内容", this.currentLine);
             // 如果输入中包含 \n 或 \r\n，说明用户已经按下了Enter，则重置currentLine，考虑到采样间隔，保留最后一行
             this.currentLine = '';
-            this.logger.log("重置", lastNewlineIndex + 1 < inputString.length)
+            this.logger.debug("重置", lastNewlineIndex + 1 < inputString.length)
             if (lastNewlineIndex + 1 < inputString.length) {
                 this.currentLine = inputString.slice(lastNewlineIndex + 1);
             }

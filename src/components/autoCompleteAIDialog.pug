@@ -1,0 +1,27 @@
+.modal-body
+    div.askInputArea
+        input.form-control.quickCmd(
+            type='text', 
+            [(ngModel)]='askUserInput', 
+            autofocus, 
+            placeholder='Ask ai', 
+            (keyup)='handleKeydown($event)',
+        )
+        button.btn.btn-outline-primary((click)='ask()') Ask
+    div(*ngIf='loadingFlag')
+        .spinner-border.text-primary(role='status')
+            span.sr-only Loading...
+    div(*ngIf='isValidStr(notReady)')
+        span An Error Occured: [{{notReady}}]
+    .list-group.mt-3.connections-list
+        ng-container(*ngFor='let cmd of commands; let i = index')
+            .list-group-item.list-group-item-action.d-flex.align-items-center.rounded-rectangle(
+                [ngClass]="{'active': i === selectedIndex}", 
+                (click)='userSelected(cmd, $event)',
+            )
+                .mr-auto
+                    div 
+                        code.command-text {{cmd.command}}
+                        //- .text-muted {{cmd.text}}{{cmd.appendCR ? "\\n" : ""}}
+                        .description {{cmd.desp}}
+                        .danger-rating([ngClass]="getRatingColor(cmd)") Danger Rating: {{cmd.dangerRating}}

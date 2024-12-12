@@ -2,7 +2,11 @@ import { EnvBasicInfo, OptionItem, TerminalSessionInfo } from "api/pluginType";
 import { MyLogger } from "services/myLogService";
 import { BaseContentProvider, OptionItemResultWrap } from "./baseProvider";
 import Fuse from "fuse.js";
+import { Injectable } from "@angular/core";
 
+@Injectable({
+    providedIn: 'root'
+})
 export class HistoryContentProvider extends BaseContentProvider {
     protected static providerTypeKey: string = "h";
     private dbName = "og_tac_HistoryDB";

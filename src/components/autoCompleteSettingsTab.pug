@@ -22,10 +22,31 @@ h3 AutoComplete
 
 .form-line
     .header
-        .title Agent type
-        .description Select agent appearance
-    select.form-control(
-        [(ngModel)]='config.store.ogAutoCompletePlugin.agent',
-        (ngModelChange)='config.save()'
+        .title Open AI Base URL
+        .description AI 服务的基础 URL
+    input.form-control(
+        type='text',
+        [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIBaseUrl',
+        (ngModelChange)='config.save()',
     )
-        option([ngValue]='agent', *ngFor='let agent of agents') {{agent}}
+
+.form-line
+    .header
+        .title Open AI Key
+        .description 请注意所有信息将非加密地保存在本地 Note that all information will be saved in plain text locally
+    input.form-control(
+        type='password',
+        [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIKey',
+        (ngModelChange)='config.save()',
+    )
+
+
+.form-line
+    .header
+        .title Open AI Model name
+        .description AI 模型名称
+    input.form-control(
+        type='text',
+        [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIModel',
+        (ngModelChange)='config.save()',
+    )

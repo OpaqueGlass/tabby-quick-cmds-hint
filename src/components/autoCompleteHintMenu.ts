@@ -176,6 +176,17 @@ export class AutoCompleteHintMenuComponent {
      */
     inputItem(index: number, type: number) {
         this.logger.log(`Selected index: ${index}, type: ${type}, content: ${JSON.stringify(this.options)}`);
+        if (this.options[index].callback) {
+            const newOptionList = this.options[index].callback();
+            if (newOptionList == null || newOptionList.length == 0) {
+                this.hideAutocompleteList();
+                return;
+            } else {
+                this.clearContent();
+                this.setContent(newOptionList);
+                return;
+            }
+        }
         sendInput({
             tab: this.app.activeTab,
             cmd: this.options[index].content,

@@ -33,4 +33,4 @@ This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://g
 > Some *developers* or *packages directly used in this plugin* are not listed. Please refer to the contributors list or `package.json`.
 
 - [tabby-clippy](https://github.com/Eugeny/tabby-clippy) An example plugin for Tabby
-- [minyoad/tabby-quick-cmds](https://github.com/minyoad/terminus-quick-cmds) / [Domain/tabby-quick-cmds](https://github.com/Domain/terminus-quick-cmds)
+- [minyoad/terminus-quick-cmds](https://github.com/minyoad/terminus-quick-cmds) / [Domain/terminus-quick-cmds](https://github.com/Domain/terminus-quick-cmds)

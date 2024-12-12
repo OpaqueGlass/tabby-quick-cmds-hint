@@ -16,6 +16,10 @@ export class AutoCompleteHotkeyProvider extends HotkeyProvider {
         {
             id: "ogautocomplete_init_scripts",
             name: "Init AutoComplete",
+        },
+        {
+            id: "ogautocomplete_ask_ai",
+            name: "ask ai for help",
         }
     ]
 

@@ -27,7 +27,7 @@ export function sleep(ms: number) {
  * @param appendCR 是否在命令后追加回车
  * @param singleLine 是否忽略换行，而一次只输入一行
  * @param clearFirst 是否在输入前清空终端
- * 
+ * @param refocus 是否在输入后重新聚焦终端
  */
 export async function sendInput({tab, cmd, appendCR = false,
     singleLine = false, clearFirst = false, refocus = true}: {

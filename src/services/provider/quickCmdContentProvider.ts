@@ -2,7 +2,11 @@ import { OptionItem, EnvBasicInfo } from "../../api/pluginType";
 import Fuse from 'fuse.js';
 import { BaseContentProvider, OptionItemResultWrap } from "./baseProvider";
 import { MyLogger } from "services/myLogService";
+import { Injectable } from "@angular/core";
 
+@Injectable({
+    providedIn: 'root'
+})
 export class QuickCmdContentProvider extends BaseContentProvider {
     protected static providerTypeKey: string = "q";
     constructor(
