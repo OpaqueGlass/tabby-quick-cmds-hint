@@ -61,7 +61,6 @@ export class AutoCompleteHintMenuComponent {
 
     public setContent(newVal: OptionItem[]) {
         this.contentGroups[newVal[0].type] = newVal;
-        this.logger.log("Hello", this.contentGroups)
         this.doRegetItems();
         // this.options = newVal;
         // this.currentItemIndex = -1;
@@ -74,8 +73,12 @@ export class AutoCompleteHintMenuComponent {
     public test(text: string) {
         this.mainText = text;
     }
-    public ajustPosition() {
-
+    private refreshMainText() {
+        if (this.currentItemIndex < 0 || this.currentItemIndex >= this.options.length) {
+            this.mainText = "No such item";
+            return;
+        }
+        this.mainText = this.options[this.currentItemIndex].content ?? "";
     }
 
     private clearContent() {
@@ -144,6 +147,7 @@ export class AutoCompleteHintMenuComponent {
             this.logger.log("???", this.currentItemIndex);
             return null;
         }
+        this.refreshMainText();
         return this.currentItemIndex;
     }
     selectDown() {
@@ -155,6 +159,7 @@ export class AutoCompleteHintMenuComponent {
         } else {
             return null;
         }
+        this.refreshMainText();
         return this.currentItemIndex;
     }
 
