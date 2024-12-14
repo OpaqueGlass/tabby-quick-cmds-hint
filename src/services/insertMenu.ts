@@ -110,7 +110,7 @@ export class AddMenuService {
             this.logger.debug("Reject for sessionId unique", resultWrap.envBasicInfo.sessionId, this.currentSessionId);
             return;
         }
-        this.logger.log("Provider 返回option", resultWrap.optionItem);
+        this.logger.debug("Provider 返回option", resultWrap.optionItem);
         this.componentRef.instance.setContent(resultWrap.optionItem);
     }
 
@@ -128,10 +128,11 @@ export class AddMenuService {
     }
 
     public sendCurrentText(text: string, uuid: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>) {
+        this.recentCmd = text;
         // TODO: 加入快捷键或用户强制触发，这时不进行这些判定，并重置uuid
         if (this.lastCmd === text && this.currentSessionId == sessionId) {
             // 和上一个一致，无需处理
-            this.logger.log("和上一个一致，无需处理");
+            this.logger.debug("和上一个一致，无需处理");
             return;
         }
         if (text.length < 3) {
@@ -139,14 +140,13 @@ export class AddMenuService {
             return;
         }
         if (uuid && this.recentBlockedUuid === uuid) {
-            this.logger.log("uuid被阻止");
+            this.logger.debug("uuid被阻止");
             return;
         }
-        this.logger.log("进入处理", text)
+        this.logger.debug("进入处理", text)
         this.recentUuid = uuid;
         this.currentSessionId = sessionId;
         
-        this.recentCmd = text;
 
         // TODO:异步：遍历所有
         // 改成异步的，另外，除了结果外还需要回传传过去的text、uuid、tab-id信息，避免插入到错误的tab提示中
@@ -173,7 +173,6 @@ export class AddMenuService {
 
     private handleKeyUp(event: KeyboardEvent) {
         const key = event.key;
-        this.logger.debug("handle key up");
         if (key === this.recentBlockedKeyup) {
             this.recentBlockedKeyup = null;
             event.preventDefault();
@@ -186,8 +185,8 @@ export class AddMenuService {
 
     private handleKeyDown(event: KeyboardEvent) {
         const key = event.key;
-        this.logger.debug("handle key down");
         let actFlag = false;
+        this.logger.debug("handle key down", event.key)
         if (key === 'ArrowUp') {
             if (this.componentRef.instance.selectUp() !== null) {
                 actFlag = true;
@@ -204,8 +203,10 @@ export class AddMenuService {
             if (currentIndex != -1 && this.componentRef.instance.showingFlag) {
                 this.componentRef.instance.inputItem(currentIndex, 1);
                 actFlag = true;
+                this.logger.debug("handle enter: input")
             } else {
                 this.hideMenu();
+                this.logger.debug("handle enter: hide")
             }
         } else if (key === 'Escape') {
             this.recentBlockedUuid = this.recentUuid;

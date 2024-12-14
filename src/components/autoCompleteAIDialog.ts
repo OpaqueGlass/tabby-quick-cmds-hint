@@ -200,7 +200,7 @@ Respond with the following JSON format only:
             tab: this.appService.activeTab,
             cmd: this.avoidDirectRun(cmd.command),
             appendCR: false,
-            clearFirst: false,
+            clearFirst: true,
             refocus: true
         });
         this.activeModel.close("任务完成");
