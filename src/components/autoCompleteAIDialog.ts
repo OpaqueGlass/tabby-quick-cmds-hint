@@ -7,6 +7,7 @@ import jsYaml from "js-yaml"
 import { AddMenuService } from 'services/insertMenu';
 import { isValidStr, sendInput } from 'utils/commonUtils';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AutoCompleteTranslateService } from 'services/translateService';
 
 interface AICommandItem {
     command: string;
@@ -31,6 +32,7 @@ export class AutoCompleteAIDialogComponent {
         protected addMenuService: AddMenuService,
         protected appService: AppService,
         protected activeModel: NgbActiveModal,
+        protected myTranslate: AutoCompleteTranslateService,
     ) {
         this.loadOpenAIConfig();
         this.askUserInput = addMenuService.getRecentCmd();

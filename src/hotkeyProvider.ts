@@ -15,11 +15,11 @@ export class AutoCompleteHotkeyProvider extends HotkeyProvider {
         },
         {
             id: "ogautocomplete_init_scripts",
-            name: "Init AutoComplete",
+            name: "Init QuickCmdHint for Current Session (Bash only)",
         },
         {
             id: "ogautocomplete_ask_ai",
-            name: "ask ai for help",
+            name: "AI Command Generation",
         }
     ]
 

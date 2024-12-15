@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AutoCompleteAIDialogComponent } from 'components/autoCompleteAIDialog';
+import { AutoCompleteTranslateService } from 'services/translateService';
 import { AppService, HostWindowService, HotkeysService, ToolbarButton, ToolbarButtonProvider } from 'tabby-core';
 import { inputInitScripts, sendInput } from 'utils/commonUtils';
 

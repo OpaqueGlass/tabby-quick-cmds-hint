@@ -1,0 +1,32 @@
+- en_US: Enable debug mode and detailed logs
+  zh_CN: 显示详细日志和调错信息
+- en_US: Try to run init scripts when session connected
+  zh_CN: 在每次连接后，自动尝试运行初始化脚本
+- en_US: Open AI Model name
+  zh_CN: Open AI 模型名称
+- en_US: Note that all information will be saved in plain text locally
+  zh_CN: 请注意所有信息将非加密地保存在本地
+- en_US: test
+  zh_CN: testA
+- en_US: 0 All, 1 log, 2 warn, 3 ErrorOnly, 4 No log
+  zh_CN: 0 输出全部日志，1 输出日志，2 输出警告，3 仅输出错误，4 不输出日志
+- en_US: Quick Cmd Hint Settings
+  zh_CN: 快速命令提示设置
+- en_US: Quick Hint
+  zh_CN: 命令提示
+- en_US: May not work on terminal other than bash
+  zh_CN: 可能不适用于除 bash 之外的终端
+- en_US: Loading...
+  zh_CN: 加载中...
+- en_US: Ask
+  zh_CN: 询问
+- en_US: Ask AI
+  zh_CN: 询问 AI
+- en_US: No results found
+  zh_CN: 未找到结果
+- en_US: Open Dev Tools
+  zh_CN: 打开开发者工具
+- en_US: Init QuickCmdHint for Current Session (Bash only)
+  zh_CN: 为当前会话初始化快速命令提示（仅支持Bash）
+- en_US: AI Command Generation
+  zh_CN: 让AI生成命令

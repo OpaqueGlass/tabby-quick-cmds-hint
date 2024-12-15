@@ -12,4 +12,4 @@
     ng-container(*ngIf='options.length > 0 && currentItemIndex != -1 && isValidStr(options[currentItemIndex]?.desp)')
         .og-autocomplete-footer {{options[currentItemIndex].desp}}
     ng-container(*ngIf='options.length === 0')
-        .og-autocomplete-footer No results found
+        .og-autocomplete-footer(translate) No results found

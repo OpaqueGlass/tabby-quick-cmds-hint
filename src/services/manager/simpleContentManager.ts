@@ -1,4 +1,4 @@
-import { cleanTerminalText, generateUUID, isValidStr } from "utils/commonUtils";
+import { cleanTerminalText, cleanTextByNewXterm, generateUUID, isValidStr } from "utils/commonUtils";
 import { BaseManager } from "./baseManager";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 import { MyLogger } from "services/myLogService";
@@ -67,11 +67,14 @@ export class SimpleManager extends BaseManager {
             const startRegExp = /.*\x1b\]1337;CurrentDir=.*?\x07/gm;
             const matchGroup = lastRawLine.match(startRegExp);
             let lastValidPrefix = "";
+            this.logger.debug("最后一行原文本", lastRawLine);
+            this.logger.debug("匹配到的前缀", matchGroup);
             if (matchGroup && matchGroup.length > 0) {
                 lastValidPrefix = matchGroup[matchGroup.length - 1];
             }
             // 获取清理后内容
             let tempPrefix = cleanTerminalText(lastValidPrefix);
+            this.logger.debug("匹配到的前缀lastValidPrefix", lastValidPrefix);
             if (tempPrefix == null || tempPrefix.trim() == "") {
                 this.logger.log("前缀获取异常");
             } else {
@@ -84,6 +87,7 @@ export class SimpleManager extends BaseManager {
                 this.logger.log("命令文本", commandText);
             }
             this.logger.log("更新：清理后命令前缀", this.recentCleanPrefix);
+            this.logger.log("clean by xtem", cleanTextByNewXterm(lastValidPrefix).then((result)=>{console.log("aaa", result)}), "sending", lastValidPrefix)
             this.cmdStatusFlag = true;
             this.recentUuid = generateUUID();
         }
@@ -111,7 +115,7 @@ export class SimpleManager extends BaseManager {
         }
 
         const cleanedLastSerialLinesStr = cleanTerminalText(lastSerialLinesStr);
-        // this.logger.log("清理后，最近几行", cleanedLastSerialLinesStr, "PREFIX", recentCleanPrefix)
+        // this.logger.log("清理后，最近几行", cleanedLastSerialLinesStr, "PREFIX", this.recentCleanPrefix, this.cmdStatusFlag)
         if (this.recentCleanPrefix && cleanedLastSerialLinesStr.includes(this.recentCleanPrefix) && this.cmdStatusFlag) {
             const firstValieIndex = cleanedLastSerialLinesStr.lastIndexOf(this.recentCleanPrefix) + this.recentCleanPrefix.length;
             let cmd = cleanedLastSerialLinesStr.slice(firstValieIndex);

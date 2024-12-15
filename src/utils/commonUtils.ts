@@ -1,4 +1,5 @@
 import { Terminal } from "@xterm/xterm";
+import stripAnsi from "strip-ansi";
 import { AppService, BaseTabComponent, SplitTabComponent } from "tabby-core";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 
@@ -7,11 +8,10 @@ export function isValidStr(input: string) {
 }
 
 export function cleanTerminalText(input: string) {
-    const cleanNotVisibleExp = /[\x1b\x07]\[(?:[0-9]{1,2}(?:;[0-9]{1,2})*)?[a-zA-Z]|[\x1b\x07]\].*?\x07|[\x1b\x07]\[\?.*?[hl]/g;
+    const cleanNotVisibleExp = /[\x1b\x07]\[(?:[0-9]{1,2}(?:;[0-9]{1,2})*)?[a-zA-Z]|[\x1b\x07]\].*?\x07|[\x1b\x07]\[\?.*?[hl]|[\x1b\x07]\[>4;m|[\x1b\x07]\>/g;
     
 
     let result = input.replace(cleanNotVisibleExp, '');
-    
     return result;
 }
 
@@ -109,6 +109,24 @@ export function resetAndClearXterm(xterm: Terminal) {
     console.log("清屏");
     xterm.clear();
     xterm.write('\x1b[2J');
+}
+
+export function cleanTextByNewXterm(input: string) {
+    console.time("cleanTextByNewXterm");
+    return new Promise<string>((resolve) => {
+        let term = new Terminal();
+        const dom = document.createElement("div");
+        dom.classList.add("ogmytempxterm");
+        window.document.body.appendChild(dom);
+        term.open(dom);
+        term.write(input, ()=>{
+            console.timeEnd("cleanTextByNewXterm");
+            term.selectAll();
+            const result = term.getSelection();
+            term.dispose();
+            resolve(result);
+        });
+    });
 }
 
 export function inputInitScripts(app: AppService) {

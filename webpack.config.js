@@ -35,6 +35,10 @@ module.exports = {
         use: ['to-string-loader', 'css-loader'],
       },
       { test: /\.pug$/, use: ['apply-loader', 'pug-loader'] },
+      {
+        test: /\.yaml$/,
+        use: 'raw-loader',
+      },
     ]
   },
   externals: [

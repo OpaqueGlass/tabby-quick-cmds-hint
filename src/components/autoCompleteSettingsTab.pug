@@ -1,9 +1,9 @@
-h3 AutoComplete
+h3(translate) Quick Cmd Hint Settings
 
 .form-line
     .header
-        .title Enable debug mode and detailed logs
-        .description 显示详细日志和调错信息 0 All, 3 ErrorOnly, 4 No
+        .title(translate) Enable debug mode and detailed logs
+        .description(translate) 0 All, 1 log, 2 warn, 3 ErrorOnly, 4 No log
     input.form-control(
         type='number',
         [(ngModel)]='config.store.ogAutoCompletePlugin.debugLevel',
@@ -12,8 +12,8 @@ h3 AutoComplete
 
 .form-line
     .header
-        .title(translate) Try to run init scripts when session connected.
-        .description(translate) 在每次连接后，自动尝试运行初始化脚本
+        .title(translate) Try to run init scripts when session connected
+        .description(translate) May not work on terminal other than bash
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.autoInit',
         (ngModelChange)='config.save()',
@@ -22,8 +22,8 @@ h3 AutoComplete
 
 .form-line
     .header
-        .title Open AI Base URL
-        .description AI 服务的基础 URL
+        .title(translate) Open AI Base URL
+        .description(translate) 
     input.form-control(
         type='text',
         [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIBaseUrl',
@@ -32,8 +32,8 @@ h3 AutoComplete
 
 .form-line
     .header
-        .title Open AI Key
-        .description 请注意所有信息将非加密地保存在本地 Note that all information will be saved in plain text locally
+        .title(translate) Open AI Key
+        .description(translate) Note that all information will be saved in plain text locally
     input.form-control(
         type='password',
         [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIKey',
@@ -43,8 +43,8 @@ h3 AutoComplete
 
 .form-line
     .header
-        .title Open AI Model name
-        .description AI 模型名称
+        .title(translate) Open AI Model name
+        .description(translate) 
     input.form-control(
         type='text',
         [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIModel',

@@ -4,13 +4,13 @@
             type='text', 
             [(ngModel)]='askUserInput', 
             autofocus, 
-            placeholder='Ask ai', 
+            placeholder="Ask AI", 
             (keyup)='handleKeydown($event)',
         )
-        button.btn.btn-outline-primary((click)='ask()') Ask
+        button.btn.btn-outline-primary((click)='ask()', translate) Ask
     div(*ngIf='loadingFlag')
         .spinner-border.text-primary(role='status')
-            span.sr-only Loading...
+            span.sr-only(translate) Loading...
     div(*ngIf='isValidStr(notReady)')
         span An Error Occured: [{{notReady}}]
     .list-group.mt-3.connections-list

@@ -15,6 +15,7 @@ import { AddMenuService } from 'services/insertMenu'
 import { AutoCompleteHotkeyProvider } from 'hotkeyProvider'
 import { ButtonProvider } from 'buttonProvider'
 import { AutoCompleteAIDialogComponent } from 'components/autoCompleteAIDialog'
+import { AutoCompleteTranslateService } from 'services/translateService'
 
 
 
@@ -38,6 +39,7 @@ import { AutoCompleteAIDialogComponent } from 'components/autoCompleteAIDialog'
         AutoCompleteHintMenuComponent,
         AddMenuService,
         AutoCompleteAIDialogComponent,
+        AutoCompleteTranslateService,
     ],
 })
 export default class AutoCompleteModule { }

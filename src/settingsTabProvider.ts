@@ -6,9 +6,9 @@ import { AutoCompleteSettingsTabComponent } from './components/autoCompleteSetti
 /** @hidden */
 @Injectable()
 export class AutoCompleteSettingsTabProvider extends SettingsTabProvider {
-    id = 'autoComplete'
+    id = 'ogautocomplete'
     // icon
-    title = 'AutoComplete'
+    title = 'Quick Hint'
 
     getComponentType (): any {
         return AutoCompleteSettingsTabComponent

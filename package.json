@@ -24,6 +24,7 @@
     "@angular/forms": "^15",
     "@angular/platform-browser": "^15",
     "@ng-bootstrap/ng-bootstrap": "^17.0.1",
+    "@ngx-translate/core": "^16.0.3",
     "@types/node": "^22.5.4",
     "@types/webpack-env": "^1.16.0",
     "apply-loader": "^2.0.0",

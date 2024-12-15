@@ -17,6 +17,7 @@ import { ConfigService } from 'tabby-core';
 import { BaseTerminalProfile, BaseTerminalTabComponent } from 'tabby-terminal';
 import { HistoryContentProvider } from './provider/historyProvider';
 import { OpenAIContentProvider } from './provider/openAIContentProvider';
+import { AutoCompleteTranslateService } from './translateService';
 
 @Injectable({
 providedIn: 'root'
@@ -39,6 +40,7 @@ export class AddMenuService {
         private configService: ConfigService,
         quickCmdContentProvider: QuickCmdContentProvider,
         historyContentProvider: HistoryContentProvider,
+        private myTranslate: AutoCompleteTranslateService, // 这个东西，放在Provider、index都会导致其他中文内容丢失
         // openAIContentProvider: OpenAIContentProvider,
     ) {
         document.addEventListener("keydown", this.handleKeyDown.bind(this), true);
