@@ -3,7 +3,7 @@ import { bufferTime } from 'rxjs'
 import { AddMenuService } from 'services/insertMenu';
 import { SimpleManager } from 'services/manager/simpleContentManager';
 import { MyLogger } from 'services/myLogService';
-import { AppService, ConfigService } from 'tabby-core';
+import { AppService, ConfigService, NotificationsService } from 'tabby-core';
 import { TerminalDecorator, BaseTerminalTabComponent, BaseTerminalProfile } from 'tabby-terminal'
 import { cleanTerminalText, generateUUID, inputInitScripts, sleep } from 'utils/commonUtils';
 
@@ -16,6 +16,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         private configService: ConfigService,
         private logger: MyLogger,
         private app: AppService,
+        private notification: NotificationsService,
     ) {
         super()
         addMenuService.insertComponent();
@@ -51,7 +52,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
             this.logger.log("focus out");
         }, true);
         
-        const mangager = new SimpleManager(tab, this.logger, this.addMenuService, this.configService);
+        const mangager = new SimpleManager(tab, this.logger, this.addMenuService, this.configService, this.notification);
         tab.input$.pipe(bufferTime(300)).subscribe(mangager.handleInput);
         tab.output$.pipe(bufferTime(300)).subscribe(mangager.handleOutput);
         tab.sessionChanged$.subscribe(mangager.handleSessionChanged);

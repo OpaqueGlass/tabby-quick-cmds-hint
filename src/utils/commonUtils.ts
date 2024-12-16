@@ -1,4 +1,5 @@
 import { Terminal } from "@xterm/xterm";
+import { clear } from "console";
 import stripAnsi from "strip-ansi";
 import { AppService, BaseTabComponent, SplitTabComponent } from "tabby-core";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
@@ -112,7 +113,7 @@ export function resetAndClearXterm(xterm: Terminal) {
 }
 
 export function cleanTextByNewXterm(input: string) {
-    console.time("cleanTextByNewXterm");
+    // 15ms
     return new Promise<string>((resolve) => {
         let term = new Terminal();
         const dom = document.createElement("div");
@@ -120,11 +121,10 @@ export function cleanTextByNewXterm(input: string) {
         window.document.body.appendChild(dom);
         term.open(dom);
         term.write(input, ()=>{
-            console.timeEnd("cleanTextByNewXterm");
             term.selectAll();
             const result = term.getSelection();
             term.dispose();
-            resolve(result);
+            resolve(trimLineTextFromXterm(result));
         });
     });
 }
@@ -165,4 +165,8 @@ export function generateUUID() {
     }
 
     return uuid;
+}
+
+export function trimLineTextFromXterm(input: string) {
+    return input.replace(new RegExp("\n", "gm"), "");
 }

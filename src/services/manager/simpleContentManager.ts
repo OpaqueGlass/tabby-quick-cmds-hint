@@ -3,7 +3,7 @@ import { BaseManager } from "./baseManager";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 import { MyLogger } from "services/myLogService";
 import { AddMenuService } from "services/insertMenu";
-import { ConfigService } from "tabby-core";
+import { ConfigService, NotificationsService } from "tabby-core";
 
 export class SimpleManager extends BaseManager {
     private cmdStatusFlag: boolean;
@@ -15,7 +15,8 @@ export class SimpleManager extends BaseManager {
         public tab: BaseTerminalTabComponent<BaseTerminalProfile>, 
         public logger: MyLogger, 
         public addMenuService: AddMenuService, 
-        public configService: ConfigService
+        public configService: ConfigService,
+        public notification: NotificationsService
     ) {
         super(tab, logger, addMenuService, configService);
         this.logger.log("test", this.logger, tab);
@@ -78,7 +79,7 @@ export class SimpleManager extends BaseManager {
             if (tempPrefix == null || tempPrefix.trim() == "") {
                 this.logger.log("前缀获取异常");
             } else {
-                this.recentCleanPrefix = tempPrefix.trim();
+                this.recentCleanPrefix = tempPrefix//.trim();
             }
             this.logger.log("近期命令列表", lines.slice(-10).join("\n"));
             const lastMatchingLine = lines.reverse().find(line => line.includes(lastValidPrefix));
@@ -87,15 +88,22 @@ export class SimpleManager extends BaseManager {
                 this.logger.log("命令文本", commandText);
             }
             this.logger.log("更新：清理后命令前缀", this.recentCleanPrefix);
-            this.logger.log("clean by xtem", cleanTextByNewXterm(lastValidPrefix).then((result)=>{console.log("aaa", result)}), "sending", lastValidPrefix)
+            if (this.configService.store.ogAutoCompletePlugin.debugLevel < 2) {
+                cleanTextByNewXterm(lastValidPrefix).then((result)=>{
+                    if (this.recentCleanPrefix !== result) {
+                        this.notification.error("[tabbyquick-hint-debug-report]清理前缀不一致", this.recentCleanPrefix + " != " + result);
+                        this.logger.warn("清理前缀不一致", this.recentCleanPrefix + " != " + result);
+                    }
+                });
+            }
             this.cmdStatusFlag = true;
             this.recentUuid = generateUUID();
         }
+        // 检测命令执行，必须在原始未清理的内容中，全部输出中获取
         const replayCmdPrefix = "]2323;Command="
-        if (lastSerialLinesStr.match(new RegExp(replayCmdPrefix)) && this.userImputedFlag ) {
-            this.logger.log("命令已经发送", outputString);
+        if (outputString.match(new RegExp(replayCmdPrefix)) ) {
             const startRegExp = /.*\x1b\]2323;Command=[^\x07]*\x07/gm;
-            const matchGroup = lastSerialLinesStr.match(startRegExp);
+            const matchGroup = outputString.match(startRegExp);
             let cmd = "";
             if (matchGroup && matchGroup.length > 0) {
                 cmd = matchGroup[matchGroup.length - 1];
@@ -105,31 +113,36 @@ export class SimpleManager extends BaseManager {
                 cmd = cmd.replace(/\s+$/, "");
             }
             // 避免把乱七八糟的转义码当做history
-            this.logger.log("识别到的命令", cmd);
+            this.logger.debug("识别到的执行命令", cmd);
             const cleanedCmd = cleanTerminalText(cmd);
-            this.logger.log("清理后命令(一致？)", cleanedCmd == cmd, cleanedCmd);
+            this.logger.debug("清理后命令(一致？)", cleanedCmd == cmd, cleanedCmd);
             if (isValidStr(cmd) && cleanedCmd == cmd && !cmd.startsWith(" ")) {
+                // 处理black list
+                if (cmd.match(new RegExp("^rm|\\[\\[", "gm"))) {
+                    this.logger.debug("命令保存：Reject for black list", cmd);
+                }
                 this.logger.log("保存命令", cmd);
                 this.addMenuService.broadcastNewCmd(cmd, this.sessionUniqueId, this.tab);
             }
         }
 
+        // 发送并处理正在输入的命令
         const cleanedLastSerialLinesStr = cleanTerminalText(lastSerialLinesStr);
         // this.logger.log("清理后，最近几行", cleanedLastSerialLinesStr, "PREFIX", this.recentCleanPrefix, this.cmdStatusFlag)
         if (this.recentCleanPrefix && cleanedLastSerialLinesStr.includes(this.recentCleanPrefix) && this.cmdStatusFlag) {
             const firstValieIndex = cleanedLastSerialLinesStr.lastIndexOf(this.recentCleanPrefix) + this.recentCleanPrefix.length;
             let cmd = cleanedLastSerialLinesStr.slice(firstValieIndex);
             if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
-                this.logger.log("命令为", cmd);
+                this.logger.debug("命令为", cmd);
             }
             if (cmd && this.tab.hasFocus) {
                 if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
-                    this.logger.log("menu sending", cmd);
+                    this.logger.debug("menu sending", cmd);
                 }
                 this.addMenuService.sendCurrentText(cmd, this.recentUuid, this.sessionUniqueId, this.tab);
             } else if (this.tab.hasFocus) {
                 if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
-                    this.logger.log("menu close");
+                    this.logger.debug("menu close");
                 }
                 this.addMenuService.hideMenu();
             }

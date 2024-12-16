@@ -26,7 +26,7 @@ export class AddMenuService {
     private componentRef: ComponentRef<AutoCompleteHintMenuComponent>;
     private lastCmd: string;
     private recentUuid: string;
-    private recentCmd: string; // 仅用于对外呈现
+    private currentCmd: string; // 仅用于对外呈现
     private recentBlockedUuid: string;
     private recentBlockedKeyup: string;
     private currentSessionId: string;
@@ -80,6 +80,7 @@ export class AddMenuService {
     private clearCurrentTabCache() {
         this.currentSessionId = null;
         this.recentUuid = null;
+        this.currentCmd = "";
     }
 
     public isCurrentTabMatch(sessionId: string, uuid: string) {
@@ -130,7 +131,7 @@ export class AddMenuService {
     }
 
     public sendCurrentText(text: string, uuid: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>) {
-        this.recentCmd = text;
+        this.currentCmd = text;
         // TODO: 加入快捷键或用户强制触发，这时不进行这些判定，并重置uuid
         if (this.lastCmd === text && this.currentSessionId == sessionId) {
             // 和上一个一致，无需处理
@@ -169,8 +170,8 @@ export class AddMenuService {
         this.lastCmd = text;
     }
 
-    public getRecentCmd() {
-        return this.recentCmd;
+    public getCurrentCmd() {
+        return this.currentCmd;
     }
 
     private handleKeyUp(event: KeyboardEvent) {

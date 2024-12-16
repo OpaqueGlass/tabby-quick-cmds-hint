@@ -35,7 +35,7 @@ export class AutoCompleteAIDialogComponent {
         protected myTranslate: AutoCompleteTranslateService,
     ) {
         this.loadOpenAIConfig();
-        this.askUserInput = addMenuService.getRecentCmd();
+        this.askUserInput = addMenuService.getCurrentCmd();
         this.logger.log("AI panel init", this.askUserInput);
         if (isValidStr(this.askUserInput)) {
             // this.ask();
