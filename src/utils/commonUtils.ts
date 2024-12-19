@@ -134,12 +134,11 @@ export function inputInitScripts(app: AppService) {
     // 需要转义 "， /等，另外，前导空格可以避免写入history
     const bashCommand = ` if [[ -z "$DIR_REPORTING_ENABLED" ]]; then export DIR_REPORTING_ENABLED=1; if [[ $SHELL == */bash ]]; then export PS1="$PS1\\[\\e]1337;CurrentDir=$(pwd)\\a\\]"; elif [[ $SHELL == */zsh ]]; then precmd() { echo -n "\\x1b]1337;CurrentDir=$(pwd)\\x07"; }; elif [[ $SHELL == */fish ]]; then fish -c 'function __tabby_working_directory_reporting --on-event fish_prompt; echo -en "\\e]1337;CurrentDir=$PWD\\x7"; end'; else echo "Unsupported shell"; fi; fi`;
     // Add history support
-    const commandV2 = ` if [[ -z "$DIR_REPORTING_ENABLED" ]]; then export DIR_REPORTING_ENABLED=1; if [[ $SHELL == */bash ]]; then export PS1="$PS1\\[\\e]1337;CurrentDir=$(pwd)\\a\\]"; function preexec_invoke_exec() { printf "\\033]2323;Command=%s\\007" "$1"; }; trap 'preexec_invoke_exec "$BASH_COMMAND"' DEBUG; elif [[ $SHELL == */zsh ]]; then precmd() { echo -n "\\x1b]1337;CurrentDir=$(pwd)\\x07"; }; elif [[ $SHELL == */fish ]]; then fish -c 'function __tabby_working_directory_reporting --on-event fish_prompt; echo -en "\\e]1337;CurrentDir=$PWD\\x7"; end'; else echo "Unsupported shell"; fi; fi
-`;
+    const commandV2 = ` if [[ -z "$DIR_REPORTING_ENABLED" ]]; then export DIR_REPORTING_ENABLED=1; if [[ $SHELL == */bash ]]; then export PS1="$PS1\\[\\e]1337;CurrentDir=$(pwd)\\a\\]"; function preexec_invoke_exec() { printf "\\033]2323;Command=%s\\007" "$1"; }; trap 'preexec_invoke_exec "$BASH_COMMAND"' DEBUG; elif [[ $SHELL == */zsh ]]; then precmd() { echo -n "\\x1b]1337;CurrentDir=$(pwd)\\x07"; }; elif [[ $SHELL == */fish ]]; then fish -c 'function __tabby_working_directory_reporting --on-event fish_prompt; echo -en "\\e]1337;CurrentDir=$PWD\\x7"; end'; else echo "Unsupported shell"; fi; fi`;
 
     sendInput({
         "tab": app.activeTab,
-        "cmd": bashCommand,
+        "cmd": commandV2,
         "appendCR": true,
     });
 

@@ -53,8 +53,12 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         }, true);
         
         const mangager = new SimpleManager(tab, this.logger, this.addMenuService, this.configService, this.notification);
-        tab.input$.pipe(bufferTime(300)).subscribe(mangager.handleInput);
-        tab.output$.pipe(bufferTime(300)).subscribe(mangager.handleOutput);
+        if (mangager.handleInput) {
+            tab.input$.pipe(bufferTime(300)).subscribe(mangager.handleInput);
+        }
+        if (mangager.handleOutput) {
+            tab.output$.pipe(bufferTime(300)).subscribe(mangager.handleOutput);
+        }
         tab.sessionChanged$.subscribe(mangager.handleSessionChanged);
         // ????
         // tab.sessionChanged$.subscribe(session => {

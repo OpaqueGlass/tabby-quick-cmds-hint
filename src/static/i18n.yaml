@@ -5,7 +5,7 @@
 - en_US: Open AI Model name
   zh_CN: Open AI 模型名称
 - en_US: Note that all information will be saved in plain text locally
-  zh_CN: 请注意所有信息将非加密地保存在本地
+  zh_CN: 请注意所有信息将明文保存在本地
 - en_US: test
   zh_CN: testA
 - en_US: 0 All, 1 log, 2 warn, 3 ErrorOnly, 4 No log
@@ -30,3 +30,15 @@
   zh_CN: 为当前会话初始化快速命令提示（仅支持Bash）
 - en_US: AI Command Generation
   zh_CN: 让AI生成命令
+- en_US: This plugin is still in its early stages of development. Users are advised that there may be risks associated with its usage, and all usage is at your own discretion and responsibility.
+  zh_CN: 目前，插件仍在早期开发阶段。用户应注意使用此插件可能存在风险，所有使用行为由用户自行决定和承担责任。
+- en_US: "The developer has only focused on scenarios where:"
+  zh_CN: 开发者仅关注以下场景：
+- en_US: The server is connected via SSH and runs Ubuntu.
+  zh_CN: 服务器通过SSH连接，运行Ubuntu。
+- en_US: The shell environment is Bash.
+  zh_CN: Shell环境为Bash。
+- en_US: Tabby is installed on a Windows system.
+  zh_CN: Tabby安装在Windows系统上。
+- en_US: Other configurations or setups may not be supported at this time.
+  zh_CN: 其他配置或环境设置目前可能不受支持。

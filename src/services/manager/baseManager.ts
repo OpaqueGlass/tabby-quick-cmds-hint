@@ -16,10 +16,6 @@ export class BaseManager {
         this.profileUniqueId = tab.profile.id;
         this.sessionUniqueId = generateUUID();
     }
-    handleInput(buffers: Buffer[]) {
-
-    }
-    handleOutput(data: string[]) {
-
-    }
+    handleInput: (buffers: Buffer[])=>void | null = null;
+    handleOutput:(data: string[])=>void | null = null;
 }

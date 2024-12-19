@@ -189,7 +189,7 @@ export class AddMenuService {
     private handleKeyDown(event: KeyboardEvent) {
         const key = event.key;
         let actFlag = false;
-        this.logger.debug("handle key down", event.key)
+        // this.logger.messyDebug("handle key down", event.key)
         if (key === 'ArrowUp') {
             if (this.componentRef.instance.selectUp() !== null) {
                 actFlag = true;

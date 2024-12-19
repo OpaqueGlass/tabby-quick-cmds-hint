@@ -23,6 +23,7 @@ export class SimpleManager extends BaseManager {
         this.currentLine = "";
     }
     handleInput = (buffers: Buffer[]) => {
+        return;
         // 还需要判断当前是否是输入命令的状态，其他vim文本输入等情况不做处理
         // 将接收到的缓冲区内容拼接起来
         const inputString = Buffer.concat(buffers).toString();
@@ -39,12 +40,12 @@ export class SimpleManager extends BaseManager {
             if (lastNewlineIndex + 1 < inputString.length) {
                 this.currentLine = inputString.slice(lastNewlineIndex + 1);
             }
-            // 判定停止用户命令输入状态
-            if (this.cmdStatusFlag == true) {
-                this.cmdStatusFlag = false;
-                this.logger.log("判定停止用户输入状态");
-                this.addMenuService.hideMenu();
-            }
+            // 判定停止用户命令输入状态 bug: 在回车后可能立刻就下一个命令的输入，这个时候似乎判定由于pipe的延迟导致出现被停止输入状态的情况
+            // if (this.cmdStatusFlag == true) {
+            //     this.cmdStatusFlag = false;
+            //     this.logger.log("判定停止用户输入状态");
+            //     this.addMenuService.hideMenu();
+            // }
             this.userImputedFlag = true;
         } else {
             // 如果输入中不包含 \n 或 \r\n，说明用户正在键入，将当前输入追加到 currentLine
@@ -60,7 +61,7 @@ export class SimpleManager extends BaseManager {
         const outputString = data.join('');
         const allStateStr = this.tab.frontend.saveState();
         const lines = allStateStr.trim().split("\n");
-        const lastSerialLinesStr = lines.slice(-3).join("\n");
+        const lastSerialLinesStr = lines.slice(-1).join("\n");
         // 通过最近输出判定开始键入命令
         if (outputString.match(new RegExp("]1337;CurrentDir="))) {
             // 获取最后一行
@@ -128,9 +129,10 @@ export class SimpleManager extends BaseManager {
 
         // 发送并处理正在输入的命令
         const cleanedLastSerialLinesStr = cleanTerminalText(lastSerialLinesStr);
-        // this.logger.log("清理后，最近几行", cleanedLastSerialLinesStr, "PREFIX", this.recentCleanPrefix, this.cmdStatusFlag)
+        // this.logger.debug("清理后，最近几行", cleanedLastSerialLinesStr, "PREFIX", this.recentCleanPrefix, this.cmdStatusFlag)
         if (this.recentCleanPrefix && cleanedLastSerialLinesStr.includes(this.recentCleanPrefix) && this.cmdStatusFlag) {
             const firstValieIndex = cleanedLastSerialLinesStr.lastIndexOf(this.recentCleanPrefix) + this.recentCleanPrefix.length;
+            this.logger.debug("slice index", firstValieIndex);
             let cmd = cleanedLastSerialLinesStr.slice(firstValieIndex);
             if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
                 this.logger.debug("命令为", cmd);
@@ -146,6 +148,11 @@ export class SimpleManager extends BaseManager {
                 }
                 this.addMenuService.hideMenu();
             }
+        } else if (this.tab.hasFocus) {
+            if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
+                this.logger.debug("menu close by not match or cmd disabled", this.cmdStatusFlag);
+            }
+            this.addMenuService.hideMenu();
         }
     }
     handleSessionChanged = (session) => {

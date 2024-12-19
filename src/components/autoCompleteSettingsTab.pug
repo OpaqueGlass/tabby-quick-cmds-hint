@@ -1,14 +1,31 @@
 h3(translate) Quick Cmd Hint Settings
 
+.alert.alert-info.d-flex.align-items-center
+    .me-auto
+        div(translate) This plugin is still in its early stages of development. Users are advised that there may be risks associated with its usage, and all usage is at your own discretion and responsibility.
+
+        div(translate) The developer has only focused on scenarios where:
+
+        ul 
+            li(translate) The server is connected via SSH and runs Ubuntu.
+            li(translate) The shell environment is Bash.
+            li(translate) Tabby is installed on a Windows system.
+        
+        div(translate) Other configurations or setups may not be supported at this time.
+
 .form-line
     .header
         .title(translate) Enable debug mode and detailed logs
         .description(translate) 0 All, 1 log, 2 warn, 3 ErrorOnly, 4 No log
     input.form-control(
         type='number',
+        max=4,
+        min=-2,
         [(ngModel)]='config.store.ogAutoCompletePlugin.debugLevel',
         (ngModelChange)='config.save()',
     )
+
+h4 Init Scripts
 
 .form-line
     .header
@@ -19,6 +36,8 @@ h3(translate) Quick Cmd Hint Settings
         (ngModelChange)='config.save()',
     )
 
+
+h4 AI
 
 .form-line
     .header
