@@ -22,6 +22,9 @@ export class QuickCmdContentProvider extends BaseContentProvider {
             threshold: 0.3, // 控制匹配的模糊度
             includeScore: true // 包含得分
         };
+        if (envBasicInfo.config.store.qc == undefined || envBasicInfo.config.store.qc.cmds == undefined) {
+            return null;
+        }
         const dataList = envBasicInfo.config.store.qc.cmds.map((oneCmd) => {
             return {
                 name: oneCmd.name,

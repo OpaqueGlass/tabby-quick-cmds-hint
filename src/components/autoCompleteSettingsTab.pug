@@ -13,19 +13,9 @@ h3(translate) Quick Cmd Hint Settings
         
         div(translate) Other configurations or setups may not be supported at this time.
 
-.form-line
-    .header
-        .title(translate) Enable debug mode and detailed logs
-        .description(translate) 0 All, 1 log, 2 warn, 3 ErrorOnly, 4 No log
-    input.form-control(
-        type='number',
-        max=4,
-        min=-2,
-        [(ngModel)]='config.store.ogAutoCompletePlugin.debugLevel',
-        (ngModelChange)='config.save()',
-    )
 
-h4 Init Scripts
+
+h3 Init Scripts
 
 .form-line
     .header
@@ -37,7 +27,7 @@ h4 Init Scripts
     )
 
 
-h4 AI
+h3 AI
 
 .form-line
     .header
@@ -67,5 +57,19 @@ h4 AI
     input.form-control(
         type='text',
         [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIModel',
+        (ngModelChange)='config.save()',
+    )
+
+h3 Debug
+
+.form-line
+    .header
+        .title(translate) Enable debug mode and detailed logs
+        .description(translate) 0 All, 1 log, 2 warn, 3 ErrorOnly, 4 No log
+    input.form-control(
+        type='number',
+        max=4,
+        min=-2,
+        [(ngModel)]='config.store.ogAutoCompletePlugin.debugLevel',
         (ngModelChange)='config.save()',
     )

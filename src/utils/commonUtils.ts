@@ -9,8 +9,8 @@ export function isValidStr(input: string) {
 }
 
 export function cleanTerminalText(input: string) {
-    const cleanNotVisibleExp = /[\x1b\x07]\[(?:[0-9]{1,2}(?:;[0-9]{1,2})*)?[a-zA-Z]|[\x1b\x07]\].*?\x07|[\x1b\x07]\[\?.*?[hl]|[\x1b\x07]\[>4;m|[\x1b\x07]\>/g;
-    
+    const cleanNotVisibleExp = /[\x1b\x07]\[(?:[0-9]{1,2}(?:;[0-9]{1,2})*)?[a-zA-Z]|[\x1b\x07]\].*?\x07|[\x1b\x07]\[\?.*?[hl]|[\x1b\x07]\[>4;m|[\x1b\x07]\>|\x1B\(B/g;
+    // fish (B
 
     let result = input.replace(cleanNotVisibleExp, '');
     return result;

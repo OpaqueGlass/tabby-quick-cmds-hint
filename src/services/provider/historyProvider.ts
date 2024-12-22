@@ -35,7 +35,7 @@ export class HistoryContentProvider extends BaseContentProvider {
             return null;
         }
         const result: OptionItem[] = [];
-        const dbList = await this.getHistoryFromDB(this.db, envBasicInfo.tab.profile.id, 10, null, null);
+        const dbList = await this.getHistoryFromDB(this.db, envBasicInfo.tab.profile.id, 10, null, null, 3);
         this.logger.log("db list", dbList);
         const options = {
             keys: ['cmd'], // 搜索的字段
@@ -108,7 +108,7 @@ export class HistoryContentProvider extends BaseContentProvider {
             };
         });
     }
-    async getHistoryFromDB(db: IDBDatabase, profileId: string, limit: number, startTime: Date, endTime: Date): Promise<any[]> {
+    async getHistoryFromDB(db: IDBDatabase, profileId: string, limit: number, startTime: Date, endTime: Date, countLimit?: number): Promise<any[]> {
         return new Promise((resolve, reject) => {
             const transaction = db.transaction(this.storeName, "readonly");
             const store = transaction.objectStore(this.storeName);
@@ -122,7 +122,7 @@ export class HistoryContentProvider extends BaseContentProvider {
                 if (cursor) {
                     const record = cursor.value;
                     if ((startTime == null && record.time >= startTime) 
-                        && (endTime == null || record.time <= endTime)) {
+                        && (endTime == null || record.time <= endTime) && (countLimit == null || record.count >= countLimit)) {
                         results.push(record);
                         if (results.length >= limit) {
                             resolve(results);

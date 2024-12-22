@@ -94,7 +94,8 @@ export class AutoCompleteHintMenuComponent {
     showAutocompleteList(targetElement: HTMLElement) {
         const listEl = this.elRef.nativeElement.children[0];
         this.recentTargetElement = targetElement;
-        this.adjustPosition();
+        // make sure adjustPosition is called after the list is shown
+        setTimeout(this.adjustPosition.bind(this), 0);
         // 显示自动完成列表
         this.renderer.setStyle(listEl, 'display', 'block');
         this.showingFlag = true;
@@ -104,17 +105,18 @@ export class AutoCompleteHintMenuComponent {
         const listEl = this.elRef.nativeElement.children[0];
         const targetRect = this.recentTargetElement.getBoundingClientRect();
         // 获取窗口的高度
-        const viewportHeight = window.document.querySelector("ssh-tab")?.clientHeight || window.innerHeight;
+        const viewportHeight = window.document.querySelector("ssh-tab .terminal.xterm")?.clientHeight || window.innerHeight;
 
         // 下方位置和上方位置
         const belowPosition = targetRect.bottom;
         const abovePosition = targetRect.top - listEl.offsetHeight;
-        this.logger.debug("height(liOffset, belowPosition, viewport)", listEl.offsetHeight, belowPosition, viewportHeight)
+        this.logger.debug("height(liOffset, belowPosition, viewport)", listEl.clientHeight, belowPosition, viewportHeight)
         // 决定显示在下方还是上方
         let topPosition: number;
         if (belowPosition + listEl.offsetHeight <= viewportHeight) {
             // 下方有足够空间
             topPosition = belowPosition;
+            this.logger.debug("Down")
         } else {
             // 上方有足够空间
             topPosition = abovePosition;

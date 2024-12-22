@@ -59,6 +59,10 @@ export class SimpleManager extends BaseManager {
     }
     handleOutput = (data: string[]) => {
         const outputString = data.join('');
+        if (!this.tab.frontend.saveState) {
+            this.logger.debug("当前终端不支持saveState");
+            return;
+        }
         const allStateStr = this.tab.frontend.saveState();
         const lines = allStateStr.trim().split("\n");
         const lastSerialLinesStr = lines.slice(-1).join("\n");
@@ -79,10 +83,11 @@ export class SimpleManager extends BaseManager {
             this.logger.debug("匹配到的前缀lastValidPrefix", lastValidPrefix);
             if (tempPrefix == null || tempPrefix.trim() == "") {
                 this.logger.log("前缀获取异常");
+                this.recentCleanPrefix = lastValidPrefix;
             } else {
                 this.recentCleanPrefix = tempPrefix//.trim();
             }
-            this.logger.log("近期命令列表", lines.slice(-10).join("\n"));
+            // this.logger.messyDebug("近期命令列表", lines.slice(-10).join("\n"));
             const lastMatchingLine = lines.reverse().find(line => line.includes(lastValidPrefix));
             if (lastMatchingLine) {
                 const commandText = lastMatchingLine.split(lastValidPrefix).pop().trim();
@@ -128,19 +133,15 @@ export class SimpleManager extends BaseManager {
         }
 
         // 发送并处理正在输入的命令
+        this.logger.messyDebug("lastSerialLine", lastSerialLinesStr);
         const cleanedLastSerialLinesStr = cleanTerminalText(lastSerialLinesStr);
-        // this.logger.debug("清理后，最近几行", cleanedLastSerialLinesStr, "PREFIX", this.recentCleanPrefix, this.cmdStatusFlag)
-        if (this.recentCleanPrefix && cleanedLastSerialLinesStr.includes(this.recentCleanPrefix) && this.cmdStatusFlag) {
+        // "[1B" means cursor go to next line. in most cases, it means the command is finished
+        if (this.recentCleanPrefix && cleanedLastSerialLinesStr.includes(this.recentCleanPrefix) && !lastSerialLinesStr.includes("[1B")) {
             const firstValieIndex = cleanedLastSerialLinesStr.lastIndexOf(this.recentCleanPrefix) + this.recentCleanPrefix.length;
-            this.logger.debug("slice index", firstValieIndex);
             let cmd = cleanedLastSerialLinesStr.slice(firstValieIndex);
-            if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
-                this.logger.debug("命令为", cmd);
-            }
+            this.logger.messyDebug("命令为", cmd);
             if (cmd && this.tab.hasFocus) {
-                if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
-                    this.logger.debug("menu sending", cmd);
-                }
+                this.logger.messyDebug("menu sending", cmd);
                 this.addMenuService.sendCurrentText(cmd, this.recentUuid, this.sessionUniqueId, this.tab);
             } else if (this.tab.hasFocus) {
                 if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
@@ -149,9 +150,7 @@ export class SimpleManager extends BaseManager {
                 this.addMenuService.hideMenu();
             }
         } else if (this.tab.hasFocus) {
-            if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
-                this.logger.debug("menu close by not match or cmd disabled", this.cmdStatusFlag);
-            }
+            this.logger.messyDebug("menu close by not match or cmd disabled", this.recentCleanPrefix,  cleanedLastSerialLinesStr.includes(this.recentCleanPrefix), !lastSerialLinesStr.includes("[1B"));
             this.addMenuService.hideMenu();
         }
     }
