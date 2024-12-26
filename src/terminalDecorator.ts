@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { bufferTime } from 'rxjs'
+import { bufferTime, Subscription } from 'rxjs'
 import { AddMenuService } from 'services/insertMenu';
 import { SimpleManager } from 'services/manager/simpleContentManager';
 import { MyLogger } from 'services/myLogService';
@@ -28,7 +28,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         this.logger.log("tab内容判断", tab);
         this.logger.log("tab内容判断", tab.element.nativeElement);
         // 连接时提示使用init命令
-        tab.sessionChanged$.subscribe(session => {
+        const sessionChangedSubscription = tab.sessionChanged$.subscribe(session => {
             this.logger.log("tab内容判断sessionChanged", tab.session?.supportsWorkingDirectory(), tab.title);
             this.logger.log("tab内容判断sessionChanged", session?.supportsWorkingDirectory());
             // 这个changed涉及重新连接什么的，所以，如果为false时没有，如果为session undefined就是没连上
@@ -43,6 +43,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
                 }
             }
         });
+        super.subscribeUntilDetached(tab, sessionChangedSubscription);
         // END
 
         tab.addEventListenerUntilDestroyed(tab.element.nativeElement.querySelector(".xterm-helper-textarea"), 'focusout', async () => {
@@ -54,12 +55,12 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         
         const mangager = new SimpleManager(tab, this.logger, this.addMenuService, this.configService, this.notification);
         if (mangager.handleInput) {
-            tab.input$.pipe(bufferTime(300)).subscribe(mangager.handleInput);
+            super.subscribeUntilDetached(tab, tab.input$.pipe(bufferTime(300)).subscribe(mangager.handleInput));
         }
         if (mangager.handleOutput) {
-            tab.output$.pipe(bufferTime(300)).subscribe(mangager.handleOutput);
+            super.subscribeUntilDetached(tab, tab.output$.pipe(bufferTime(300)).subscribe(mangager.handleOutput));
         }
-        tab.sessionChanged$.subscribe(mangager.handleSessionChanged);
+        super.subscribeUntilDetached(tab, tab.sessionChanged$.subscribe(mangager.handleSessionChanged));
         // ????
         // tab.sessionChanged$.subscribe(session => {
         //     if (session) {
@@ -71,7 +72,6 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         // }
     }
 
-    
 
     private processBackspaces(input: string) {
         let result = [];  // 用数组来存储最终结果，处理效率更高

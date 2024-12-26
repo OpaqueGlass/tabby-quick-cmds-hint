@@ -66,6 +66,7 @@ export class SimpleManager extends BaseManager {
         const allStateStr = this.tab.frontend.saveState();
         const lines = allStateStr.trim().split("\n");
         const lastSerialLinesStr = lines.slice(-1).join("\n");
+        this.logger.debug("debug", allStateStr);
         // 通过最近输出判定开始键入命令
         if (outputString.match(new RegExp("]1337;CurrentDir="))) {
             // 获取最后一行
@@ -135,6 +136,7 @@ export class SimpleManager extends BaseManager {
         // 发送并处理正在输入的命令
         this.logger.messyDebug("lastSerialLine", lastSerialLinesStr);
         const cleanedLastSerialLinesStr = cleanTerminalText(lastSerialLinesStr);
+        // some times [1B still not provided in vim, tmux or screen
         // "[1B" means cursor go to next line. in most cases, it means the command is finished
         if (this.recentCleanPrefix && cleanedLastSerialLinesStr.includes(this.recentCleanPrefix) && !lastSerialLinesStr.includes("[1B")) {
             const firstValieIndex = cleanedLastSerialLinesStr.lastIndexOf(this.recentCleanPrefix) + this.recentCleanPrefix.length;

@@ -4,14 +4,14 @@ h3(translate) Quick Cmd Hint Settings
     .me-auto
         div(translate) This plugin is still in its early stages of development. Users are advised that there may be risks associated with its usage, and all usage is at your own discretion and responsibility.
 
-        div(translate) The developer has only focused on scenarios where:
+        div(translate) The developer has mainly focused on scenarios where:
 
         ul 
             li(translate) The server is connected via SSH and runs Ubuntu.
             li(translate) The shell environment is Bash.
             li(translate) Tabby is installed on a Windows system.
         
-        div(translate) Other configurations or setups may not be supported at this time.
+        div(translate) Other configurations or setups may not be supported.
 
 
 
@@ -20,7 +20,7 @@ h3 Init Scripts
 .form-line
     .header
         .title(translate) Try to run init scripts when session connected
-        .description(translate) May not work on terminal other than bash
+        .description(translate) For Bash Only
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.autoInit',
         (ngModelChange)='config.save()',
