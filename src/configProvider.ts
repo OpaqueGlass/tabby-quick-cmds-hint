@@ -13,6 +13,9 @@ export class AutoCompleteConfigProvider extends ConfigProvider {
                 openAIBaseUrl: "https://api.openai.com/v1",
                 openAIKey: "",
                 openAIModel: "gpt-4o-mini",
+            },
+            appearance: {
+                "fontSize": 15,
             }
         },
         hotkeys: {

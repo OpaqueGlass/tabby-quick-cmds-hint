@@ -18,6 +18,7 @@ import { BaseTerminalProfile, BaseTerminalTabComponent } from 'tabby-terminal';
 import { HistoryContentProvider } from './provider/historyProvider';
 import { OpenAIContentProvider } from './provider/openAIContentProvider';
 import { AutoCompleteTranslateService } from './translateService';
+import { Subject } from 'rxjs';
 
 @Injectable({
 providedIn: 'root'
@@ -31,6 +32,8 @@ export class AddMenuService {
     private recentBlockedKeyup: string;
     private currentSessionId: string;
     private contentProviderList: BaseContentProvider[]; // 选项提供列表，用于异步获取
+    private enterNotificationSubject: Subject<void> = new Subject<void>();
+    public enterNotification$ = this.enterNotificationSubject.asObservable();
     constructor(
         private appRef: ApplicationRef,
         private injector: Injector,
@@ -202,6 +205,7 @@ export class AddMenuService {
             }
         } else if (key === 'Enter') {
             const currentIndex = this.componentRef.instance.currentItemIndex;
+            this.enterNotificationSubject.next();
             // TODO: 我们可能还需要判定是否有其他窗口显示在其上
             if (currentIndex != -1 && this.componentRef.instance.showingFlag) {
                 this.componentRef.instance.inputItem(currentIndex, 1);
@@ -224,6 +228,8 @@ export class AddMenuService {
                 actFlag = true;
 
             }
+        } else if (key === 'Backspace') {
+            this.componentRef.instance.clearSelection();
         } else {
             return;
         }

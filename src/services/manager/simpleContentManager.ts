@@ -1,4 +1,4 @@
-import { cleanTerminalText, cleanTextByNewXterm, generateUUID, isValidStr } from "utils/commonUtils";
+import { cleanTerminalText, cleanTextByNewXterm, generateUUID, isValidStr, simpleHash } from "utils/commonUtils";
 import { BaseManager } from "./baseManager";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 import { MyLogger } from "services/myLogService";
@@ -11,6 +11,7 @@ export class SimpleManager extends BaseManager {
     private currentLine: string;
     private recentCleanPrefix: string;
     private recentUuid: string;
+    private recentStateLineHash: string;
     constructor(
         public tab: BaseTerminalTabComponent<BaseTerminalProfile>, 
         public logger: MyLogger, 
@@ -21,6 +22,11 @@ export class SimpleManager extends BaseManager {
         super(tab, logger, addMenuService, configService);
         this.logger.log("test", this.logger, tab);
         this.currentLine = "";
+        this.subscriptionList.push(addMenuService.enterNotification$.subscribe(this.endCmdStatus));
+    }
+    endCmdStatus = () => {
+        this.logger.debug("收到Enter信号")
+        this.cmdStatusFlag = false;
     }
     handleInput = (buffers: Buffer[]) => {
         return;
@@ -66,7 +72,16 @@ export class SimpleManager extends BaseManager {
         const allStateStr = this.tab.frontend.saveState();
         const lines = allStateStr.trim().split("\n");
         const lastSerialLinesStr = lines.slice(-1).join("\n");
-        this.logger.debug("debug", allStateStr);
+        // 重复响应判定，应对screen等停滞更新的情况
+        const last5Line = lines.slice(lines.length - 5).join("\n")
+        const recentStateLinesHash = simpleHash(last5Line);
+        if (recentStateLinesHash == this.recentStateLineHash) {
+            this.logger.messyDebug("由于重复，本次不响应", last5Line, recentStateLinesHash);
+            return
+        } else {
+            this.recentStateLineHash = recentStateLinesHash;
+        }
+        this.logger.messyDebug("debug", allStateStr);
         // 通过最近输出判定开始键入命令
         if (outputString.match(new RegExp("]1337;CurrentDir="))) {
             // 获取最后一行
@@ -138,7 +153,7 @@ export class SimpleManager extends BaseManager {
         const cleanedLastSerialLinesStr = cleanTerminalText(lastSerialLinesStr);
         // some times [1B still not provided in vim, tmux or screen
         // "[1B" means cursor go to next line. in most cases, it means the command is finished
-        if (this.recentCleanPrefix && cleanedLastSerialLinesStr.includes(this.recentCleanPrefix) && !lastSerialLinesStr.includes("[1B")) {
+        if (this.recentCleanPrefix && cleanedLastSerialLinesStr.includes(this.recentCleanPrefix) && !lastSerialLinesStr.includes("[1B") && this.cmdStatusFlag) {
             const firstValieIndex = cleanedLastSerialLinesStr.lastIndexOf(this.recentCleanPrefix) + this.recentCleanPrefix.length;
             let cmd = cleanedLastSerialLinesStr.slice(firstValieIndex);
             this.logger.messyDebug("命令为", cmd);

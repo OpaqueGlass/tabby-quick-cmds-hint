@@ -1,13 +1,13 @@
 import { Component, ElementRef, Inject, Input, Renderer2, SimpleChanges, type OnChanges, ChangeDetectorRef } from '@angular/core'
 import { OptionItem } from '../api/pluginType'
-import { AppService } from 'tabby-core';
+import { AppService, ConfigService } from 'tabby-core';
 import { isValidStr, sendInput } from 'utils/commonUtils';
 import { MyLogger } from 'services/myLogService';
 import { DOCUMENT } from '@angular/common';
 
 @Component({
     template: require('./autoCompleteHintMenu.pug'),
-    styles: [require('./autoCompleteHintMenu.css')],
+    styles: [require('./autoCompleteHintMenu.scss')],
 })
 export class AutoCompleteHintMenuComponent {
     mainText: string = "Hello, world! This is the tabby-auto-complete plugin speaking~";
@@ -23,7 +23,7 @@ export class AutoCompleteHintMenuComponent {
         private app: AppService,
         private logger: MyLogger,
         @Inject(DOCUMENT) private document: Document,
-        private cdr: ChangeDetectorRef,
+        private configService: ConfigService
     ) {
         this.currentItemIndex = -1;
         this.showStatus = false;
@@ -90,6 +90,10 @@ export class AutoCompleteHintMenuComponent {
         }
     }
 
+    public clearSelection() {
+        this.currentItemIndex = -1;
+    }
+
     // 在输入框的事件中调用此函数
     showAutocompleteList(targetElement: HTMLElement) {
         const listEl = this.elRef.nativeElement.children[0];
@@ -113,7 +117,8 @@ export class AutoCompleteHintMenuComponent {
         this.logger.debug("height(liOffset, belowPosition, viewport)", listEl.clientHeight, belowPosition, viewportHeight)
         // 决定显示在下方还是上方
         let topPosition: number;
-        if (belowPosition + listEl.offsetHeight <= viewportHeight) {
+        const fontSize: number = this.configService.store.terminal.fontSize;
+        if (belowPosition + listEl.offsetHeight + fontSize <= viewportHeight) {
             // 下方有足够空间
             topPosition = belowPosition;
             this.logger.debug("Down")
@@ -158,6 +163,7 @@ export class AutoCompleteHintMenuComponent {
         }
         if (this.currentItemIndex < this.options.length - 1) {
             this.currentItemIndex++;
+            // setTimeout(this.adjustPosition.bind(this), 0);
         } else {
             return null;
         }
@@ -205,6 +211,7 @@ export class AutoCompleteHintMenuComponent {
         if (type == 1) {
             this.hideAutocompleteList();
         }
+        this.clearSelection();
         // 上屏完毕可能还需要调用focus
     }
     isValidStr(str: string) {

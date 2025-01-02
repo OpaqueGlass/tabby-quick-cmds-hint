@@ -1,7 +1,8 @@
 .og-autocomplete-list {
     position: absolute;
-    z-index: 1000; /* 确保浮动层显示在前面 */
-    max-width: 650px;
+    z-index: 20;
+    max-width: 350px;
+    min-width: 350px;
     background-color: rgb(8, 2, 36);
     border: 1px solid #ddd;
     display: none;
@@ -36,12 +37,27 @@
 }
 
 .og-autocomplete-item .og-ac-type {
-    background-color: #b235eb;
-    color: #fff;
     padding: 4px;
 }
 
 .og-autocomplete-item .og-ac-name {
     color: #ddd;
     padding: 4px;
+}
+
+.og-autocomplete-main-text {
+    max-height: 1.5em;
+    overflow: auto;
+}
+
+.og-ac-type {
+    background-color: #b235eb;
+    color: #fff;
+    &[data-cmd-type='q'] {
+        background-color: #d4d424;
+        color: #0c0333;
+    }
+    &[data-cmd-type='h'] {
+        background-color: green;
+    }
 }
