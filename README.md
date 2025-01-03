@@ -1,5 +1,7 @@
 # tabby-quick-cmds-hint
 
+[中文](README_zh-CN.md) | **English**
+
 This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://github.com/Eugeny/tabby). 
 
 ## Quick Start
@@ -7,15 +9,19 @@ This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://g
 > [!NOTE]
 > 
 > - This plugin is still in development.
-> - It may not be compatible with shells other than Bash, or with systems other than Ubuntu. 
+> - It may not be compatible with shells other than Bash, or with systems other than Ubuntu. See [docs/INIT.md](./docs/INIT.md) for more info.
 > - The console log output may also be quite messy.
-> - To use this plugin, build it yourself or use pre-release, and copy to `C:\Users\<Your user name>\AppData\Roaming\tabby\plugins\node_modules` (For windows)
 
-1. Follow the instructions in  [Tabby/Shell-working-directory-reporting](https://github.com/Eugeny/tabby/wiki/Shell-working-directory-reporting) 
+1. 
+   - For `bash` user:  
+      - basic function: add the following scripts to `~/.bashrc`
+         ```bash
+         
+         ```
+      - history: add the following scripts to `~/.bashrc`
+         ```bash
 
-   > If you want use history, please use integrated `Init AutoComplete` hotkey to initiate this feature for every session. 
-   > 
-   > This feature will execute a command in the session that is suitable for Ubuntu bash, which may can be referenced for setting up other terminals. 
+         ```
 2. Download and enable `tabby-quick-cmds` plugin. Add some commands.
 3. Start annoying hint experience.
 
@@ -23,10 +29,10 @@ This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://g
 ## TODO
 
 - [x] The cmds saved in `tabby-quick-cmds`
-- [ ] Use AI to complete cmds
+- [x] Use AI to complete cmds (Available only when triggered by a shortcut key)
 - [ ] Command arguments
 - [x] History
-- [ ] Multilingual support
+- [x] Multilingual support
 
 ## Reference & Appreciations
 

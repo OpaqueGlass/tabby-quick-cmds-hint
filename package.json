@@ -1,9 +1,15 @@
 {
   "name": "tabby-quick-cmds-hint",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "It's a simple complete hint plugin for tabby",
-  "author": "OpaqueGlass",
-  "license": "AGPLv3",
+  "repository": {
+    "url": "git+https://github.com/OpaqueGlass/tabby-quick-cmds-hint.git"
+  },
+  "homepage": "https://github.com/OpaqueGlass/tabby-quick-cmds-hint",
+  "author": {
+    "name": "OpaqueGlass"
+  },
+  "license": "AGPL-3.0",
   "keywords": [
     "tabby-plugin"
   ],
