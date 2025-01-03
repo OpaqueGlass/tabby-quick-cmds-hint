@@ -6,6 +6,7 @@ import {
     Injectable,
     ComponentFactoryResolver,
     ComponentRef,
+    forwardRef,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { AutoCompleteHintMenuComponent } from '../components/autoCompleteHintMenu';
@@ -16,9 +17,10 @@ import { EnvBasicInfo, TerminalSessionInfo } from 'api/pluginType';
 import { ConfigService } from 'tabby-core';
 import { BaseTerminalProfile, BaseTerminalTabComponent } from 'tabby-terminal';
 import { HistoryContentProvider } from './provider/historyProvider';
-import { OpenAIContentProvider } from './provider/openAIContentProvider';
-import { AutoCompleteTranslateService } from './translateService';
 import { Subject } from 'rxjs';
+import { ButtonProvider } from 'buttonProvider';
+import { MySignalService } from './signalService';
+import { AutoCompleteTranslateService } from './translateService';
 
 @Injectable({
 providedIn: 'root'
@@ -32,8 +34,13 @@ export class AddMenuService {
     private recentBlockedKeyup: string;
     private currentSessionId: string;
     private contentProviderList: BaseContentProvider[]; // 选项提供列表，用于异步获取
+    // 回车输入状态
     private enterNotificationSubject: Subject<void> = new Subject<void>();
     public enterNotification$ = this.enterNotificationSubject.asObservable();
+    // 补全菜单工作状态
+    private menuStatus: boolean = true;
+    private menuStatusNotificationSubject: Subject<boolean> = new Subject<boolean>();
+    public menuStatus$ = this.menuStatusNotificationSubject.asObservable();
     constructor(
         private appRef: ApplicationRef,
         private injector: Injector,
@@ -45,6 +52,8 @@ export class AddMenuService {
         historyContentProvider: HistoryContentProvider,
         private myTranslate: AutoCompleteTranslateService, // 这个东西，放在Provider、index都会导致其他中文内容丢失
         // openAIContentProvider: OpenAIContentProvider,
+        // private buttonProvider: ButtonProvider, // 直接引用会卡在Cannot access 'AddMenuService' before initialization
+        private signalService: MySignalService
     ) {
         document.addEventListener("keydown", this.handleKeyDown.bind(this), true);
         document.addEventListener("keyup", this.handleKeyUp.bind(this), true);
@@ -52,7 +61,21 @@ export class AddMenuService {
             quickCmdContentProvider,
             historyContentProvider,
         ];
-        logger.log("Add menu service init")
+        logger.log("Add menu service init");
+        signalService.menuStatus$.subscribe(()=>{
+            if (this.getStatus()) {
+                this.disable();
+            } else {
+                this.enable();
+            }
+        })
+        // buttonProvider.menuStatus$.subscribe(()=>{
+        //     if (this.getStatus()) {
+        //         this.disable();
+        //     } else {
+        //         this.enable();
+        //     }
+        // });
     }
 
     // 插入组件的方法
@@ -104,7 +127,7 @@ export class AddMenuService {
             this.logger.debug("Reject for no response");
             return;
         }
-        if (resultWrap.optionItem == null || resultWrap.optionItem.length == 0) {
+        if (resultWrap.optionItem == null) {
             this.logger.debug("Reject for empty");
             return;
         }
@@ -117,7 +140,7 @@ export class AddMenuService {
             return;
         }
         this.logger.debug("Provider 返回option", resultWrap.optionItem);
-        this.componentRef.instance.setContent(resultWrap.optionItem);
+        this.componentRef.instance.setContent(resultWrap.optionItem, resultWrap.type);
     }
 
     public broadcastNewCmd(cmd: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>) {
@@ -133,15 +156,37 @@ export class AddMenuService {
         });
     }
 
+    public disable() {
+        this.menuStatus = false;
+        this.hideMenu();
+        this.menuStatusNotificationSubject.next(this.menuStatus);
+    }
+
+    public enable() {
+        this.menuStatus = true;
+        this.currentSessionId = "";
+        this.lastCmd = "";
+        this.recentBlockedUuid = "";
+        this.menuStatusNotificationSubject.next(this.menuStatus);
+    }
+
+    public getStatus() {
+        return this.menuStatus;
+    }
+
     public sendCurrentText(text: string, uuid: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>) {
         this.currentCmd = text;
+        if (!this.menuStatus) {
+            this.logger.debug("Ignore sended cmd for menuStatus == false")
+            return;
+        }
         // TODO: 加入快捷键或用户强制触发，这时不进行这些判定，并重置uuid
         if (this.lastCmd === text && this.currentSessionId == sessionId) {
             // 和上一个一致，无需处理
             this.logger.debug("和上一个一致，无需处理");
             return;
         }
-        if (text.length < 3) {
+        if (text.length < 2) {
             this.hideMenu();
             return;
         }

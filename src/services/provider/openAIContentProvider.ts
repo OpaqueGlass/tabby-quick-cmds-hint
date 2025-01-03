@@ -1,9 +1,7 @@
 import { OptionItem, EnvBasicInfo } from "../../api/pluginType";
-import Fuse from 'fuse.js';
 import OpenAI from "openai";
 import { BaseContentProvider, OptionItemResultWrap } from "./baseProvider";
 import { MyLogger } from "services/myLogService";
-import { Injectable } from "@angular/core";
 import { ConfigService } from "tabby-core";
 import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { AutoCompleteAIDialogComponent } from "components/autoCompleteAIDialog";
@@ -13,7 +11,7 @@ import { AutoCompleteAIDialogComponent } from "components/autoCompleteAIDialog";
 // @Injectable({
 //     providedIn: 'root'
 // })
-export class OpenAIContentProvider extends BaseContentProvider {
+export class AIContentProvider extends BaseContentProvider {
     protected static providerTypeKey: string = "a";
     openai: OpenAI;
     private recentEnvBasicInfo: EnvBasicInfo;
@@ -45,10 +43,11 @@ export class OpenAIContentProvider extends BaseContentProvider {
                     content: inputCmd,
                     desp: "",
                     callback: this.userAskAiCallback.bind(this, inputCmd, this.recentEnvBasicInfo),
-                    type: OpenAIContentProvider.providerTypeKey
+                    type: AIContentProvider.providerTypeKey
                 }
             ],
-            envBasicInfo: envBasicInfo
+            envBasicInfo: envBasicInfo,
+            type: AIContentProvider.providerTypeKey
         };
     }
     async userAskAiCallback(inputCmd: string, envBasicInfo: EnvBasicInfo) {

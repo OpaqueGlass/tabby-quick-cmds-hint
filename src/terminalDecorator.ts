@@ -94,12 +94,4 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         // 将数组转换为字符串并返回
         return result.join('');
     }
-
-    // private attachToSession (session: BaseSession) {
-    //     // session.output$.subscribe(data => {
-    //     //     if (data.includes('command not found')) {
-    //     //         //
-    //     //     }
-    //     // })
-    // }
 }

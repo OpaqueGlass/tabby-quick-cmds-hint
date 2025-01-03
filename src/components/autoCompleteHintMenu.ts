@@ -59,8 +59,8 @@ export class AutoCompleteHintMenuComponent {
     }
 
 
-    public setContent(newVal: OptionItem[]) {
-        this.contentGroups[newVal[0].type] = newVal;
+    public setContent(newVal: OptionItem[], type: string) {
+        this.contentGroups[type] = newVal;
         this.doRegetItems();
         // this.options = newVal;
         // this.currentItemIndex = -1;
@@ -196,7 +196,7 @@ export class AutoCompleteHintMenuComponent {
                 return;
             } else {
                 this.clearContent();
-                this.setContent(newOptionList);
+                this.setContent(newOptionList, this.options[index].type);
                 return;
             }
         }

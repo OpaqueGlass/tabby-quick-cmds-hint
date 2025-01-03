@@ -13,7 +13,7 @@ export class MyLogger {
       ) {
         this.name = 'quick-cmds-hint';
         // tabby的Logger不支持,继续传参，只能类似%d这样的模板字符串，我们这边还是自定义省心点
-        this.logLevel = configService.store.ogAutoCompletePlugin.debugLevel;
+        this.logLevel = configService.store?.ogAutoCompletePlugin?.debugLevel ?? 3;
         configService.changed$.subscribe(() => {
             this.setLogLevel(configService.store.ogAutoCompletePlugin.debugLevel);
         });

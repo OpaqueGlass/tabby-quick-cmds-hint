@@ -1,6 +1,4 @@
-import { AutoCompleteTranslateService } from 'services/translateService'
 import { ConfigProvider } from 'tabby-core'
-import { TranslateService } from "tabby-core";
 
 /** @hidden */
 export class AutoCompleteConfigProvider extends ConfigProvider {

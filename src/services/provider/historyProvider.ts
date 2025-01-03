@@ -64,7 +64,8 @@ export class HistoryContentProvider extends BaseContentProvider {
         // do sth
         return {
             optionItem: result,
-            envBasicInfo: envBasicInfo
+            envBasicInfo: envBasicInfo,
+            type: HistoryContentProvider.providerTypeKey
         } as OptionItemResultWrap;
     }
     async userInputCmd(inputCmd: string, terminalSessionInfo: TerminalSessionInfo): Promise<void> {

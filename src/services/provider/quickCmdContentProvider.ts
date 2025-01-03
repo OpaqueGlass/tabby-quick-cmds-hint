@@ -38,7 +38,8 @@ export class QuickCmdContentProvider extends BaseContentProvider {
         result.push(...fuse.search(inputCmd).map((value)=>value.item as OptionItem));
         return {
             optionItem: result,
-            envBasicInfo: envBasicInfo
+            envBasicInfo: envBasicInfo,
+            type: QuickCmdContentProvider.providerTypeKey
         };
     }
 }

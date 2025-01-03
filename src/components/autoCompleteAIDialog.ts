@@ -1,13 +1,12 @@
-import { Component, HostListener, Input } from '@angular/core';
+import { Component, forwardRef, HostListener, Inject, Input } from '@angular/core';
 import { EnvBasicInfo } from 'api/pluginType';
 import OpenAI from 'openai';
 import { MyLogger } from 'services/myLogService';
-import { AppService, ConfigService } from 'tabby-core';
+import { AppService, ConfigService, TranslateService } from 'tabby-core';
 import jsYaml from "js-yaml"
 import { AddMenuService } from 'services/insertMenu';
 import { isValidStr, sendInput } from 'utils/commonUtils';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AutoCompleteTranslateService } from 'services/translateService';
 
 interface AICommandItem {
     command: string;
@@ -29,17 +28,21 @@ export class AutoCompleteAIDialogComponent {
     constructor(
         protected logger: MyLogger,
         protected configService: ConfigService,
-        protected addMenuService: AddMenuService,
+         @Inject(forwardRef(() => AddMenuService)) protected addMenuService: AddMenuService,
         protected appService: AppService,
         protected activeModel: NgbActiveModal,
-        protected myTranslate: AutoCompleteTranslateService,
+        protected myTranslate: TranslateService,
     ) {
+        
+    }
+
+    ngOnInit() {
         this.loadOpenAIConfig();
-        this.askUserInput = addMenuService.getCurrentCmd();
         this.logger.log("AI panel init", this.askUserInput);
         if (isValidStr(this.askUserInput)) {
             // this.ask();
         }
+        this.askUserInput = this.addMenuService.getCurrentCmd();
     }
 
     loadOpenAIConfig() {
