@@ -11,7 +11,6 @@ import { DOCUMENT } from '@angular/common';
 })
 export class AutoCompleteHintMenuComponent {
     mainText: string = "Hello, world! This is the tabby-auto-complete plugin speaking~";
-    showStatus: boolean = false;
     options: OptionItem[] = [];
     currentItemIndex: number = -1;
     recentTargetElement: HTMLElement;
@@ -26,7 +25,6 @@ export class AutoCompleteHintMenuComponent {
         private configService: ConfigService
     ) {
         this.currentItemIndex = -1;
-        this.showStatus = false;
         this.contentGroups = {
             "q": [],// quick cmd
             "h": [],// highlight
@@ -66,10 +64,6 @@ export class AutoCompleteHintMenuComponent {
         // this.currentItemIndex = -1;
     }
 
-    public show() {
-        this.showStatus = true;
-    }
-
     public test(text: string) {
         this.mainText = text;
     }
@@ -82,7 +76,7 @@ export class AutoCompleteHintMenuComponent {
     }
 
     private clearContent() {
-        this.showStatus = false;
+        this.showingFlag = false;
         this.options = [];
         this.currentItemIndex = -1;
         for (let key in this.contentGroups) {
@@ -143,6 +137,10 @@ export class AutoCompleteHintMenuComponent {
         this.showingFlag = false;
     }
 
+    public getShowingStatus() {
+        return this.showingFlag;
+    }
+
     selectUp() {
         if (!this.showingFlag) {
             this.logger.log("不再显示")
@@ -165,7 +163,7 @@ export class AutoCompleteHintMenuComponent {
             this.currentItemIndex++;
             // setTimeout(this.adjustPosition.bind(this), 0);
         } else {
-            return null;
+            return this.currentItemIndex;
         }
         this.refreshMainText();
         return this.currentItemIndex;

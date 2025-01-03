@@ -18,7 +18,6 @@ import { ConfigService } from 'tabby-core';
 import { BaseTerminalProfile, BaseTerminalTabComponent } from 'tabby-terminal';
 import { HistoryContentProvider } from './provider/historyProvider';
 import { Subject } from 'rxjs';
-import { ButtonProvider } from 'buttonProvider';
 import { MySignalService } from './signalService';
 import { AutoCompleteTranslateService } from './translateService';
 
@@ -41,6 +40,8 @@ export class AddMenuService {
     private menuStatus: boolean = true;
     private menuStatusNotificationSubject: Subject<boolean> = new Subject<boolean>();
     public menuStatus$ = this.menuStatusNotificationSubject.asObservable();
+    // 上下菜单状态
+    private recentHistoryJumpStatus: boolean = false;
     constructor(
         private appRef: ApplicationRef,
         private injector: Injector,
@@ -170,6 +171,10 @@ export class AddMenuService {
         this.menuStatusNotificationSubject.next(this.menuStatus);
     }
 
+    /**
+     * 是否启用的控制，和menu是否正显示无关
+     * @returns 
+     */
     public getStatus() {
         return this.menuStatus;
     }
@@ -180,7 +185,10 @@ export class AddMenuService {
             this.logger.debug("Ignore sended cmd for menuStatus == false")
             return;
         }
-        // TODO: 加入快捷键或用户强制触发，这时不进行这些判定，并重置uuid
+        if (this.recentHistoryJumpStatus) {
+            this.logger.debug("Ignored due to recent history input");
+            return;
+        }
         if (this.lastCmd === text && this.currentSessionId == sessionId) {
             // 和上一个一致，无需处理
             this.logger.debug("和上一个一致，无需处理");
@@ -243,22 +251,33 @@ export class AddMenuService {
                 actFlag = true;
             } else {
                 this.logger.debug("up 不操作");
+                this.recentHistoryJumpStatus = true;
+                this.hideMenu();
             }
         } else if (key === 'ArrowDown') {
             if (this.componentRef.instance.selectDown() !== null) {
                 actFlag = true;
+            } else {
+                this.recentHistoryJumpStatus = true;
+                this.hideMenu();
             }
         } else if (key === 'Enter') {
             const currentIndex = this.componentRef.instance.currentItemIndex;
             this.enterNotificationSubject.next();
-            // TODO: 我们可能还需要判定是否有其他窗口显示在其上
-            if (currentIndex != -1 && this.componentRef.instance.showingFlag) {
-                this.componentRef.instance.inputItem(currentIndex, 1);
-                actFlag = true;
-                this.logger.debug("handle enter: input")
+            // 判定是否有其他窗口显示在其上
+            // TODO: 减少判定范围
+            const floatLayers = this.document.querySelectorAll("ngb-modal-window[role]")
+            if (floatLayers == null || floatLayers.length > 0) {
+                this.logger.log("No act due to float layer exist");
             } else {
-                this.hideMenu();
-                this.logger.debug("handle enter: hide")
+                if (currentIndex != -1 && this.componentRef.instance.showingFlag) {
+                    this.componentRef.instance.inputItem(currentIndex, 1);
+                    actFlag = true;
+                    this.logger.debug("handle enter: input")
+                } else {
+                    this.hideMenu();
+                    this.logger.debug("handle enter: hide")
+                }
             }
         } else if (key === 'Escape') {
             this.recentBlockedUuid = this.recentUuid;
@@ -276,6 +295,7 @@ export class AddMenuService {
         } else if (key === 'Backspace') {
             this.componentRef.instance.clearSelection();
         } else {
+            this.recentHistoryJumpStatus = false;
             return;
         }
         if (actFlag) {

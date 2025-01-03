@@ -24,7 +24,6 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
 
     attach (tab: BaseTerminalTabComponent<BaseTerminalProfile>): void {
         // TODO: 这里最好是区分一下终端，给个实例什么的，另外，可能可以通过currentPwd判断是否
-        let currentLine = ''; // 用于存储当前正在键入的行
         this.logger.log("tab内容判断", tab);
         this.logger.log("tab内容判断", tab.element.nativeElement);
         // 连接时提示使用init命令
@@ -49,7 +48,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         tab.addEventListenerUntilDestroyed(tab.element.nativeElement.querySelector(".xterm-helper-textarea"), 'focusout', async () => {
             // 这里需要延迟，否则无法点击上屏
             await sleep(200);
-            // TODO: 这里只是为了方便注释，才不做处理的
+            // TODO: 这里只是为了方便DEBUG，才不做处理的，正式版应当移除注释
             // this.addMenuService.hideMenu();
             this.logger.log("focus out");
         }, true);
