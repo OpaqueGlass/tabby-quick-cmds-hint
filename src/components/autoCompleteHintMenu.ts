@@ -120,6 +120,7 @@ export class AutoCompleteHintMenuComponent {
             // 上方有足够空间
             topPosition = abovePosition;
         }
+        // TODO: 需要判定左右空间，
 
         // 设置位置样式
         this.renderer.setStyle(listEl, 'top', `${topPosition}px`);

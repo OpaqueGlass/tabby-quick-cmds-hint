@@ -24,6 +24,15 @@ h3 Init Scripts
         (ngModelChange)='config.save()',
     )
 
+.form-line
+    .header
+        .title(translate) Enable completion when startup
+        .description(translate) When disabled, the autocomplete menu will not appear automatically, and users will need to enable the feature manually. You can manually control the auto-completion feature via the bird icon in the toolbar.
+    toggle(
+        [(ngModel)]='config.store.ogAutoCompletePlugin.initWithCompleteStart',
+        (ngModelChange)='config.save()',
+    )
+
 
 h3 AI
 

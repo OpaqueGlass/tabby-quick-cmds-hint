@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AutoCompleteAIDialogComponent } from 'components/autoCompleteAIDialog';
-import { AppService, HostWindowService, HotkeysService, ToolbarButton, ToolbarButtonProvider } from 'tabby-core';
+import { AppService, ConfigService, HostWindowService, HotkeysService, ToolbarButton, ToolbarButtonProvider } from 'tabby-core';
 import { inputInitScripts, sendInput } from 'utils/commonUtils';
 import { Subject } from "rxjs";
 import { MySignalService } from 'services/signalService';
@@ -10,6 +10,7 @@ import { MySignalService } from 'services/signalService';
 export class ButtonProvider extends ToolbarButtonProvider {
     private recentDialogRef: any;
 
+    private currentStatus: boolean;
     // private menuStatusNS: Subject<void> = new Subject<void>();
     // public menuStatus$ = this.menuStatusNS.asObservable();
     constructor (
@@ -17,9 +18,11 @@ export class ButtonProvider extends ToolbarButtonProvider {
         private hostWnd: HostWindowService,
         private app: AppService,
         private ngbModal: NgbModal,
-        signalService: MySignalService
+        private signalService: MySignalService,
+        private configService: ConfigService,
     ) {
-        super()
+        super();
+        this.currentStatus = configService.store?.ogAutoCompletePlugin?.initWithCompleteStart;
         // 仅注册在 ToolbarButtonProvider 中有效？
         hotkeys.hotkey$.subscribe(async (hotkey) => {
             if (hotkey === 'ogautocomplete_dev') {
@@ -42,7 +45,16 @@ export class ButtonProvider extends ToolbarButtonProvider {
     }
 
     provide(): ToolbarButton[] {
-        return [];
+        const that = this;
+        return [{
+            icon: require('./icons/bird.svg'),
+            weight: 5,
+            title: 'Hello Cmd',
+            touchBarNSImage: 'NSTouchBarComposeTemplate',
+            click: async () => {
+                that.signalService.changeMenuStatus();
+            }
+        }];
     }
 
     

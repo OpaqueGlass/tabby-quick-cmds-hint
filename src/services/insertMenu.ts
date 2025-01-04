@@ -20,6 +20,7 @@ import { HistoryContentProvider } from './provider/historyProvider';
 import { Subject } from 'rxjs';
 import { MySignalService } from './signalService';
 import { AutoCompleteTranslateService } from './translateService';
+import { StyleService } from './styleService';
 
 @Injectable({
 providedIn: 'root'
@@ -54,8 +55,10 @@ export class AddMenuService {
         private myTranslate: AutoCompleteTranslateService, // 这个东西，放在Provider、index都会导致其他中文内容丢失
         // openAIContentProvider: OpenAIContentProvider,
         // private buttonProvider: ButtonProvider, // 直接引用会卡在Cannot access 'AddMenuService' before initialization
-        private signalService: MySignalService
+        private signalService: MySignalService,
+        private cssService: StyleService
     ) {
+        this.menuStatus = configService.store.ogAutoCompletePlugin.initWithCompleteStart;
         document.addEventListener("keydown", this.handleKeyDown.bind(this), true);
         document.addEventListener("keyup", this.handleKeyUp.bind(this), true);
         this.contentProviderList = [
@@ -63,6 +66,11 @@ export class AddMenuService {
             historyContentProvider,
         ];
         logger.log("Add menu service init");
+        if (this.menuStatus) {
+            this.enable();
+        } else {
+            this.disable();
+        }
         signalService.menuStatus$.subscribe(()=>{
             if (this.getStatus()) {
                 this.disable();
@@ -161,6 +169,7 @@ export class AddMenuService {
         this.menuStatus = false;
         this.hideMenu();
         this.menuStatusNotificationSubject.next(this.menuStatus);
+        this.document.querySelector(".og-tac-tool-btn").setAttribute("stroke", "purple");
     }
 
     public enable() {
@@ -169,6 +178,7 @@ export class AddMenuService {
         this.lastCmd = "";
         this.recentBlockedUuid = "";
         this.menuStatusNotificationSubject.next(this.menuStatus);
+        this.document.querySelector(".og-tac-tool-btn").setAttribute("stroke", "green");
     }
 
     /**

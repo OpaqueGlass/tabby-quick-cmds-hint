@@ -39,6 +39,10 @@ module.exports = {
         test: /\.yaml$/,
         use: 'raw-loader',
       },
+      {
+        test: /\.svg$/,
+        use: 'svg-inline-loader',
+      }
     ]
   },
   externals: [
