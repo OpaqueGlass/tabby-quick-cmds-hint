@@ -40,3 +40,4 @@ This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://g
 
 - [tabby-clippy](https://github.com/Eugeny/tabby-clippy) An example plugin for Tabby
 - [minyoad/terminus-quick-cmds](https://github.com/minyoad/terminus-quick-cmds) / [Domain/terminus-quick-cmds](https://github.com/Domain/terminus-quick-cmds)
+- [lucide-icon](https://lucide.dev/) the SVG icon

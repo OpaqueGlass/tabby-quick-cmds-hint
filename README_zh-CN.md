@@ -38,3 +38,4 @@
 
 - [tabby-clippy](https://github.com/Eugeny/tabby-clippy) Tabby 的示例插件
 - [minyoad/terminus-quick-cmds](https://github.com/minyoad/terminus-quick-cmds) / [Domain/terminus-quick-cmds](https://github.com/Domain/terminus-quick-cmds)
+- [lucide-icon](https://lucide.dev/) svg图标
