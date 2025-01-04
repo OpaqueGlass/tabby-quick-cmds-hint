@@ -14,8 +14,8 @@
   zh_CN: 快速命令提示设置
 - en_US: Quick Hint
   zh_CN: 命令提示
-- en_US: For Bash Only
-  zh_CN: 仅支持Bash
+- en_US: For Bash Only. In some cases, it may not work properly.
+  zh_CN: 仅支持Bash。一些情况下不能正常运行。
 - en_US: Loading...
   zh_CN: 加载中...
 - en_US: Ask
@@ -42,3 +42,21 @@
   zh_CN: Tabby 安装在 Windows 系统上。
 - en_US: Other configurations or setups may not be supported.
   zh_CN: 其他配置或环境设置可能不受支持。
+- en_US: "Open \"Developer Tools\", \"Application\", \"Storage\" \"Indexed DB\" in the list on the left, and manage the saved history in \"og_tac_HistoryDB\"."
+  zh_CN: 打开“开发者工具”，“应用”，左侧列表中的“存储”“Indexed DB”，“og_tac_HistoryDB”中管理已保存的历史记录。
+- en_US: History
+  zh_CN: 历史记录
+- en_US: Use a custom regular expression to match the shell prompt
+  zh_CN: 使用自定义正则表达式匹配shell prompt
+- en_US: Appearance
+  zh_CN: 外观
+- en_US: Enable completion when startup
+  zh_CN: 在Tabby启动后，启用命令补全提示
+- en_US: "When disabled, the autocomplete menu will not appear automatically, and users will need to enable the feature manually. You can manually control the auto-completion feature via the bird icon in the toolbar. Green means it is enabled."
+  zh_CN: 禁用后，自动完成菜单不会自动出现，用户需要手动启用该功能。您可以通过工具栏中的小鸟图标手动控制自动完成功能。绿色意味着已启用。
+- en_US: Use regular expressions to identify shell prompts
+  zh_CN: 使用正则表达式识别shell prompt
+- en_US: "When enabled, the prompt may be triggered by mistake, or the wrong command may be captured, but it can avoid modifying the shell configuration file"
+  zh_CN: 启用后，可能错误地触发提示，或捕获到错误的命令，但可以避免修改shell配置文件
+- en_US: "If it doesn't work, don't forget to check the output in the developer tools"
+  zh_CN: 如果没有生效，别忘记查看开发者工具中的输出

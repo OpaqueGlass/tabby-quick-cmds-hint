@@ -12,13 +12,21 @@ h3(translate) Quick Cmd Hint Settings
         div(translate) Other configurations or setups may not be supported.
 
 
+h3(translate) General
 
-h3 Init Scripts
+.form-line
+    .header
+        .title(translate) Use regular expressions to identify shell prompts
+        .description(translate) When enabled, the prompt may be triggered by mistake, or the wrong command may be captured, but it can avoid modifying the shell configuration file
+    toggle(
+        [(ngModel)]='config.store.ogAutoCompletePlugin.useRegExpDetectPrompt',
+        (ngModelChange)='config.save()',
+    )
 
 .form-line
     .header
         .title(translate) Try to run init scripts when session connected
-        .description(translate) For Bash Only
+        .description(translate) For Bash Only. In some cases, it may not work properly.
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.autoInit',
         (ngModelChange)='config.save()',
@@ -27,7 +35,7 @@ h3 Init Scripts
 .form-line
     .header
         .title(translate) Enable completion when startup
-        .description(translate) When disabled, the autocomplete menu will not appear automatically, and users will need to enable the feature manually. You can manually control the auto-completion feature via the bird icon in the toolbar.
+        .description(translate) When disabled, the autocomplete menu will not appear automatically, and users will need to enable the feature manually. You can manually control the auto-completion feature via the bird icon in the toolbar. Green means it is enabled.
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.initWithCompleteStart',
         (ngModelChange)='config.save()',
@@ -68,12 +76,11 @@ h3 AI
     )
 
 
-h3 Appearance 外观 
+h3(translate) Appearance
 
 .form-line
     .header
-        .title(translate) 字体大小
-        .description(translate) 字体大小
+        .title(translate) Font size
     input.form-control(
         type='number',
         max=90,
@@ -83,9 +90,9 @@ h3 Appearance 外观
     )
 
 
-h3 History 历史
+h3(translate) History
 
-.form-line 打开“开发者工具”，“应用”，左侧列表中的“存储”“Indexed DB”，“og_tac_HistoryDB”中管理已保存的历史记录。
+.form-line(translate) Open "Developer Tools", "Application", "Storage" "Indexed DB" in the list on the left, and manage the saved history in "og_tac_HistoryDB".
 
 h3 Debug
 
@@ -100,3 +107,14 @@ h3 Debug
         [(ngModel)]='config.store.ogAutoCompletePlugin.debugLevel',
         (ngModelChange)='config.save()',
     )
+
+
+.form-line 
+    .header 
+        .title(translate) Use a custom regular expression to match the shell prompt
+        .description(translate) If it doesn't work, don't forget to check the output in the developer tools
+textarea.form-control(
+    rows='2',
+    [(ngModel)]='config.store.ogAutoCompletePlugin.customRegExp',
+    (ngModelChange)='config.save()'
+)

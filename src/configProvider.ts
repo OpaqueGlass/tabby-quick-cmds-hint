@@ -15,7 +15,9 @@ export class AutoCompleteConfigProvider extends ConfigProvider {
             },
             appearance: {
                 "fontSize": 15,
-            }
+            },
+            useRegExpDetectPrompt: true,
+            customRegExp: "",
         },
         hotkeys: {
             'ogautocomplete_stop': [],

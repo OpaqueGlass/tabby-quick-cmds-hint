@@ -11,7 +11,7 @@ import { AutoCompleteSettingsTabComponent } from 'components/autoCompleteSetting
 import { TerminalDecorator } from 'tabby-terminal'
 import { AutoCompleteTerminalDecorator } from 'terminalDecorator'
 import { AutoCompleteHintMenuComponent } from 'components/autoCompleteHintMenu'
-import { AddMenuService } from 'services/insertMenu'
+import { AddMenuService } from 'services/menuService'
 import { AutoCompleteHotkeyProvider } from 'hotkeyProvider'
 import { ButtonProvider } from 'buttonProvider'
 import { AutoCompleteAIDialogComponent } from 'components/autoCompleteAIDialog'

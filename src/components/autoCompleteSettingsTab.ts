@@ -14,7 +14,6 @@ export class AutoCompleteSettingsTabComponent {
         public config: ConfigService,
         private translate: TranslateService,
     ) {
-        console.log(this.translate.instant('Application'));
-        console.log(this.translate);
+        // console.log(this.translate.instant('Application'));
     }  
 }

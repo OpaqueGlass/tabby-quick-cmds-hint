@@ -23,7 +23,7 @@ import { AutoCompleteTranslateService } from './translateService';
 import { StyleService } from './styleService';
 
 @Injectable({
-providedIn: 'root'
+    providedIn: 'root'
 })
 export class AddMenuService {
     private componentRef: ComponentRef<AutoCompleteHintMenuComponent>;
@@ -108,7 +108,8 @@ export class AddMenuService {
     }
 
     public hideMenu() {
-        this.componentRef.instance.hideAutocompleteList();
+        // fix componentRef is undefined in constructor
+        this.componentRef?.instance?.hideAutocompleteList();
         this.clearCurrentTabCache();
     }
 

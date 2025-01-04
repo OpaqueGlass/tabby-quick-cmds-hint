@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 import { MyLogger } from 'services/myLogService';
 import { AppService, ConfigService, TranslateService } from 'tabby-core';
 import jsYaml from "js-yaml"
-import { AddMenuService } from 'services/insertMenu';
+import { AddMenuService } from 'services/menuService';
 import { isValidStr, sendInput } from 'utils/commonUtils';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 

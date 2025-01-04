@@ -49,7 +49,7 @@ export class ButtonProvider extends ToolbarButtonProvider {
         return [{
             icon: require('./icons/bird.svg'),
             weight: 5,
-            title: 'Hello Cmd',
+            title: 'Start or stop quick-cmd-hint',
             touchBarNSImage: 'NSTouchBarComposeTemplate',
             click: async () => {
                 that.signalService.changeMenuStatus();

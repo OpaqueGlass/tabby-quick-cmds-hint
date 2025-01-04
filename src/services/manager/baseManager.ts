@@ -1,5 +1,5 @@
 import { Subscription } from "rxjs";
-import { AddMenuService } from "services/insertMenu";
+import { AddMenuService } from "services/menuService";
 import { MyLogger } from "services/myLogService";
 import { ConfigService } from "tabby-core";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";

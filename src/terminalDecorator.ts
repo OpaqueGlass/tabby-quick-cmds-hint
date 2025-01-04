@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { bufferTime, Subscription } from 'rxjs'
-import { AddMenuService } from 'services/insertMenu';
+import { AddMenuService } from 'services/menuService';
 import { SimpleManager } from 'services/manager/simpleContentManager';
 import { MyLogger } from 'services/myLogService';
 import { AppService, ConfigService, NotificationsService } from 'tabby-core';
@@ -49,7 +49,9 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
             // 这里需要延迟，否则无法点击上屏
             await sleep(200);
             // TODO: 这里只是为了方便DEBUG，才不做处理的，正式版应当移除注释
-            // this.addMenuService.hideMenu();
+            if (this.configService.store.ogAutoCompletePlugin.debugLevel <= 1) {
+                this.addMenuService.hideMenu();
+            }
             this.logger.log("focus out");
         }, true);
         

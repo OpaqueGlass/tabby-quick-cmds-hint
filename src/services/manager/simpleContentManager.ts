@@ -2,16 +2,17 @@ import { cleanTerminalText, cleanTextByNewXterm, generateUUID, isValidStr, simpl
 import { BaseManager } from "./baseManager";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 import { MyLogger } from "services/myLogService";
-import { AddMenuService } from "services/insertMenu";
+import { AddMenuService } from "services/menuService";
 import { ConfigService, NotificationsService } from "tabby-core";
 
 export class SimpleManager extends BaseManager {
     private cmdStatusFlag: boolean;
     private userImputedFlag: boolean;
     private currentLine: string;
-    private recentCleanPrefix: string;
+    private recentCleanPrompt: string;
     private recentUuid: string;
     private recentStateLineHash: string;
+    private regExp: RegExp;
     constructor(
         public tab: BaseTerminalTabComponent<BaseTerminalProfile>, 
         public logger: MyLogger, 
@@ -20,7 +21,6 @@ export class SimpleManager extends BaseManager {
         public notification: NotificationsService
     ) {
         super(tab, logger, addMenuService, configService);
-        this.logger.log("test", this.logger, tab);
         this.currentLine = "";
         this.subscriptionList.push(addMenuService.enterNotification$.subscribe(this.endCmdStatus));
     }
@@ -63,7 +63,7 @@ export class SimpleManager extends BaseManager {
         //     this.currentLine = this.processBackspaces(currentLine);
         // }
     }
-    handleOutput = (data: string[]) => {
+    handleOutput = async (data: string[]) => {
         const outputString = data.join('');
         if (!this.tab.frontend.saveState) {
             this.logger.debug("当前终端不支持saveState");
@@ -71,7 +71,7 @@ export class SimpleManager extends BaseManager {
         }
         const allStateStr = this.tab.frontend.saveState();
         const lines = allStateStr.trim().split("\n");
-        const lastSerialLinesStr = lines.slice(-1).join("\n");
+        const lastStateLinesStr = lines.slice(-1).join("\n");
         // 重复响应判定，应对screen等停滞更新的情况
         const last5Line = lines.slice(lines.length - 5).join("\n")
         const recentStateLinesHash = simpleHash(last5Line);
@@ -82,46 +82,38 @@ export class SimpleManager extends BaseManager {
             this.recentStateLineHash = recentStateLinesHash;
         }
         this.logger.messyDebug("debug", allStateStr);
+        // 正则匹配获取prompt prefix，先执行
+        if (this.configService.store.ogAutoCompletePlugin.useRegExpDetectPrompt == true) {
+            const cleanLastStateLine = cleanTerminalText(lastStateLinesStr);
+            const matchResult = cleanLastStateLine.match(this.loadRegExp());
+            this.logger.debug("RegExp Debug", matchResult, lastStateLinesStr);
+            if (matchResult) {
+                this.recentCleanPrompt = matchResult[0];
+                this.cmdStatusFlag = true;
+                this.recentUuid = generateUUID();
+            }
+        }
         // 通过最近输出判定开始键入命令
         if (outputString.match(new RegExp("]1337;CurrentDir="))) {
             // 获取最后一行
             const lastRawLine = outputString.split("\n").slice(-1)[0];
             const startRegExp = /.*\x1b\]1337;CurrentDir=.*?\x07/gm;
             const matchGroup = lastRawLine.match(startRegExp);
-            let lastValidPrefix = "";
+            let lastValidPrompt = "";
             this.logger.debug("最后一行原文本", lastRawLine);
             this.logger.debug("匹配到的前缀", matchGroup);
             if (matchGroup && matchGroup.length > 0) {
-                lastValidPrefix = matchGroup[matchGroup.length - 1];
-            }
-            // 获取清理后内容
-            let tempPrefix = cleanTerminalText(lastValidPrefix);
-            this.logger.debug("匹配到的前缀lastValidPrefix", lastValidPrefix);
-            if (tempPrefix == null || tempPrefix.trim() == "") {
-                this.logger.log("前缀获取异常");
-                this.recentCleanPrefix = lastValidPrefix;
+                lastValidPrompt = matchGroup[matchGroup.length - 1];
+                // 获取清理后内容
+                this.recentCleanPrompt = await this.cleanTerminalText(lastValidPrompt)
+                this.logger.log("更新：清理后命令前缀", this.recentCleanPrompt);
+                this.cmdStatusFlag = true;
+                this.recentUuid = generateUUID();
             } else {
-                this.recentCleanPrefix = tempPrefix//.trim();
+                this.logger.warn("没有匹配到命令开始");
             }
-            // this.logger.messyDebug("近期命令列表", lines.slice(-10).join("\n"));
-            const lastMatchingLine = lines.reverse().find(line => line.includes(lastValidPrefix));
-            if (lastMatchingLine) {
-                const commandText = lastMatchingLine.split(lastValidPrefix).pop().trim();
-                this.logger.log("命令文本", commandText);
-            }
-            this.logger.log("更新：清理后命令前缀", this.recentCleanPrefix);
-            if (this.configService.store.ogAutoCompletePlugin.debugLevel < 2) {
-                cleanTextByNewXterm(lastValidPrefix).then((result)=>{
-                    if (this.recentCleanPrefix !== result) {
-                        this.notification.error("[tabbyquick-hint-debug-report]清理前缀不一致", this.recentCleanPrefix + " != " + result);
-                        this.logger.warn("清理前缀不一致", this.recentCleanPrefix + " != " + result);
-                    }
-                });
-            }
-            this.cmdStatusFlag = true;
-            this.recentUuid = generateUUID();
         }
-        // 检测命令执行，必须在原始未清理的内容中，全部输出中获取
+        // 检测命令执行，必须在原始未清理的内容中，全部输出中获取；主要用于保存历史
         const replayCmdPrefix = "]2323;Command="
         if (outputString.match(new RegExp(replayCmdPrefix)) ) {
             const startRegExp = /.*\x1b\]2323;Command=[^\x07]*\x07/gm;
@@ -136,10 +128,10 @@ export class SimpleManager extends BaseManager {
             }
             // 避免把乱七八糟的转义码当做history
             this.logger.debug("识别到的执行命令", cmd);
-            const cleanedCmd = cleanTerminalText(cmd);
-            this.logger.debug("清理后命令(一致？)", cleanedCmd == cmd, cleanedCmd);
+            const cleanedCmd = await this.cleanTerminalText(cmd);
+            // 存在转义符的、空格开始的命令不计入历史
             if (isValidStr(cmd) && cleanedCmd == cmd && !cmd.startsWith(" ")) {
-                // 处理black list
+                // 处理black list，一些类型的不保存到历史
                 if (cmd.match(new RegExp("^rm|\\[\\[", "gm"))) {
                     this.logger.debug("命令保存：Reject for black list", cmd);
                 }
@@ -149,12 +141,12 @@ export class SimpleManager extends BaseManager {
         }
 
         // 发送并处理正在输入的命令
-        this.logger.messyDebug("lastSerialLine", lastSerialLinesStr);
-        const cleanedLastSerialLinesStr = cleanTerminalText(lastSerialLinesStr);
+        this.logger.messyDebug("lastSerialLine", lastStateLinesStr);
+        const cleanedLastSerialLinesStr = cleanTerminalText(lastStateLinesStr);
         // some times [1B still not provided in vim, tmux or screen
         // "[1B" means cursor go to next line. in most cases, it means the command is finished
-        if (this.recentCleanPrefix && cleanedLastSerialLinesStr.includes(this.recentCleanPrefix) && !lastSerialLinesStr.includes("[1B") && this.cmdStatusFlag) {
-            const firstValieIndex = cleanedLastSerialLinesStr.lastIndexOf(this.recentCleanPrefix) + this.recentCleanPrefix.length;
+        if (this.recentCleanPrompt && cleanedLastSerialLinesStr.includes(this.recentCleanPrompt) && !lastStateLinesStr.includes("[1B") && this.cmdStatusFlag) {
+            const firstValieIndex = cleanedLastSerialLinesStr.lastIndexOf(this.recentCleanPrompt) + this.recentCleanPrompt.length;
             let cmd = cleanedLastSerialLinesStr.slice(firstValieIndex);
             this.logger.messyDebug("命令为", cmd);
             if (cmd && this.tab.hasFocus) {
@@ -167,7 +159,7 @@ export class SimpleManager extends BaseManager {
                 this.addMenuService.hideMenu();
             }
         } else if (this.tab.hasFocus) {
-            this.logger.messyDebug("menu close by not match or cmd disabled", this.recentCleanPrefix,  cleanedLastSerialLinesStr.includes(this.recentCleanPrefix), !lastSerialLinesStr.includes("[1B"));
+            this.logger.messyDebug("menu close by not match or cmd disabled", this.recentCleanPrompt,  cleanedLastSerialLinesStr.includes(this.recentCleanPrompt), !lastStateLinesStr.includes("[1B"));
             this.addMenuService.hideMenu();
         }
     }
@@ -175,5 +167,31 @@ export class SimpleManager extends BaseManager {
         this.logger.log("session changed", session);
         this.addMenuService.hideMenu();
         this.sessionUniqueId = generateUUID();
+    }
+    async cleanTerminalText(text: string): Promise<string> {
+        const cleanByRegExp = cleanTerminalText(text);
+        this.logger.debug("清理后命令(一致？)", cleanByRegExp == text, cleanByRegExp);
+        const cleanByXterm = await cleanTextByNewXterm(text);
+        if (!isValidStr(cleanByXterm?.trim())) {
+            return cleanByRegExp;
+        }
+        if (cleanByRegExp !== cleanByXterm && this.configService.store.ogAutoCompletePlugin.debugLevel < 2) {
+            this.notification.error("[tabbyquick-hint-debug-report]清理不一致");
+            this.logger.warn("清理不一致", cleanByRegExp + " != " + cleanByXterm);
+        }
+        return cleanByXterm;
+
+    }
+    loadRegExp() {
+        let regExp = /[^$#\n]*([a-zA-Z0-9_]+@[a-zA-Z0-9_-]+(:| )\S*)([\$\#]) /;
+        if (!isValidStr(this.configService.store.ogAutoCompletePlugin.customRegExp?.trim())) {
+            return regExp;
+        }
+        try {
+            regExp = new RegExp(this.configService.store.ogAutoCompletePlugin.customRegExp)
+        } catch (e) {
+            this.logger.error("Custom RegExp ERROR", e);
+        }
+        return regExp;
     }
 }
