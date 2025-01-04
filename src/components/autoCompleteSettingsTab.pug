@@ -37,7 +37,7 @@ h3(translate) General
         .title(translate) Enable completion when startup
         .description(translate) When disabled, the autocomplete menu will not appear automatically, and users will need to enable the feature manually. You can manually control the auto-completion feature via the bird icon in the toolbar. Green means it is enabled.
     toggle(
-        [(ngModel)]='config.store.ogAutoCompletePlugin.initWithCompleteStart',
+        [(ngModel)]='config.store.ogAutoCompletePlugin.enableCompleteWithCompleteStart',
         (ngModelChange)='config.save()',
     )
 

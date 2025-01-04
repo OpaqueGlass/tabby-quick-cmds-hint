@@ -7,7 +7,7 @@ export class AutoCompleteConfigProvider extends ConfigProvider {
             agent: 'OGAutoComplete',
             debugLevel: 3,
             autoInit: false,
-            initWithCompleteStart: true,
+            enableCompleteWithCompleteStart: true,
             ai: {
                 openAIBaseUrl: "https://api.openai.com/v1",
                 openAIKey: "",

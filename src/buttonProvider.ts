@@ -22,7 +22,7 @@ export class ButtonProvider extends ToolbarButtonProvider {
         private configService: ConfigService,
     ) {
         super();
-        this.currentStatus = configService.store?.ogAutoCompletePlugin?.initWithCompleteStart;
+        this.currentStatus = configService.store?.ogAutoCompletePlugin?.enableCompleteWithCompleteStart;
         // 仅注册在 ToolbarButtonProvider 中有效？
         hotkeys.hotkey$.subscribe(async (hotkey) => {
             if (hotkey === 'ogautocomplete_dev') {

@@ -58,7 +58,7 @@ export class AddMenuService {
         private signalService: MySignalService,
         private cssService: StyleService
     ) {
-        this.menuStatus = configService.store.ogAutoCompletePlugin.initWithCompleteStart;
+        this.menuStatus = configService.store.ogAutoCompletePlugin.enableCompleteWithCompleteStart;
         document.addEventListener("keydown", this.handleKeyDown.bind(this), true);
         document.addEventListener("keyup", this.handleKeyUp.bind(this), true);
         this.contentProviderList = [
