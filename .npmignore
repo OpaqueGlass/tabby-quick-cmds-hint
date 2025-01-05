@@ -1,0 +1,8 @@
+node_modules/
+test2.html
+.git
+.github
+# 排除配置文件
+tsconfig.json
+webpack.config.js
+yarn.lock
