@@ -15,16 +15,19 @@
    - 对于 `bash` 用户：  
       - 基本功能：在 `~/.bashrc` 中添加以下脚本
          ```bash
-         
+         export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
          ```
       - 历史记录：在 `~/.bashrc` 中添加以下脚本
          ```bash
-
+         function preexec_invoke_exec() {
+            printf "\033]2323;Command=%s\007" "$1"
+         }
+         trap 'preexec_invoke_exec "$BASH_COMMAND"' DEBUG
          ```
 2. 下载并启用 `tabby-quick-cmds` 插件。添加一些命令。
 3. 开启令人烦躁的提示体验。
 
-## TODO (待办事项)
+## TODO
 
 - [x] 在 `tabby-quick-cmds` 中保存命令
 - [x] 使用 AI 补全命令（仅在快捷键触发时可用）

@@ -16,11 +16,14 @@ This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://g
    - For `bash` user:  
       - basic function: add the following scripts to `~/.bashrc`
          ```bash
-         
+         export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
          ```
       - history: add the following scripts to `~/.bashrc`
          ```bash
-
+         function preexec_invoke_exec() {
+            printf "\033]2323;Command=%s\007" "$1"
+         }
+         trap 'preexec_invoke_exec "$BASH_COMMAND"' DEBUG
          ```
 2. Download and enable `tabby-quick-cmds` plugin. Add some commands.
 3. Start annoying hint experience.
