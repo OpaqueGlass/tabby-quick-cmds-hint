@@ -104,13 +104,17 @@ export class AutoCompleteHintMenuComponent {
         const targetRect = this.recentTargetElement.getBoundingClientRect();
         // 获取窗口的高度
         const viewportHeight = window.document.querySelector("ssh-tab .terminal.xterm")?.clientHeight || window.innerHeight;
+        const viewportWidth = window.document.querySelector("ssh-tab .terminal.xterm")?.clientWidth || window.innerWidth;
 
         // 下方位置和上方位置
         const belowPosition = targetRect.bottom;
         const abovePosition = targetRect.top - listEl.offsetHeight;
-        this.logger.debug("height(liOffset, belowPosition, viewport)", listEl.clientHeight, belowPosition, viewportHeight)
+        this.logger.debug("height(liOffset, belowPosition, viewport)", listEl.clientHeight, belowPosition, viewportHeight);
+        this.logger.debug("width(liOffset, rightPositionLeft, viewport)", listEl.clientWidth, viewportWidth - targetRect.left, viewportWidth, targetRect)
+
         // 决定显示在下方还是上方
         let topPosition: number;
+        let leftPosition: number;
         const fontSize: number = this.configService.store.terminal.fontSize;
         if (belowPosition + listEl.offsetHeight + fontSize <= viewportHeight) {
             // 下方有足够空间
@@ -121,10 +125,14 @@ export class AutoCompleteHintMenuComponent {
             topPosition = abovePosition;
         }
         // TODO: 需要判定左右空间，
-
+        if (targetRect.left - listEl.offsetWidth >= 0) {
+            leftPosition = targetRect.left - listEl.offsetWidth;
+        } else {
+            leftPosition = targetRect.left;
+        }
         // 设置位置样式
         this.renderer.setStyle(listEl, 'top', `${topPosition}px`);
-        this.renderer.setStyle(listEl, 'left', `${targetRect.left}px`);
+        this.renderer.setStyle(listEl, 'left', `${leftPosition}px`);
         // this.renderer.setStyle(listEl, 'width', `${targetRect.width}px`);
     }
 

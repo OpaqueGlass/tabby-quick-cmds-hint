@@ -1,0 +1,12 @@
+a.og-tac-a {
+    color: rgb(13, 110, 253);
+    text-decoration: underline;
+
+    &:hover {
+
+        color: rgba(13, 109, 253, 0.671);
+        text-decoration: underline;
+        cursor: pointer;
+        text-decoration: dotted;
+    }
+}

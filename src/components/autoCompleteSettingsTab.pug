@@ -118,3 +118,13 @@ textarea.form-control(
     [(ngModel)]='config.store.ogAutoCompletePlugin.customRegExp',
     (ngModelChange)='config.save()'
 )
+
+.footer-of-setting
+    div() 
+        | ⭐ Enjoying this project? If this project helps you or saves you time, please 
+        a.og-tac-a((click)='openGithub()' ) give it a star!
+        |  Your support is greatly appreciated and motivates me to keep improving it. 😊
+    div()
+        | 💡 Have questions or feedback? If you encounter any issues, 
+        a.og-tac-a((click)='openNewIssue()' ) feel free to open an issue
+        |  on GitHub! Your input is invaluable and helps me improve this project for everyone. 😊

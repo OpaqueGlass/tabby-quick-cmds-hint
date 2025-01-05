@@ -60,3 +60,5 @@
   zh_CN: 启用后，可能错误地触发提示，或捕获到错误的命令，但可以避免修改shell配置文件
 - en_US: "If it doesn't work, don't forget to check the output in the developer tools"
   zh_CN: 如果没有生效，别忘记查看开发者工具中的输出
+- en_US: "⭐ Enjoying this plugin? If this project helps you or saves you time, please give it a star! Your support is greatly appreciated and motivates me to keep improving it. 😊"
+  zh_CN: "⭐ 如果这个插件对你有帮助或节省了你的时间，请给它一颗星！非常感谢您的支持，并激励我不断改进它。😊"
