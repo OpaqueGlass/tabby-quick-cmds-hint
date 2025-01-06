@@ -124,8 +124,8 @@ export class AutoCompleteHintMenuComponent {
             // 上方有足够空间
             topPosition = abovePosition;
         }
-        // TODO: 需要判定左右空间，
-        if (targetRect.left - listEl.offsetWidth >= 0) {
+        // 需要判定左右空间
+        if (targetRect.left - listEl.offsetWidth >= 0 && targetRect.left + listEl.offsetWidth > viewportWidth) {
             leftPosition = targetRect.left - listEl.offsetWidth;
         } else {
             leftPosition = targetRect.left;
