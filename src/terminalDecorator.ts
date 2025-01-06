@@ -48,8 +48,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         tab.addEventListenerUntilDestroyed(tab.element.nativeElement.querySelector(".xterm-helper-textarea"), 'focusout', async () => {
             // 这里需要延迟，否则无法点击上屏
             await sleep(200);
-            // TODO: 这里只是为了方便DEBUG，才不做处理的，正式版应当移除注释
-            if (this.configService.store.ogAutoCompletePlugin.debugLevel <= 1) {
+            if (this.configService.store.ogAutoCompletePlugin.debugLevel > 1) {
                 this.addMenuService.hideMenu();
             }
             this.logger.log("focus out");

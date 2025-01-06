@@ -257,7 +257,7 @@ export class AddMenuService {
         const key = event.key;
         let actFlag = false;
         // this.logger.messyDebug("handle key down", event.key)
-        if (key === 'ArrowUp') {
+        if (key === 'ArrowUp' && !this.hasFloatWnd()) {
             if (this.componentRef.instance.selectUp() !== null) {
                 actFlag = true;
             } else {
@@ -265,30 +265,23 @@ export class AddMenuService {
                 this.recentHistoryJumpStatus = true;
                 this.hideMenu();
             }
-        } else if (key === 'ArrowDown') {
+        } else if (key === 'ArrowDown' && !this.hasFloatWnd()) {
             if (this.componentRef.instance.selectDown() !== null) {
                 actFlag = true;
             } else {
                 this.recentHistoryJumpStatus = true;
                 this.hideMenu();
             }
-        } else if (key === 'Enter') {
+        } else if (key === 'Enter' && !this.hasFloatWnd()) {
             const currentIndex = this.componentRef.instance.currentItemIndex;
             this.enterNotificationSubject.next();
-            // 判定是否有其他窗口显示在其上
-            // TODO: 减少判定范围
-            const floatLayers = this.document.querySelectorAll("ngb-modal-window[role]")
-            if (floatLayers == null || floatLayers.length > 0) {
-                this.logger.log("No act due to float layer exist");
+            if (currentIndex != -1 && this.componentRef.instance.showingFlag) {
+                this.componentRef.instance.inputItem(currentIndex, 1);
+                actFlag = true;
+                this.logger.debug("handle enter: input")
             } else {
-                if (currentIndex != -1 && this.componentRef.instance.showingFlag) {
-                    this.componentRef.instance.inputItem(currentIndex, 1);
-                    actFlag = true;
-                    this.logger.debug("handle enter: input")
-                } else {
-                    this.hideMenu();
-                    this.logger.debug("handle enter: hide")
-                }
+                this.hideMenu();
+                this.logger.debug("handle enter: hide")
             }
         } else if (key === 'Escape') {
             this.recentBlockedUuid = this.recentUuid;
@@ -296,14 +289,14 @@ export class AddMenuService {
                 this.hideMenu();
                 actFlag = true;
             }
-        } else if (key === 'Tab') {
+        } else if (key === 'Tab' && !this.hasFloatWnd()) {
             const currentIndex = this.componentRef.instance.currentItemIndex;
             if (currentIndex != -1) {
                 this.componentRef.instance.inputItem(currentIndex, 0);
                 actFlag = true;
 
             }
-        } else if (key === 'Backspace') {
+        } else if (key === 'Backspace' && !this.hasFloatWnd()) {
             this.componentRef.instance.clearSelection();
         } else {
             this.recentHistoryJumpStatus = false;
@@ -318,6 +311,13 @@ export class AddMenuService {
             this.logger.debug("No act")
         }
 
+    }
+    hasFloatWnd(): boolean {
+        const floatLayers = this.document.querySelectorAll("ngb-modal-window[role]")
+        if (floatLayers == null || floatLayers.length == 0) {
+            return false;
+        }
+        return true;
     }
 
 

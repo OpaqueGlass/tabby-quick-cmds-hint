@@ -1,17 +1,20 @@
-.og-autocomplete-list(
-    [ngStyle]="{'font-size': configService.store.ogAutoCompletePlugin.appearance.fontSize + 'px'}"
+.og-autocomplete-list.list-group(
+    [ngStyle]="{'font-size': configService.store.ogAutoCompletePlugin.appearance.fontSize + 'px'}",
+    [attr.theme-mode]="themeMode",
+    [attr.theme-name]="themeName"
 )
     .og-autocomplete-main-text {{ mainText }}
-    ng-container(*ngFor='let option of options; let i = index')
-        .og-autocomplete-item(
-            [attr.data-index]='i',
-            [class.highlight]='i === currentItemIndex',
-            (click)='inputItem(i, 0)'
-        )
-            div.og-ac-type(
-                [attr.data-cmd-type]='option.type'
-            ) {{option.type}}
-            div.og-ac-name {{option.name}}
+    .og-autocomplete-item-list
+        ng-container(*ngFor='let option of options; let i = index')
+            .og-autocomplete-item(
+                [attr.data-index]='i',
+                [class.og-tac-selected]='i === currentItemIndex',
+                (click)='inputItem(i, 0)'
+            )
+                div.og-ac-type(
+                    [attr.data-cmd-type]='option.type'
+                ) {{option.type}}
+                div.og-ac-name {{option.name}}
     ng-container(*ngIf='options.length > 0 && currentItemIndex != -1 && isValidStr(options[currentItemIndex]?.desp)')
         .og-autocomplete-footer {{options[currentItemIndex].desp}}
     ng-container(*ngIf='options.length === 0')

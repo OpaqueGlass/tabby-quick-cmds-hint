@@ -1,6 +1,6 @@
 import { Component, ElementRef, Inject, Input, Renderer2, SimpleChanges, type OnChanges, ChangeDetectorRef } from '@angular/core'
 import { OptionItem } from '../api/pluginType'
-import { AppService, ConfigService } from 'tabby-core';
+import { AppService, ConfigService, PlatformService, ThemesService } from 'tabby-core';
 import { isValidStr, sendInput } from 'utils/commonUtils';
 import { MyLogger } from 'services/myLogService';
 import { DOCUMENT } from '@angular/common';
@@ -16,19 +16,45 @@ export class AutoCompleteHintMenuComponent {
     recentTargetElement: HTMLElement;
     showingFlag: boolean = false;
     contentGroups: {[key: string]: OptionItem[]} = {};
+    themeMode: string = "dark";
+    themeName: string = "NotSet";
     constructor(
         private renderer: Renderer2,
         private elRef: ElementRef,
         private app: AppService,
         private logger: MyLogger,
         @Inject(DOCUMENT) private document: Document,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private themeService: ThemesService,
+        private platformService: PlatformService,
     ) {
         this.currentItemIndex = -1;
         this.contentGroups = {
             "q": [],// quick cmd
             "h": [],// highlight
             "a": [],// ai
+        }
+        this.themeChanged();
+        this.themeService.themeChanged$.subscribe(()=>{
+            this.themeChanged();
+        })
+    }
+
+    themeChanged() {
+        this.themeMode = this.configService.store.appearance.colorSchemeMode;
+        let theme: 'dark'|'light' = 'dark'
+        if (this.configService.store.appearance.colorSchemeMode === 'light') {
+            theme = 'light'
+        } else if (this.configService.store.appearance.colorSchemeMode === 'auto') {
+            //@ts-ignore
+            theme = this.platformService?.getTheme() ?? 'dark';
+        }
+        this.themeMode = theme;
+
+        if (theme === 'light') {
+            this.themeName = this.configService.store.terminal.lightColorScheme.name
+        } else {
+            this.themeName =  this.configService.store.terminal.colorScheme.name
         }
     }
 
@@ -130,6 +156,8 @@ export class AutoCompleteHintMenuComponent {
         } else {
             leftPosition = targetRect.left;
         }
+        // 设置max-height:
+
         // 设置位置样式
         this.renderer.setStyle(listEl, 'top', `${topPosition}px`);
         this.renderer.setStyle(listEl, 'left', `${leftPosition}px`);
@@ -157,6 +185,7 @@ export class AutoCompleteHintMenuComponent {
         }
         if (this.currentItemIndex >= 0) {
             this.currentItemIndex--;
+            setTimeout(this.scrollIntoVisible.bind(this), 0);
         } else {
             this.logger.log("???", this.currentItemIndex);
             return null;
@@ -170,6 +199,7 @@ export class AutoCompleteHintMenuComponent {
         }
         if (this.currentItemIndex < this.options.length - 1) {
             this.currentItemIndex++;
+            setTimeout(this.scrollIntoVisible.bind(this), 0);
             // setTimeout(this.adjustPosition.bind(this), 0);
         } else {
             return this.currentItemIndex;
@@ -223,5 +253,22 @@ export class AutoCompleteHintMenuComponent {
     }
     isValidStr(str: string) {
         return isValidStr(str);
+    }
+    scrollIntoVisible() {
+        // const outerContainer = categoriesContainer.value;
+        // let container = this.elRef.nativeElement.querySelector(".og-autocomplete-item-list");
+        let container = null;
+        // danger: 这和DOM结构密切相关；由于缓存和更新延迟，不能直接使用querySelector定位
+        const selectedElement = this.elRef.nativeElement.querySelector(".og-tac-selected");
+        if (selectedElement) {
+            container = selectedElement.closest('.og-autocomplete-item-list');
+            const containerRect = container.getBoundingClientRect();
+            const elementRect = selectedElement.getBoundingClientRect();
+            if (elementRect.top < containerRect.top) {
+                container.scrollTop -= (containerRect.top - elementRect.top) + elementRect.height;
+            } else if (elementRect.bottom > containerRect.bottom) {
+                container.scrollTop += (elementRect.bottom - containerRect.bottom) + elementRect.height;
+            }
+        }
     }
 }
