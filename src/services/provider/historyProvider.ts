@@ -3,6 +3,7 @@ import { MyLogger } from "services/myLogService";
 import { BaseContentProvider, OptionItemResultWrap } from "./baseProvider";
 import Fuse from "fuse.js";
 import { Injectable } from "@angular/core";
+import { ConfigService } from "tabby-core";
 
 @Injectable({
     providedIn: 'root'
@@ -13,9 +14,10 @@ export class HistoryContentProvider extends BaseContentProvider {
     private storeName = "CmdHistory";
     private db: IDBDatabase;
     constructor(
-        protected logger: MyLogger
+        protected logger: MyLogger,
+        protected configService: ConfigService,
     ) {
-        super(logger);
+        super(logger, configService);
         this.openDB().then((db) => {
             this.db = db;
             // 清理历史记录
@@ -32,6 +34,9 @@ export class HistoryContentProvider extends BaseContentProvider {
     }
     async getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
         if (this.db == null) {
+            return null;
+        }
+        if (!this.configService.store.ogAutoCompletePlugin.history.enable) {
             return null;
         }
         const result: OptionItem[] = [];
@@ -72,9 +77,27 @@ export class HistoryContentProvider extends BaseContentProvider {
         if (this.db == null) {
             return null;
         }
+        if (!this.configService.store.ogAutoCompletePlugin.history.enable) {
+            return null;
+        }
+        inputCmd = inputCmd.trim();
+        if (!this.checkCmd(inputCmd)) {
+            return ;
+        }
         this.addOrUpdateCmdHistory(this.db, {time: new Date(), cmd: inputCmd, profileId: terminalSessionInfo.tab.profile.id}).catch((err)=>{
             this.logger.error(err);
         });
+    }
+    checkCmd(inputCmd: string):boolean {
+        if (inputCmd.match(new RegExp("^(rm |\\[\\[|cd )", "gm"))) {
+            this.logger.debug("命令保存：Reject for black list", inputCmd);
+            return false;
+        }
+        // 键入一部分的命令不予处理
+        if (inputCmd.endsWith("/")) {
+            return false;
+        }
+        return true;
     }
     userSelectedCallback(inputCmd: string): void {
 

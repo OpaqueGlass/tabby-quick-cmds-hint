@@ -94,6 +94,15 @@ h3(translate) History
 
 .form-line(translate) Open "Developer Tools", "Application", "Storage" "Indexed DB" in the list on the left, and manage the saved history in "og_tac_HistoryDB".
 
+.form-line
+    .header
+        .title(translate) Enable User Typed Command History
+        .description(translate) Currently, it is only effective after configuring the prompt escape sequence. Turning this off will still create the database and will not clear the history that was previously saved.
+    toggle(
+        [(ngModel)]='config.store.ogAutoCompletePlugin.history.enable',
+        (ngModelChange)='config.save()',
+    )
+
 h3 Debug
 
 .form-line

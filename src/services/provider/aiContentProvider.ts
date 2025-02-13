@@ -21,7 +21,7 @@ export class AIContentProvider extends BaseContentProvider {
         protected configService: ConfigService,
         private ngbModal: NgbModal,
     ) {
-        super(logger);
+        super(logger, configService);
     }
     
     // TODO: 需要提供给gpt具体的终端等信息

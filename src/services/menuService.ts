@@ -153,7 +153,13 @@ export class AddMenuService {
         this.componentRef.instance.setContent(resultWrap.optionItem, resultWrap.type);
     }
 
-    public broadcastNewCmd(cmd: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>) {
+    /**
+     * 向Provider广播用户输入的，已回车的cmd
+     * @param cmd 用户输入的cmd
+     * @param sessionId sessionId，和会话相关
+     * @param tab tab实例
+     */
+    public broadcastUserEnteredCmd(cmd: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>) {
         const terminalSessionInfo: TerminalSessionInfo = {
             config: this.configService,
             tab: tab,
@@ -294,7 +300,6 @@ export class AddMenuService {
             if (currentIndex != -1) {
                 this.componentRef.instance.inputItem(currentIndex, 0);
                 actFlag = true;
-
             }
         } else if (key === 'Backspace' && !this.hasFloatWnd()) {
             this.componentRef.instance.clearSelection();

@@ -18,6 +18,9 @@ export class AutoCompleteConfigProvider extends ConfigProvider {
             },
             useRegExpDetectPrompt: true,
             customRegExp: "",
+            history: {
+                "enable": false,
+            }
         },
         hotkeys: {
             'ogautocomplete_stop': [],

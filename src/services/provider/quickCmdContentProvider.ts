@@ -3,6 +3,7 @@ import Fuse from 'fuse.js';
 import { BaseContentProvider, OptionItemResultWrap } from "./baseProvider";
 import { MyLogger } from "services/myLogService";
 import { Injectable } from "@angular/core";
+import { ConfigService } from "tabby-core";
 
 @Injectable({
     providedIn: 'root'
@@ -10,9 +11,10 @@ import { Injectable } from "@angular/core";
 export class QuickCmdContentProvider extends BaseContentProvider {
     protected static providerTypeKey: string = "q";
     constructor(
-        protected logger: MyLogger
+        protected logger: MyLogger,
+        protected configService: ConfigService,
     ) {
-        super(logger);
+        super(logger, configService);
     }
     
     async getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
