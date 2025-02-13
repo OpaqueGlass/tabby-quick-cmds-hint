@@ -11,6 +11,9 @@ h3(translate) Quick Cmd Hint Settings
         
         div(translate) Other configurations or setups may not be supported.
 
+.alert.alert-info.d-flex.align-items-center(*ngIf='config.store["qc"] == undefined')
+    .me-auto
+        div(translate) To use this plugin, first download and enable tabby-quick-cmds, and then create some commands within it.
 
 h3(translate) General
 
@@ -96,10 +99,19 @@ h3(translate) History
 
 .form-line
     .header
-        .title(translate) Enable User Typed Command History
-        .description(translate) Currently, it is only effective after configuring the prompt escape sequence. Turning this off will still create the database and will not clear the history that was previously saved.
+        .title(translate) Enable the history of user input commands
+        .description(translate) Turning this off will still create the database (but without recording history) and will not clear the history that was previously saved.
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.history.enable',
+        (ngModelChange)='config.save()',
+    )
+
+.form-line
+    .header
+        .title(translate) Record input commands matched by regular expressions
+        .description(translate) It may record incorrect or incomplete commands. When disabled, only input commands matched by the prompt escape sequence will be saved.
+    toggle(
+        [(ngModel)]='config.store.ogAutoCompletePlugin.history.countInRegExp',
         (ngModelChange)='config.save()',
     )
 
@@ -130,10 +142,10 @@ textarea.form-control(
 
 .footer-of-setting
     div() 
-        | ⭐ Enjoying this project? If this project helps you or saves you time, please 
-        a.og-tac-a((click)='openGithub()' ) give it a star!
-        |  Your support is greatly appreciated and motivates me to keep improving it. 😊
+        span(translate) ⭐ If this project helps you, please 
+        a.og-tac-a((click)='openGithub()',translate ) give it a star!
+        span(translate)  Your support is greatly appreciated. 😊
     div()
-        | 💡 Have questions or feedback? If you encounter any issues, 
-        a.og-tac-a((click)='openNewIssue()' ) feel free to open an issue
-        |  on GitHub! Your input is invaluable and helps me improve this project for everyone. 😊
+        span(translate) 💡 If you encounter any issues, 
+        a.og-tac-a((click)='openNewIssue()',translate ) feel free to open an issue on GitHub!
+        span(translate) 😊

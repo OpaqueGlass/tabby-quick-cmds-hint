@@ -158,12 +158,14 @@ export class AddMenuService {
      * @param cmd 用户输入的cmd
      * @param sessionId sessionId，和会话相关
      * @param tab tab实例
+     * @param matchedByRegExp 
      */
-    public broadcastUserEnteredCmd(cmd: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>) {
+    public broadcastUserEnteredCmd(cmd: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>, matchedByRegExp: boolean) {
         const terminalSessionInfo: TerminalSessionInfo = {
             config: this.configService,
             tab: tab,
-            sessionId: sessionId
+            sessionId: sessionId,
+            matchedByRegExp: matchedByRegExp
         }
         this.contentProviderList.forEach((provider) => {
             provider.userInputCmd(cmd, terminalSessionInfo).catch((err) => {

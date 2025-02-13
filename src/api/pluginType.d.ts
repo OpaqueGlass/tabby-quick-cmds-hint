@@ -12,6 +12,7 @@ interface TerminalSessionInfo {
     config: ConfigService;
     tab: BaseTerminalTabComponent<BaseTerminalProfile>;
     sessionId: string;
+    matchedByRegExp: boolean;
 }
 export interface OptionItem {
     name: string; // 显示在候选区中的名称

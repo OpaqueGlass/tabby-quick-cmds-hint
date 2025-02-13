@@ -14,9 +14,9 @@ export class SimpleManager extends BaseManager {
     // 命令输入id，用于区分一次输入
     private recentUuid: string;
     private recentStateLineHash: string;
-    private regExp: RegExp;
+    // private regExp: RegExp;
     // 使用正则表达式匹配的
-    private usingRexExp: boolean;
+    private usingRegExp: boolean;
     constructor(
         public tab: BaseTerminalTabComponent<BaseTerminalProfile>, 
         public logger: MyLogger, 
@@ -34,8 +34,9 @@ export class SimpleManager extends BaseManager {
         const lastStateLine = this.getLastStateLine();
         // 检查
         const cmd = await this.getCmd(lastStateLine, cleanTerminalText(lastStateLine));
-        if (isValidStr(cmd) && cmd[0] != " " && !this.usingRexExp && !cmd.trim().endsWith("/")) {
-            this.addMenuService.broadcastUserEnteredCmd(cmd, this.sessionUniqueId, this.tab);
+        if (isValidStr(cmd) && cmd[0] != " " && !cmd.trim().endsWith("/")) {
+            this.logger.log("广播命令", cmd);
+            this.addMenuService.broadcastUserEnteredCmd(cmd, this.sessionUniqueId, this.tab, this.usingRegExp);
         }
     }
     handleInput = (buffers: Buffer[]) => {
@@ -101,7 +102,7 @@ export class SimpleManager extends BaseManager {
                 this.recentCleanPrompt = matchResult[0];
                 this.cmdStatusFlag = true;
                 this.recentUuid = generateUUID();
-                this.usingRexExp = true;
+                this.usingRegExp = true;
             }
         }
         // 从 转移序列 获取prompt prefix
@@ -120,7 +121,7 @@ export class SimpleManager extends BaseManager {
                 this.logger.log("更新：清理后命令前缀", this.recentCleanPrompt);
                 this.cmdStatusFlag = true;
                 this.recentUuid = generateUUID();
-                this.usingRexExp = false;
+                this.usingRegExp = false;
             } else {
                 this.logger.warn("没有匹配到命令开始");
             }

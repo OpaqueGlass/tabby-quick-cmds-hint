@@ -80,6 +80,9 @@ export class HistoryContentProvider extends BaseContentProvider {
         if (!this.configService.store.ogAutoCompletePlugin.history.enable) {
             return null;
         }
+        if (!this.configService.store.ogAutoCompletePlugin.history.countInRegExp && terminalSessionInfo.matchedByRegExp) {
+            return null;
+        }
         inputCmd = inputCmd.trim();
         if (!this.checkCmd(inputCmd)) {
             return ;

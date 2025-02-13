@@ -60,5 +60,25 @@
   zh_CN: 启用后，可能错误地触发提示，或捕获到错误的命令，但可以避免修改shell配置文件
 - en_US: "If it doesn't work, don't forget to check the output in the developer tools"
   zh_CN: 如果没有生效，别忘记查看开发者工具中的输出
-- en_US: "⭐ Enjoying this plugin? If this project helps you or saves you time, please give it a star! Your support is greatly appreciated and motivates me to keep improving it. 😊"
+- en_US: "⭐ If this project helps you or saves you time, please give it a star! Your support is greatly appreciated. 😊"
   zh_CN: "⭐ 如果这个插件对你有帮助或节省了你的时间，请给它一颗星！非常感谢您的支持，并激励我不断改进它。😊"
+- en_US: "To use this plugin, first download and enable tabby-quick-cmds, and then create some commands within it."
+  zh_CN: "为使用此插件，请先下载启用tabby-quick-cmds，并在其中创建一些命令。"
+- en_US: "Enable the history of user input commands"
+  zh_CN: "启用用户输入命令历史"
+- en_US: "Turning this off will still create the database (but without recording history) and will not clear the history that was previously saved."
+  zh_CN: "关闭此项，仍然会创建历史记录数据库（但不记录历史），先前记录的历史不会被自动清除。"
+- en_US: "Record input commands matched by regular expressions"
+  zh_CN: "记录由正则表达式匹配到的命令"
+- en_US: "It may record incorrect or incomplete commands. When disabled, only input commands matched by the prompt escape sequence will be saved."
+  zh_CN: "可能记录到错误或不完整的命令。禁用后，只保存由prompt转义序列匹配的输入命令。"
+- en_US: ⭐ If this project helps you, please
+  zh_CN: ⭐ 如果这个项目对你有帮助，请
+- en_US: give it a star!
+  zh_CN: 点亮Star。
+- en_US: Your support is greatly appreciated. 😊
+  zh_CN: 感谢你的支持！😊
+- en_US: 💡 If you encounter any issues, 
+  zh_CN: 💡 如果遇到问题，
+- en_US: feel free to open an issue on GitHub!
+  zh_CN: 请到Github创建issue

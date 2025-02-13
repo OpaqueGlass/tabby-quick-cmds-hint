@@ -20,6 +20,7 @@ export class AutoCompleteConfigProvider extends ConfigProvider {
             customRegExp: "",
             history: {
                 "enable": false,
+                "countInRegExp": true,
             }
         },
         hotkeys: {
