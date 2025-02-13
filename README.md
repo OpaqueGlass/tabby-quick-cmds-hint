@@ -9,7 +9,7 @@ This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://g
 > [!NOTE]
 > 
 > - This plugin is still in development.
-> - It may not be compatible with shells other than Bash, or with systems other than Ubuntu. See [docs/INIT.md](./docs/INIT.md) for more info.
+> - It may not be compatible with shells other than Bash, or with systems other than Ubuntu. See [docs/INIT.md](./docs/INIT_en-US.md) for more info.
 > - The console log output may also be quite messy.
 
 1. 
@@ -17,13 +17,6 @@ This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://g
       - basic function: add the following scripts to `~/.bashrc`
          ```bash
          export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
-         ```
-      - history: add the following scripts to `~/.bashrc`
-         ```bash
-         function preexec_invoke_exec() {
-            printf "\033]2323;Command=%s\007" "$1"
-         }
-         trap 'preexec_invoke_exec "$BASH_COMMAND"' DEBUG
          ```
 2. Download and enable `tabby-quick-cmds` plugin. Add some commands.
 3. Start annoying hint experience.

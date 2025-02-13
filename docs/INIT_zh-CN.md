@@ -1,6 +1,6 @@
 # 初次使用说明和插件实现方式的解释
 
-> 最后更新于：v0.1.0 更新时。
+> 最后更新于：v0.1.2 更新时。
 
 ## 插件实现方式说明
 
@@ -13,7 +13,11 @@
 识别为命令的一部分。
 
 
-### 2. 历史命令（实际执行命令）记录
+### 2. 历史命令记录
+
+> 我正在尝试移除这个前置条件。
+> 
+> 因为这样获得的命令将是实际执行的，可能包含不需要的信息（如`[[]]`判断、alias）。
 
 插件基于执行命令后，shell通过`]2323;Command=$(cmd)\x07`返回执行的命令记录。这里是自定义
 的转义序列，没有参考来源。如果和其他已有实现冲突，请反馈。
@@ -37,16 +41,16 @@
 export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
 ```
 
-命令历史记录：
-
-```bash
-function preexec_invoke_exec() {
-    printf "\033]2323;Command=%s\007" "$1"
-}
-
-trap 'preexec_invoke_exec "$BASH_COMMAND"' DEBUG
-                                                      
-```
+> 命令历史记录：
+> 
+> ```bash
+> function preexec_invoke_exec() {
+>     printf "\033]2323;Command=%s\007" "$1"
+> }
+> 
+> trap 'preexec_invoke_exec "$BASH_COMMAND"' DEBUG
+>                                                       
+> ```
 
 #### fish
 

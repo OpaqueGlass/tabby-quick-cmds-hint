@@ -10,7 +10,11 @@ The plugin uses a regular expression to match `CurrentDir.*\a` in the raw output
 
 As a result, the `CurrentDir`-related prompt must appear at the end of the command input prompt. Otherwise, the plugin will not function correctly.
 
-### 2. Recording Historical Commands (Executed Commands)
+### 2. Recording Historical Commands
+
+> I'm tring to remove this prerequisite.
+>
+> Because the commands obtained this way will be the actual executed ones, they may contain unnecessary information (such as `[[ ]]` judgments, alias).
 
 The plugin records executed commands based on the shell's return of the command via `]2323;Command=$(cmd)\x07` after execution. This uses a custom escape sequence with no external references. If this conflicts with other existing implementations, please provide feedback.
 
@@ -30,15 +34,15 @@ Refer directly to [tabby/wiki/Shell-working-directory-reporting#bash](https://gi
 export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
 ```
 
-To use history: 
-
-```bash
-function preexec_invoke_exec() {
-    printf "\033]2323;Command=%s\007" "$1"
-}
-
-trap 'preexec_invoke_exec "$BASH_COMMAND"' DEBUG
-```
+> To use history: 
+> 
+> ```bash
+> function preexec_invoke_exec() {
+>     printf "\033]2323;Command=%s\007" "$1"
+> }
+> 
+> trap 'preexec_invoke_exec "$BASH_COMMAND"' DEBUG
+> ```
 
 #### Fish
 
