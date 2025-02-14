@@ -33,13 +33,13 @@ import { AutoCompleteTranslateService } from 'services/translateService'
         { provide: TerminalDecorator, useClass: AutoCompleteTerminalDecorator, multi: true },
         { provide: HotkeyProvider, useClass: AutoCompleteHotkeyProvider, multi: true },
         { provide: ToolbarButtonProvider, useClass: ButtonProvider, multi: true },
+        AddMenuService,
+        AutoCompleteTranslateService,
     ],
     declarations: [
         AutoCompleteSettingsTabComponent,
         AutoCompleteHintMenuComponent,
-        AddMenuService,
         AutoCompleteAIDialogComponent,
-        AutoCompleteTranslateService,
     ],
 })
 export default class AutoCompleteModule { }
