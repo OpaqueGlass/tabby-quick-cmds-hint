@@ -82,3 +82,21 @@
   zh_CN: 💡 如果遇到问题，
 - en_US: feel free to open an issue on GitHub!
   zh_CN: 请到Github创建issue
+- en_US: "The plugin has been primarily tested in the following scenarios: connecting to servers running"
+  zh_CN: "插件主要在以下情况进行测试：连接到运行"
+- en_US: "or"
+  zh_CN: "或"
+- en_US: "via"
+  zh_CN: "的设备（通过"
+- en_US: "; using"
+  zh_CN: "）；使用"
+- en_US: "as the shell environment; and using Tabby on Windows systems."
+  zh_CN: "作为Shell；在Windows系统上使用Tabby。"
+- en_US: "After enabling the plugin, entering content will trigger a prompt. Use the up and down arrow keys to select an item. Pressing"
+  zh_CN: "启用此插件，输入内容将触发提示。使用方向上下键选择一个项目。按下"
+- en_US: "will input the selected item into the terminal, while pressing"
+  zh_CN: "将输入选择的项目到终端。按下"
+- en_US: "will input the selected item into the terminal and execute it by pressing enter."
+  zh_CN: "将输入选择的项目到终端，并回车执行它。"
+- en_US: Show complete menu now
+  zh_CN: "立刻显示提示菜单"

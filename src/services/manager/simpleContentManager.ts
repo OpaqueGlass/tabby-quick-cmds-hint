@@ -4,6 +4,7 @@ import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 import { MyLogger } from "services/myLogService";
 import { AddMenuService } from "services/menuService";
 import { ConfigService, NotificationsService } from "tabby-core";
+import { MySignalService } from "services/signalService";
 
 export class SimpleManager extends BaseManager {
     // 命令输入状态，由enter清除，由匹配到prefix开始
@@ -22,11 +23,13 @@ export class SimpleManager extends BaseManager {
         public logger: MyLogger, 
         public addMenuService: AddMenuService, 
         public configService: ConfigService,
-        public notification: NotificationsService
+        public notification: NotificationsService,
+        private signalService: MySignalService
     ) {
         super(tab, logger, addMenuService, configService);
         this.currentLine = "";
         this.subscriptionList.push(addMenuService.enterNotification$.subscribe(this.endCmdStatus));
+        signalService.startCompleteNow$.subscribe(this.suggestNow.bind(this));
     }
     endCmdStatus = async () => {
         this.logger.debug("收到Enter信号")
@@ -153,15 +156,7 @@ export class SimpleManager extends BaseManager {
 
         // 发送并处理正在输入的命令
         this.logger.messyDebug("lastSerialLine", lastStateLinesStr);
-        const cleanedLastSerialLinesStr = cleanTerminalText(lastStateLinesStr);
-        const cmd = await this.getCmd(lastStateLinesStr, cleanedLastSerialLinesStr);
-        if (isValidStr(cmd) && this.cmdStatusFlag) {
-            this.logger.messyDebug("命令为", cmd);
-            this.suggest(cmd);
-        } else if (this.tab.hasFocus) {
-            this.logger.messyDebug("menu close by not match or cmd disabled", this.recentCleanPrompt,  cleanedLastSerialLinesStr.includes(this.recentCleanPrompt), !lastStateLinesStr.includes("[1B"));
-            this.addMenuService.hideMenu();
-        }
+        this.getCmdAndSuggest(lastStateLinesStr);
     }
     getLastStateLine() {
         const allStateStr = this.tab.frontend.saveState();
@@ -192,16 +187,34 @@ export class SimpleManager extends BaseManager {
      * 发送命令，给出提示菜单
      * @param cmd 提示的命令
      */
-    suggest(cmd: string) {
+    sendCmd(cmd: string, force: boolean = false) {
         if (isValidStr(cmd) && this.tab.hasFocus) {
             this.logger.messyDebug("menu sending", cmd);
-            this.addMenuService.sendCurrentText(cmd, this.recentUuid, this.sessionUniqueId, this.tab);
+            this.addMenuService.sendCurrentText(cmd, this.recentUuid, this.sessionUniqueId, this.tab, force);
         } else if (this.tab.hasFocus) {
             if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
                 this.logger.debug("menu close");
             }
             this.addMenuService.hideMenu();
         }
+    }
+    async getCmdAndSuggest(lastStateLineStr: string, force: boolean=false) {
+        const cleanedLastSerialLinesStr = cleanTerminalText(lastStateLineStr);
+        const cmd = await this.getCmd(lastStateLineStr, cleanedLastSerialLinesStr);
+        if (isValidStr(cmd) && this.cmdStatusFlag) {
+            this.logger.messyDebug("命令为", cmd);
+            this.sendCmd(cmd, force);
+        } else if (this.tab.hasFocus) {
+            this.logger.messyDebug("menu close by not match or cmd disabled", this.recentCleanPrompt,  cleanedLastSerialLinesStr.includes(this.recentCleanPrompt), !lastStateLineStr.includes("[1B"));
+            this.addMenuService.hideMenu();
+        }
+    }
+    suggestNow() {
+        if (!this.tab.hasFocus) {
+            return;
+        }
+        this.recentUuid = generateUUID();
+        this.getCmdAndSuggest(this.getLastStateLine(), true);
     }
     handleSessionChanged = (session) => {
         this.logger.log("session changed", session);

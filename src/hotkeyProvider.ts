@@ -20,6 +20,10 @@ export class AutoCompleteHotkeyProvider extends HotkeyProvider {
         {
             id: "ogautocomplete_ask_ai",
             name: "AI Command Generation",
+        },
+        {
+            id: "ogautocomplete_hint_now",
+            name: "Show complete menu now"
         }
     ]
 

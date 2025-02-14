@@ -28,6 +28,7 @@ export class AutoCompleteConfigProvider extends ConfigProvider {
             'ogautocomplete_dev': [],
             "ogautocomplete_init_scripts": [],
             "ogautocomplete_ask_ai": [],
+            "ogautocomplete_hint_now": [],
         },
     }
 }

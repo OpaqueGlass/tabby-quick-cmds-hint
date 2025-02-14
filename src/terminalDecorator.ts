@@ -6,6 +6,7 @@ import { MyLogger } from 'services/myLogService';
 import { AppService, ConfigService, NotificationsService } from 'tabby-core';
 import { TerminalDecorator, BaseTerminalTabComponent, BaseTerminalProfile } from 'tabby-terminal'
 import { cleanTerminalText, generateUUID, inputInitScripts, sleep } from 'utils/commonUtils';
+import { MySignalService } from 'services/signalService';
 
 
 @Injectable()
@@ -17,6 +18,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         private logger: MyLogger,
         private app: AppService,
         private notification: NotificationsService,
+        private signalService: MySignalService
     ) {
         super()
         addMenuService.insertComponent();
@@ -54,7 +56,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
             this.logger.log("focus out");
         }, true);
         
-        const mangager = new SimpleManager(tab, this.logger, this.addMenuService, this.configService, this.notification);
+        const mangager = new SimpleManager(tab, this.logger, this.addMenuService, this.configService, this.notification, this.signalService);
         if (mangager.handleInput) {
             super.subscribeUntilDetached(tab, tab.input$.pipe(bufferTime(300)).subscribe(mangager.handleInput));
         }

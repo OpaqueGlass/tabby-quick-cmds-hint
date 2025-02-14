@@ -198,9 +198,9 @@ export class AddMenuService {
         return this.menuStatus;
     }
 
-    public sendCurrentText(text: string, uuid: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>) {
+    public sendCurrentText(text: string, uuid: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>, ignoreStatus) {
         this.currentCmd = text;
-        if (!this.menuStatus) {
+        if (!this.menuStatus && !ignoreStatus) {
             this.logger.debug("Ignore sended cmd for menuStatus == false")
             return;
         }

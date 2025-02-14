@@ -2,14 +2,22 @@ h3(translate) Quick Cmd Hint Settings
 
 .alert.alert-info.d-flex.align-items-center
     .me-auto
-        div(translate) The plugin has been primarily developed for the following scenarios:
-
-        ul 
-            li(translate) Connecting to a server running Ubuntu via SSH;
-            li(translate) Using Bash as the shell environment;
-            li(translate) Tabby installed on a Windows system.
-        
-        div(translate) Other configurations or setups may not be supported.
+        div(translate) 
+            | The plugin has been primarily tested in the following scenarios: connecting to servers running 
+            strong Ubuntu 
+            | or 
+            strong CentOS 
+            | via 
+            strong SSH 
+            | ; using 
+            strong Bash 
+            | as the shell environment; and using Tabby on Windows systems. 
+        div(translate) 
+            p(translate) After enabling the plugin, entering content will trigger a prompt. Use the up and down arrow keys to select an item. Pressing 
+                code Tab 
+                | will input the selected item into the terminal, while pressing 
+                code Enter 
+                | will input the selected item into the terminal and execute it by pressing enter.
 
 .alert.alert-info.d-flex.align-items-center(*ngIf='config.store["qc"] == undefined')
     .me-auto

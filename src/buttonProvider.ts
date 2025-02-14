@@ -36,6 +36,8 @@ export class ButtonProvider extends ToolbarButtonProvider {
                 this.recentDialogRef = this.ngbModal.open(AutoCompleteAIDialogComponent);
             } else if (hotkey === "ogautocomplete_stop") {
                 signalService.changeMenuStatus();
+            } else if (hotkey === "ogautocomplete_hint_now") {
+                signalService.hintNow();
             }
         });
     }
