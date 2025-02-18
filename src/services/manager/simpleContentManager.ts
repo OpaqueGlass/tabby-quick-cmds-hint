@@ -28,7 +28,7 @@ export class SimpleManager extends BaseManager {
     ) {
         super(tab, logger, addMenuService, configService);
         this.currentLine = "";
-        this.subscriptionList.push(addMenuService.enterNotification$.subscribe(this.endCmdStatus));
+        this.subscriptionList.push(addMenuService.enterNotification$.subscribe(this.endCmdStatus.bind(this)));
         signalService.startCompleteNow$.subscribe(this.suggestNow.bind(this));
     }
     endCmdStatus = async () => {
