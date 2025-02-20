@@ -6,6 +6,10 @@ import { AddMenuService } from "services/menuService";
 import { ConfigService, NotificationsService } from "tabby-core";
 import { MySignalService } from "services/signalService";
 
+interface LastStateLinesObj {
+    raw: string;
+    cleaned: string;
+}
 export class SimpleManager extends BaseManager {
     // 命令输入状态，由enter清除，由匹配到prefix开始
     private cmdStatusFlag: boolean;
@@ -28,15 +32,20 @@ export class SimpleManager extends BaseManager {
     ) {
         super(tab, logger, addMenuService, configService);
         this.currentLine = "";
+        // TODO: 为什么有时这个.bind this还无效呢，还需要改成箭头函数？
         this.subscriptionList.push(addMenuService.enterNotification$.subscribe(this.endCmdStatus.bind(this)));
         signalService.startCompleteNow$.subscribe(this.suggestNow.bind(this));
     }
     endCmdStatus = async () => {
-        this.logger.debug("收到Enter信号")
+        this.logger.debug("收到Enter信号", this)
         this.cmdStatusFlag = false;
-        const lastStateLine = this.getLastStateLine();
+        if (!this.tab.hasFocus) {
+            return;
+        }
+        const lastStateLineObj = await this.getLastStateLine();
         // 检查
-        const cmd = await this.getCmd(lastStateLine, cleanTerminalText(lastStateLine));
+        // FIXME: 避免进vim之后会出现的，每次回车都广播
+        const cmd = await this.getCmd(lastStateLineObj.raw, lastStateLineObj.cleaned);
         if (isValidStr(cmd) && cmd[0] != " " && !cmd.trim().endsWith("/")) {
             this.logger.log("广播命令", cmd);
             this.addMenuService.broadcastUserEnteredCmd(cmd, this.sessionUniqueId, this.tab, this.usingRegExp);
@@ -156,30 +165,50 @@ export class SimpleManager extends BaseManager {
 
         // 发送并处理正在输入的命令
         this.logger.messyDebug("lastSerialLine", lastStateLinesStr);
-        this.getCmdAndSuggest(lastStateLinesStr);
+        this.getCmdAndSuggest(await this.getLastStateLine());
     }
-    getLastStateLine() {
+    /**
+     * 获取输出内容中的文本
+     * @returns 
+     */
+    getLastStateLine = async (): Promise<LastStateLinesObj> => {
+        if (!this || !this.tab || !this.tab.frontend) {
+            this.logger.debug("WARN, lost frontend", this.tab);
+        }
         const allStateStr = this.tab.frontend.saveState();
+        const cleanedAllStateStr = await cleanTextByNewXterm(allStateStr);
+        const cleanedLines = cleanedAllStateStr.trim().split("\n");
+        const lastCleanedStateLineStr = cleanedLines.slice(-1).join("\n");
+
         const lines = allStateStr.trim().split("\n");
-        const lastStateLineStr = lines.slice(-1).join("\n");
-        return lastStateLineStr
+        const lastRawStateLineStr = lines.slice(-1).join("\n");
+        return {
+            "raw": lastRawStateLineStr, 
+            "cleaned": lastCleanedStateLineStr
+        } as LastStateLinesObj
     }
     /**
      * 从输入字符串中，获取用户输入的命令
-     * @param lastStateLineStr 最后一行statel
-     * @param cleanedLastStateLineStr 清理转义符后的stateline
+     * @param rawLine 原始stateline，取最后一行
+     * @param cleanedLine 清理转义符后的stateline，取最后一行
      * @returns 用户输入的命令，可能为空字符串
      */
-    async getCmd(lastStateLineStr: string, cleanedLastStateLineStr: string) {
+    async getCmd(rawLine: string, cleanedLine: string) {
         let cmd = "";
         // some times [1B still not provided in vim, tmux or screen
         // "[1B" means cursor go to next line. in most cases, it means the command is finished
-        if (this.recentCleanPrompt && cleanedLastStateLineStr.includes(this.recentCleanPrompt) && !lastStateLineStr.includes("[1B")) {
-            const firstValieIndex = cleanedLastStateLineStr.lastIndexOf(this.recentCleanPrompt) + this.recentCleanPrompt.length;
-            cmd = cleanedLastStateLineStr.slice(firstValieIndex);
+        const moveDownRegExp = /\x1b\[[0-9]*B/gm;
+        const moveUpRegExp = /\x1b\[[0-9]*A/gm;
+        const containMoveDownFlag = rawLine.match(moveDownRegExp);
+        const containMoveUpFlag = rawLine.match(moveUpRegExp);
+        const cleanedLastStateLineStr = await cleanTextByNewXterm(rawLine);
+        if (this.recentCleanPrompt && cleanedLastStateLineStr.includes(this.recentCleanPrompt) && !containMoveDownFlag) {
+            const actualLastLine = containMoveUpFlag ? cleanedLine : cleanedLastStateLineStr;
+            const firstValieIndex = actualLastLine.lastIndexOf(this.recentCleanPrompt) + this.recentCleanPrompt.length;
+            cmd = actualLastLine.slice(firstValieIndex);
             this.logger.messyDebug("命令为", cmd);
         } else if (this.tab.hasFocus) {
-            this.logger.messyDebug("getCmd未匹配", this.recentCleanPrompt, cleanedLastStateLineStr.includes(this.recentCleanPrompt), !lastStateLineStr.includes("[1B"), this.cmdStatusFlag)
+            this.logger.messyDebug("getCmd未匹配 [recentCleanPrompt, isIncludeCleanPrompt, isContainMoveDown, cmdStatus]", this.recentCleanPrompt, cleanedLastStateLineStr.includes(this.recentCleanPrompt), !containMoveDownFlag, this.cmdStatusFlag)
         }
         return cmd;
     }
@@ -198,23 +227,28 @@ export class SimpleManager extends BaseManager {
             this.addMenuService.hideMenu();
         }
     }
-    async getCmdAndSuggest(lastStateLineStr: string, force: boolean=false) {
-        const cleanedLastSerialLinesStr = cleanTerminalText(lastStateLineStr);
-        const cmd = await this.getCmd(lastStateLineStr, cleanedLastSerialLinesStr);
+    /**
+     * 
+     * @param lastStateLineStr 
+     * @param force 忽略当前禁用状态，强制提出提示菜单
+     */
+    async getCmdAndSuggest(lastStateLineObj: LastStateLinesObj, force: boolean=false) {
+        const cleanedLastSerialLinesStr = cleanTerminalText(lastStateLineObj.raw);
+        const cmd = await this.getCmd(lastStateLineObj.raw, lastStateLineObj.cleaned);
         if (isValidStr(cmd) && this.cmdStatusFlag) {
             this.logger.messyDebug("命令为", cmd);
             this.sendCmd(cmd, force);
         } else if (this.tab.hasFocus) {
-            this.logger.messyDebug("menu close by not match or cmd disabled", this.recentCleanPrompt,  cleanedLastSerialLinesStr.includes(this.recentCleanPrompt), !lastStateLineStr.includes("[1B"));
+            this.logger.messyDebug("menu close by not match or cmd disabled", this.recentCleanPrompt,  cleanedLastSerialLinesStr.includes(this.recentCleanPrompt), !lastStateLineObj.raw.includes("["));
             this.addMenuService.hideMenu();
         }
     }
-    suggestNow() {
+    async suggestNow() {
         if (!this.tab.hasFocus) {
             return;
         }
         this.recentUuid = generateUUID();
-        this.getCmdAndSuggest(this.getLastStateLine(), true);
+        this.getCmdAndSuggest(await this.getLastStateLine(), true);
     }
     handleSessionChanged = (session) => {
         this.logger.log("session changed", session);

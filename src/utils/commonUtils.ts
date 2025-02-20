@@ -167,7 +167,7 @@ export function generateUUID() {
 }
 
 export function trimLineTextFromXterm(input: string) {
-    return input.replace(new RegExp("\n", "gm"), "");
+    return input.replace(/^\s*[\r\n]/gm, "");
 }
 
 export function simpleHash(str: string) {
