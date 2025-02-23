@@ -32,11 +32,10 @@ export class SimpleManager extends BaseManager {
     ) {
         super(tab, logger, addMenuService, configService);
         this.currentLine = "";
-        // TODO: 为什么有时这个.bind this还无效呢，还需要改成箭头函数？
         this.subscriptionList.push(addMenuService.enterNotification$.subscribe(this.endCmdStatus.bind(this)));
-        signalService.startCompleteNow$.subscribe(this.suggestNow.bind(this));
+        this.subscriptionList.push(signalService.startCompleteNow$.subscribe(this.suggestNow.bind(this)));
     }
-    endCmdStatus = async () => {
+    async endCmdStatus() {
         this.logger.debug("收到Enter信号", this)
         this.cmdStatusFlag = false;
         if (!this.tab.hasFocus) {

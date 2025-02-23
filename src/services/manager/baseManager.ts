@@ -4,8 +4,9 @@ import { MyLogger } from "services/myLogService";
 import { ConfigService } from "tabby-core";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 import { generateUUID } from "utils/commonUtils";
+import { OnDestroy } from '@angular/core';
 
-export class BaseManager {
+export class BaseManager implements OnDestroy {
     protected sessionUniqueId: string;
     protected profileUniqueId: string;
     protected subscriptionList: Array<Subscription>;
@@ -21,9 +22,13 @@ export class BaseManager {
     }
     handleInput: (buffers: Buffer[])=>void | null = null;
     handleOutput:(data: string[])=>void | null = null;
-    destory():void {
+    destroy():void {
+        this.logger.debug("Manager Destroying");
         for (let subscription of this.subscriptionList) {
             subscription?.unsubscribe();
         }
+    }
+    ngOnDestroy():void {
+        this.destroy();
     }
 }

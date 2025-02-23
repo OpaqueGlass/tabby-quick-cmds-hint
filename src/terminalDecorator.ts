@@ -64,6 +64,10 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
             super.subscribeUntilDetached(tab, tab.output$.pipe(bufferTime(300)).subscribe(mangager.handleOutput));
         }
         super.subscribeUntilDetached(tab, tab.sessionChanged$.subscribe(mangager.handleSessionChanged));
+        const destroySub = tab.destroyed$.subscribe(()=>{
+            mangager.destroy();
+            destroySub.unsubscribe();
+        });
         // ????
         // tab.sessionChanged$.subscribe(session => {
         //     if (session) {
