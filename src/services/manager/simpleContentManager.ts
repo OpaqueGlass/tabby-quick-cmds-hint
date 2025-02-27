@@ -174,12 +174,38 @@ export class SimpleManager extends BaseManager {
         if (!this || !this.tab || !this.tab.frontend) {
             this.logger.debug("WARN, lost frontend", this.tab);
         }
-        const allStateStr = this.tab.frontend.saveState();
+        let allStateStr = this.tab.frontend.saveState();
+        try {
+            // @ts-ignore
+            if (this.tab.frontend.xterm._addonManager._addons) {
+                let serializeAddon = null;
+                // @ts-ignore
+                for (let i of this.tab.frontend.xterm._addonManager._addons) {
+                    if (i.instance?.serialize) {
+                        serializeAddon = i.instance;
+                        break;
+                    }
+                }
+                // @ts-ignore
+                allStateStr = serializeAddon.serialize({
+                    excludeAltBuffer: false,
+                    excludeModes: true,
+                    scrollback: 200,
+                });
+                this.logger.debug("使用xterm内部Serialze api");
+            } else {
+                this.logger.debug("使用包装API");
+            }
+        } catch (e) {
+            this.logger.error("During getting serial state (beta), an ERROR occured. Fallback to origin API. ", e);
+        }
+        
         const cleanedAllStateStr = await cleanTextByNewXterm(allStateStr);
         const cleanedLines = cleanedAllStateStr.trim().split("\n");
         const lastCleanedStateLineStr = cleanedLines.slice(-1).join("\n");
-
-        const lines = allStateStr.trim().split("\n");
+        
+        // FIX: 有时state捕捉到空白行的问题
+        const lines = allStateStr.split("\n");
         const lastRawStateLineStr = lines.slice(-1).join("\n");
         return {
             "raw": lastRawStateLineStr, 
@@ -258,13 +284,13 @@ export class SimpleManager extends BaseManager {
         const cleanByRegExp = cleanTerminalText(text);
         this.logger.debug("清理后命令(一致？)", cleanByRegExp == text, cleanByRegExp);
         const cleanByXterm = await cleanTextByNewXterm(text);
-        if (!isValidStr(cleanByXterm?.trim())) {
-            return cleanByRegExp;
-        }
-        if (cleanByRegExp !== cleanByXterm && this.configService.store.ogAutoCompletePlugin.debugLevel < 2) {
-            this.notification.error("[tabbyquick-hint-debug-report]清理不一致");
-            this.logger.warn("清理不一致", cleanByRegExp + " != " + cleanByXterm);
-        }
+        // if (!isValidStr(cleanByXterm?.trim())) {
+        //     return cleanByRegExp;
+        // }
+        // if (cleanByRegExp !== cleanByXterm && this.configService.store.ogAutoCompletePlugin.debugLevel < 2) {
+        //     this.notification.error("[tabbyquick-hint-debug-report]清理不一致");
+        //     this.logger.warn("清理不一致", cleanByRegExp + " != " + cleanByXterm);
+        // }
         return cleanByXterm;
 
     }
