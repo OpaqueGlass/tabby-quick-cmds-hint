@@ -34,6 +34,9 @@ jobs:
       - name: Build for production
         run: yarn build
 
+      - name: Zip it
+        run: zip -r dist.zip dist/
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -48,6 +51,7 @@ jobs:
           body_path: ./result.txt
           prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') || contains(github.ref, 'dev') }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          files: dist.zip
 
       - uses: JS-DevTools/npm-publish@v3
         if: ${{ ! (contains(github.ref, 'beta') || contains(github.ref, 'alpha') || contains(github.ref, 'dev')) }}
