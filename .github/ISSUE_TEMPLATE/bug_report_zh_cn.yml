@@ -1,0 +1,80 @@
+name: 问题反馈
+description: 提交非预期行为、错误或缺陷报告
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢提交问题反馈！请尽可能详细地填写以下内容，以帮助我们理解和解决问题。
+
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: 问题现象
+      description: 尽可能详细地描述问题的表现。
+      placeholder: 在此描述问题...在粘贴错误日志时，请使用markdown代码块
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        如果问题不能稳定重现，请修改“设置-命令提示-Debug-显示详细日志和调错信息”为0。并关注开发者工具（设置-应用-开启开发者工具）-控制台（Console）中的错误提示，将遇到问题时的控制台日志截图上传。
+  
+  - type: textarea
+    id: reproduce-steps
+    attributes:
+      label: 复现操作
+      description: 描述重现问题所需要的步骤或设置项。如果不能稳定重现，请说明问题的发生频率，并上传错误提示信息。
+      placeholder: |
+        1. 步骤一
+        2. 步骤二
+        3. 步骤三
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots-or-recordings
+    attributes:
+      label: 截图或录屏说明
+      description: （可不填）请上传截图或录屏来演示问题和复现步骤。
+      placeholder: 在此上传截图或录屏...
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: 预期行为
+      description: （可不填）描述你认为插件应当表现出怎样的行为或结果
+      placeholder: 在此描述预期行为...
+
+  - type: textarea
+    attributes:
+      label: 设备和系统信息
+      description: |
+        示例:
+          - **操作系统**: Windows11 24H2
+          - **Tabby**: v1.0.215
+      value: |
+          - 操作系统:
+          - Tabby:
+      render: markdown
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: check_list
+    attributes:
+      label: 检查单
+      description: 在提交前，请确认这些事项
+      options:
+      - label: 我已经查询了issue列表，我认为没有人反馈过类似问题
+        required: true
+      - label: 我已经将插件升级到最新版本
+        required: true
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: 其他补充信息
+      description: （可不填）如有其他相关信息，请在此提供。
+      placeholder: 在此提供补充信息...
