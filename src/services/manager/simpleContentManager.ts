@@ -52,38 +52,6 @@ export class SimpleManager extends BaseManager {
     }
     handleInput = (buffers: Buffer[]) => {
         return;
-        // 还需要判断当前是否是输入命令的状态，其他vim文本输入等情况不做处理
-        // 将接收到的缓冲区内容拼接起来
-        const inputString = Buffer.concat(buffers).toString();
-        if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
-            this.logger.log("近期输入", inputString, JSON.stringify(inputString));
-        }
-        // ssh连接ubuntu 实测换行为\r
-        if (inputString.includes("\n") || inputString.includes("\r")) {
-            const lastNewlineIndex = inputString.lastIndexOf('\r') == -1 ? inputString.lastIndexOf('\n') : inputString.lastIndexOf('\r');
-            this.logger.debug("当前行内容", this.currentLine);
-            // 如果输入中包含 \n 或 \r\n，说明用户已经按下了Enter，则重置currentLine，考虑到采样间隔，保留最后一行
-            this.currentLine = '';
-            this.logger.debug("重置", lastNewlineIndex + 1 < inputString.length)
-            if (lastNewlineIndex + 1 < inputString.length) {
-                this.currentLine = inputString.slice(lastNewlineIndex + 1);
-            }
-            // 判定停止用户命令输入状态 bug: 在回车后可能立刻就下一个命令的输入，这个时候似乎判定由于pipe的延迟导致出现被停止输入状态的情况
-            // if (this.cmdStatusFlag == true) {
-            //     this.cmdStatusFlag = false;
-            //     this.logger.log("判定停止用户输入状态");
-            //     this.addMenuService.hideMenu();
-            // }
-            this.userImputedFlag = true;
-        } else {
-            // 如果输入中不包含 \n 或 \r\n，说明用户正在键入，将当前输入追加到 currentLine
-            this.currentLine += inputString;
-        }
-        // ssh连接ubuntu，实测删除为\u007F
-        // if (this.currentLine.includes('\u007F') || this.currentLine.includes("\b")) {
-        //     this.logger.log("字符串中包含退格");
-        //     this.currentLine = this.processBackspaces(currentLine);
-        // }
     }
     handleOutput = async (data: string[]) => {
         const outputString = data.join('');
