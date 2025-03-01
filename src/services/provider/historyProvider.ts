@@ -40,16 +40,19 @@ export class HistoryContentProvider extends BaseContentProvider {
             return null;
         }
         const result: OptionItem[] = [];
-        const dbList = await this.getHistoryFromDB(this.db, envBasicInfo.tab.profile.id, 10, null, null, 3);
-        this.logger.log("db list", dbList);
+        // FIXME: 控制检索范围
+        const dbList = await this.getHistoryFromDB(this.db, envBasicInfo.tab.profile.id, 1000, null, null, 3);
+        dbList.sort((a, b)=>{return b.time - a.time});
+        this.logger.debug("db list", dbList);        
         const options = {
             keys: ['cmd'], // 搜索的字段
             threshold: 0.2, // 控制匹配的模糊度
             includeScore: true // 包含得分
         };
         const fuse = new Fuse(dbList, options);
-        this.logger.log("匹配结果", fuse.search(inputCmd));
-        result.push(...fuse.search(inputCmd).map((value)=>{
+        const searchResult = fuse.search(inputCmd);
+        this.logger.log("匹配结果", searchResult);
+        result.push(...searchResult.slice(0, 7).map((value)=>{
             return {
                 name: value.item.cmd,
                 content: value.item.cmd,

@@ -16,6 +16,7 @@ export class AutoCompleteHintMenuComponent {
     recentTargetElement: HTMLElement;
     showingFlag: boolean = false;
     contentGroups: {[key: string]: OptionItem[]} = {};
+    contentLimit: {[key: string]: number} = {};
     themeMode: string = "dark";
     themeName: string = "NotSet";
     constructor(
@@ -33,6 +34,11 @@ export class AutoCompleteHintMenuComponent {
             "q": [],// quick cmd
             "h": [],// highlight
             "a": [],// ai
+        };
+        this.contentLimit = {
+            "q": 3,
+            "h": 3,
+            "a": 3,
         }
         this.themeChanged();
         this.themeService.themeChanged$.subscribe(()=>{
@@ -64,8 +70,17 @@ export class AutoCompleteHintMenuComponent {
 
         // 按照 contentGroups中的key顺序，遍历，将结果加入到options中
         this.options = [];
+        // 限制个数
+        let totalItemCount = 0;
         for (let key in this.contentGroups) {
-            this.options = this.options.concat(this.contentGroups[key]);
+            totalItemCount += this.contentGroups[key].length;
+        }
+        for (let key in this.contentGroups) {
+            let temp = this.contentGroups[key];
+            if (totalItemCount > 5) {
+                temp = this.contentGroups[key].slice(0, this.contentLimit[key]);
+            }
+            this.options = this.options.concat(temp);
         }
         if (this.options.length == 0) {
             this.hideAutocompleteList();
