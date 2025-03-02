@@ -23,8 +23,24 @@ jobs:
           node-version: 22
           registry-url: "https://registry.npmjs.org"
 
-      - name: setup yarn
+      - name: Setup yarn
         run: npm i -g yarn
+
+      # Get yarn store directory
+      - name: Get yarn store directory
+        id: yarn-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(yarn cache dir)" >> $GITHUB_OUTPUT
+
+      # Setup yarn cache
+      - name: Setup yarn cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.yarn-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-yarn-store-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-store-
 
       # Install dependencies
       - name: Install dependencies
@@ -34,9 +50,11 @@ jobs:
       - name: Build for production
         run: yarn build
 
+      # Package as zip file
       - name: Zip it
         run: zip -r dist.zip dist/
 
+      # Get changelog
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -57,5 +75,4 @@ jobs:
         if: ${{ ! (contains(github.ref, 'beta') || contains(github.ref, 'alpha') || contains(github.ref, 'dev')) }}
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          dry-run: true
           provenance: true
