@@ -116,9 +116,16 @@ export function cleanTextByNewXterm(input: string) {
     // 15ms
     return new Promise<string>((resolve) => {
         let term = new Terminal();
-        const dom = document.createElement("div");
-        dom.classList.add("ogmytempxterm");
-        window.document.body.appendChild(dom);
+        let dom = null;
+        const existDom = document.getElementById("ogmytempxterm");
+        if (existDom) {
+            dom = existDom;
+        } else {
+            dom = document.createElement("div");
+            dom.classList.add("ogmytempxterm");
+            dom.setAttribute("id", "ogmytempxterm");
+            window.document.body.appendChild(dom);
+        }
         term.open(dom);
         term.write(input, ()=>{
             term.selectAll();

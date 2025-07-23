@@ -28,7 +28,9 @@
     z-index: 20;
     max-width: 350px;
     min-width: 350px;
-    display: none;
+    opacity: 0;
+    pointer-events: none;
+    //display: none;
     border-radius: 7px;
     overflow: hidden;
 }

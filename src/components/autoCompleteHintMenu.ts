@@ -86,7 +86,7 @@ export class AutoCompleteHintMenuComponent {
             this.hideAutocompleteList();
             return;
         } else {
-            this.showAutocompleteList(this.document.querySelector('.content-tab-active.active .focused .xterm-helper-textarea'))
+            this.showAutocompleteList(this.document.querySelector('.content-tab-active.active .focused .xterm-helper-textarea'));
         }
         // 调整后，仍然选择之前的option
         if (currentOption) {
@@ -131,12 +131,18 @@ export class AutoCompleteHintMenuComponent {
 
     // 在输入框的事件中调用此函数
     showAutocompleteList(targetElement: HTMLElement) {
+        if (this.showingFlag) {
+            this.logger.debug("已经显示，不再多次处理");
+            setTimeout(this.adjustPosition.bind(this), 0);
+            return;
+        }
         const listEl = this.elRef.nativeElement.children[0];
         this.recentTargetElement = targetElement;
         // make sure adjustPosition is called after the list is shown
         setTimeout(this.adjustPosition.bind(this), 0);
         // 显示自动完成列表
-        this.renderer.setStyle(listEl, 'display', 'block');
+        this.renderer.setStyle(listEl, 'opacity', '1');
+        this.renderer.setStyle(listEl, 'pointer-events', 'auto');
         this.showingFlag = true;
     }
 
@@ -184,7 +190,8 @@ export class AutoCompleteHintMenuComponent {
         this.clearContent();
         const listEl = this.elRef.nativeElement.children[0];
         if (listEl) {
-            this.renderer.setStyle(listEl, 'display', 'none');
+            this.renderer.setStyle(listEl, 'opacity', '0');
+            this.renderer.setStyle(listEl, 'pointer-events', 'no');
         }
         this.showingFlag = false;
     }
