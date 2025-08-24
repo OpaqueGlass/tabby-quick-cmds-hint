@@ -8,6 +8,7 @@ export class AutoCompleteConfigProvider extends ConfigProvider {
             debugLevel: 3,
             autoInit: false,
             enableCompleteWithCompleteStart: true,
+            menuShowItemMaxCount: 7,
             ai: {
                 openAIBaseUrl: "https://api.openai.com/v1",
                 openAIKey: "",

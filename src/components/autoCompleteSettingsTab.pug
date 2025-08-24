@@ -51,6 +51,17 @@ h3(translate='settings.general')
         (ngModelChange)='config.save()',
     )
 
+.form-line
+    .header
+        .title(translate='settings.menu_show_item_max')
+        .description(translate='settings.menu_show_item_max_desc')
+    input.form-control(
+        type='number',
+        min=2,
+        [(ngModel)]='config.store.ogAutoCompletePlugin.menuShowItemMaxCount',
+        (ngModelChange)='config.save()',
+    )
+
 
 h3(translate='ai.title')
 

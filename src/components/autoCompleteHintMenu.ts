@@ -1,3 +1,20 @@
+/*  
+*  tabby-quick-cmds-hint: A simple complete hint plugin for tabby.
+*  Copyright (C) 2025 OpaqueGlass and other developers
+*
+*  This program is free software: you can redistribute it and/or modify
+*  it under the terms of the GNU Affero General Public License as published
+*  by the Free Software Foundation, either version 3 of the License, or
+*  (at your option) any later version.
+*
+*  This program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU Affero General Public License for more details.
+*
+*  You should have received a copy of the GNU Affero General Public License
+*  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 import { Component, ElementRef, Inject, Input, Renderer2, SimpleChanges, type OnChanges, ChangeDetectorRef } from '@angular/core'
 import { OptionItem } from '../api/pluginType'
 import { AppService, ConfigService, PlatformService, ThemesService } from 'tabby-core';
@@ -16,7 +33,6 @@ export class AutoCompleteHintMenuComponent {
     recentTargetElement: HTMLElement;
     showingFlag: boolean = false;
     contentGroups: {[key: string]: OptionItem[]} = {};
-    contentLimit: {[key: string]: number} = {};
     themeMode: string = "dark";
     themeName: string = "NotSet";
     constructor(
@@ -35,11 +51,6 @@ export class AutoCompleteHintMenuComponent {
             "h": [],// highlight
             "a": [],// ai
         };
-        this.contentLimit = {
-            "q": 3,
-            "h": 3,
-            "a": 3,
-        }
         this.themeChanged();
         this.themeService.themeChanged$.subscribe(()=>{
             this.themeChanged();
@@ -75,12 +86,34 @@ export class AutoCompleteHintMenuComponent {
         for (let key in this.contentGroups) {
             totalItemCount += this.contentGroups[key].length;
         }
-        for (let key in this.contentGroups) {
-            let temp = this.contentGroups[key];
-            if (totalItemCount > 5) {
-                temp = this.contentGroups[key].slice(0, this.contentLimit[key]);
+        // 计算每组的最大显示数
+        const maxTotal = this.configService.store.ogAutoCompletePlugin.menuShowItemMaxCount;
+        const groupKeys = Object.keys(this.contentGroups);
+        const groupCount = groupKeys.length;
+        // 统计每组实际数量
+        const groupActualCounts = groupKeys.map(key => this.contentGroups[key].length);
+        // 先分配平均值
+        let perGroupMax = Math.floor(maxTotal / groupCount);
+        // 计算每组实际可分配的数量
+        let groupShowCounts = groupActualCounts.map(count => Math.min(count, perGroupMax));
+        // 计算剩余可分配数量
+        let used = groupShowCounts.reduce((a, b) => a + b, 0);
+        let left = maxTotal - used;
+        // 按顺序分配剩余数量给还有剩余的组
+        while (left > 0) {
+            let distributed = false;
+            for (let i = 0; i < groupCount && left > 0; i++) {
+                if (groupActualCounts[i] > groupShowCounts[i]) {
+                    groupShowCounts[i]++;
+                    left--;
+                    distributed = true;
+                }
             }
-            this.options = this.options.concat(temp);
+            if (!distributed) break; // 没有可分配的了
+        }
+        // 合并结果
+        for (let i = 0; i < groupCount; i++) {
+            this.options = this.options.concat(this.contentGroups[groupKeys[i]].slice(0, groupShowCounts[i]));
         }
         if (this.options.length == 0) {
             this.hideAutocompleteList();

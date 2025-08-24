@@ -1,6 +1,7 @@
-#Command Parameter Autocomplete Configuration File #Format Description: 
+# Command Argument Autocomplete Configuration File 
+# Format Description: 
 # - command: command name
-#   arguments: A list of parameters, each containing the following fields: 
+#   arguments: A list of arguments, each containing the following fields: 
 #     - name: Display name (placeholder supported, such as<files>, will be displayed in UI) 
 #     - content: actual input content (content actually input to terminal after user selection
 #     - despLangKey: Optional, the translation key for the description, in the format of the path in i18n.yaml, such as "arguments_complete.git.add" 
