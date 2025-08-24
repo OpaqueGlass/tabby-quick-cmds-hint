@@ -17,14 +17,16 @@
          ```bash
          export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
          ```
-2. 下载并启用 `tabby-quick-cmds` 插件。添加一些命令。
+2. 下载并启用 `tabby-quick-cmds` 插件，本插件主要检索 `tabby-quick-cmds` 中保存的命令。添加一些命令。
 3. 开启令人烦躁的提示体验。
+
+> 如果这对你有帮助，请考虑Star本项目。
 
 ## TODO
 
 - [x] 在 `tabby-quick-cmds` 中保存命令
 - [x] 使用 AI 补全命令（仅在快捷键触发时可用）
-- [ ] 支持命令参数
+- [x] 支持命令参数
 - [x] 历史记录
 - [x] 多语言支持
 

@@ -3,7 +3,7 @@ import { TranslateService } from "tabby-core";
 import yaml from 'js-yaml';
 import yamlFileContent from '../static/i18n.yaml';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class AutoCompleteTranslateService {
     constructor(
         private translate: TranslateService,
@@ -12,16 +12,42 @@ export class AutoCompleteTranslateService {
     }
     initMyTranslate() {
         const data = yaml.load(yamlFileContent);
-        // 遍历所有数组元素，提取 zh_CN 等值作为单独的列表
-        const availableLanguages = Object.keys(data[Object.keys(data)[0]]).filter(lang => lang !== 'en_US');
-        for (let langKey of availableLanguages) {
-            // 遍历data，提取en_US作为key, 提取  langKey作为Value
-            let result = {};
-            for (let item of data) {
-                result[item["en_US"]] = item[langKey];
+        function transform(obj) {
+            const result = {};
+
+            function recurse(current, path) {
+                if (typeof current === "object" && !Array.isArray(current)) {
+                    // 判断是不是语言节点（全是字符串）
+                    const keys = Object.keys(current);
+                    const allStrings = keys.every(k => typeof current[k] === "string");
+                    if (allStrings) {
+                        keys.forEach(lang => {
+                            if (!result[lang]) result[lang] = {};
+                            setByPath(result[lang], path, current[lang]);
+                        });
+                    } else {
+                        keys.forEach(k => recurse(current[k], path.concat(k)));
+                    }
+                }
             }
-            console.warn("set Trans", langKey, result)
-            this.translate.setTranslation(langKey.replace("_", "-"), result, true);
+
+            function setByPath(obj, path, value) {
+                let cur = obj;
+                for (let i = 0; i < path.length - 1; i++) {
+                    if (!cur[path[i]]) cur[path[i]] = {};
+                    cur = cur[path[i]];
+                }
+                cur[path[path.length - 1]] = value;
+            }
+
+            recurse(obj, []);
+            return result;
+        }
+        const result = transform(data);
+        console.warn("setTrans", result);
+        for (const langKey of Object.keys(result)) {
+            console.warn("setTrans", langKey, result[langKey])
+            this.translate.setTranslation(langKey.replace("_", "-"), result[langKey], true);
         }
     }
     test() {

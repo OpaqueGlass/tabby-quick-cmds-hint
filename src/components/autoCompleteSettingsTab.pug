@@ -1,34 +1,33 @@
-h3(translate) Quick Cmd Hint Settings
+h3(translate='settings.title')
 
 .alert.alert-info.d-flex.align-items-center
     .me-auto
-        div(translate) 
-            | The plugin has been primarily tested in the following scenarios: connecting to servers running 
-            strong Ubuntu 
-            | or 
-            strong CentOS 
-            | via 
-            strong SSH 
-            | ; using 
-            strong Bash 
-            | as the shell environment; and using Tabby on Windows systems. 
-        div(translate) 
-            p(translate) After enabling the plugin, entering content will trigger a prompt. Use the up and down arrow keys to select an item. Pressing 
-                code Tab 
-                | will input the selected item into the terminal, while pressing 
-                code Enter 
-                | will input the selected item into the terminal and execute it by pressing enter.
+        div(translate="intro.tested_scenarios") 
+        strong(translate='intro.ubuntu_centos') 
+        span(translate='intro.or') 
+        strong(translate='intro.centos') 
+        span(translate='intro.via_ssh') 
+        strong(translate='intro.ssh') 
+        span(translate='intro.using_bash') 
+        strong(translate='intro.bash') 
+        span(translate='intro.on_windows') 
+        div 
+            p(translate='intro.usage_instruction') 
+            code(translate='intro.tab_key') 
+            span(translate='intro.tab_action') 
+            code(translate='intro.enter_key') 
+            span(translate='intro.enter_action')
 
-.alert.alert-info.d-flex.align-items-center(*ngIf='config.store["qc"] == undefined')
+.alert.alert-info.d-flex.align-items-center(*ngIf='config.store["qc"] == undefined || config.store["qc"] == {}')
     .me-auto
-        div(translate) To use this plugin, first download and enable tabby-quick-cmds, and then create some commands within it.
+        div(translate='intro.plugin_requirement')
 
-h3(translate) General
+h3(translate='settings.general')
 
 .form-line
     .header
-        .title(translate) Use regular expressions to identify shell prompts
-        .description(translate) When enabled, the prompt may be triggered by mistake, or the wrong command may be captured, but it can avoid modifying the shell configuration file
+        .title(translate='settings.use_regexp_prompt')
+        .description(translate='settings.use_regexp_prompt_desc')
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.useRegExpDetectPrompt',
         (ngModelChange)='config.save()',
@@ -36,8 +35,8 @@ h3(translate) General
 
 .form-line
     .header
-        .title(translate) Try to run init scripts when session connected
-        .description(translate) For Bash Only. In some cases, it may not work properly.
+        .title(translate='settings.auto_init')
+        .description(translate='settings.auto_init_desc')
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.autoInit',
         (ngModelChange)='config.save()',
@@ -45,20 +44,20 @@ h3(translate) General
 
 .form-line
     .header
-        .title(translate) Enable completion when startup
-        .description(translate) When disabled, the autocomplete menu will not appear automatically, and users will need to enable the feature manually. You can manually control the auto-completion feature via the bird icon in the toolbar. Green means it is enabled.
+        .title(translate='settings.enable_on_startup')
+        .description(translate='settings.enable_on_startup_desc')
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.enableCompleteWithCompleteStart',
         (ngModelChange)='config.save()',
     )
 
 
-h3 AI
+h3(translate='ai.title')
 
 .form-line
     .header
-        .title(translate) Open AI Base URL
-        .description(translate) 
+        .title(translate='ai.openai_base_url')
+        .description(translate='ai.openai_base_url') 
     input.form-control(
         type='text',
         [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIBaseUrl',
@@ -67,8 +66,8 @@ h3 AI
 
 .form-line
     .header
-        .title(translate) Open AI Key
-        .description(translate) Note that all information will be saved in plain text locally
+        .title(translate='ai.openai_key')
+        .description(translate='ai.openai_key_desc')
     input.form-control(
         type='password',
         [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIKey',
@@ -78,8 +77,8 @@ h3 AI
 
 .form-line
     .header
-        .title(translate) Open AI Model name
-        .description(translate) 
+        .title(translate='ai.openai_model')
+        .description(translate='ai.openai_model') 
     input.form-control(
         type='text',
         [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIModel',
@@ -87,11 +86,11 @@ h3 AI
     )
 
 
-h3(translate) Appearance
+h3(translate='appearance.title')
 
 .form-line
     .header
-        .title(translate) Font size
+        .title(translate='appearance.font_size')
     input.form-control(
         type='number',
         max=90,
@@ -101,14 +100,14 @@ h3(translate) Appearance
     )
 
 
-h3(translate) History
+h3(translate='history.title')
 
-.form-line(translate) Open "Developer Tools", "Application", "Storage" "Indexed DB" in the list on the left, and manage the saved history in "og_tac_HistoryDB".
+.form-line(translate='history.manage_desc')
 
 .form-line
     .header
-        .title(translate) Enable the history of user input commands
-        .description(translate) Turning this off will still create the database (but without recording history) and will not clear the history that was previously saved.
+        .title(translate='history.enable')
+        .description(translate='history.enable_desc')
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.history.enable',
         (ngModelChange)='config.save()',
@@ -116,19 +115,32 @@ h3(translate) History
 
 .form-line
     .header
-        .title(translate) Record input commands matched by regular expressions
-        .description(translate) It may record incorrect or incomplete commands. When disabled, only input commands matched by the prompt escape sequence will be saved.
+        .title(translate='history.count_regexp')
+        .description(translate='history.count_regexp_desc')
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.history.countInRegExp',
         (ngModelChange)='config.save()',
     )
 
-h3 Debug
+h3(translate='arguments.title')
+
+.form-line(translate='arguments.manage_desc')
 
 .form-line
     .header
-        .title(translate) Enable debug mode and detailed logs
-        .description(translate) 0 All, 1 log, 2 warn, 3 ErrorOnly, 4 No log
+        .title(translate='arguments.enable')
+        .description(translate='arguments.enable_desc')
+    toggle(
+        [(ngModel)]='config.store.ogAutoCompletePlugin.arguments.enable',
+        (ngModelChange)='config.save()',
+    )
+
+h3(translate='debug.title')
+
+.form-line
+    .header
+        .title(translate='debug.enable_debug')
+        .description(translate='debug.log_level_desc')
     input.form-control(
         type='number',
         max=4,
@@ -140,8 +152,8 @@ h3 Debug
 
 .form-line 
     .header 
-        .title(translate) Use a custom regular expression to match the shell prompt
-        .description(translate) If it doesn't work, don't forget to check the output in the developer tools
+        .title(translate='debug.custom_regexp')
+        .description(translate='debug.custom_regexp_desc')
 textarea.form-control(
     rows='2',
     [(ngModel)]='config.store.ogAutoCompletePlugin.customRegExp',
@@ -150,10 +162,10 @@ textarea.form-control(
 
 .footer-of-setting
     div() 
-        span(translate) ⭐ If this project helps you, please 
-        a.og-tac-a((click)='openGithub()',translate ) give it a star!
-        span(translate)  Your support is greatly appreciated and motivates me to keep improving it. 😊
+        span(translate='support.give_star_prefix') 
+        a.og-tac-a((click)='openGithub()',translate='support.give_star_link')
+        span(translate='support.give_star_suffix')
     div()
-        span(translate) 💡 If you encounter any issues, 
-        a.og-tac-a((click)='openNewIssue()',translate ) feel free to open an issue on GitHub!
-        span(translate) 😊
+        span(translate='support.issue_prefix') 
+        a.og-tac-a((click)='openNewIssue()',translate='support.issue_link')
+        span(translate='support.issue_suffix')

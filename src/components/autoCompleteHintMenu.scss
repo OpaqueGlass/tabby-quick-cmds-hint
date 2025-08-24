@@ -58,6 +58,11 @@
     padding: 4px;
 }
 
+.og-autocomplete-item .og-ac-desp {
+    color: var(--bs-gray);
+    padding: 4px;
+}
+
 .og-ac-type {
     background-color: #b235eb;
     color: #fff;
@@ -67,6 +72,9 @@
     }
     &[data-cmd-type='h'] {
         background-color: green;
+    }
+    &[data-cmd-type='a'] {
+        background-color: rgba(153, 2, 2, 0.527);
     }
 }
 /* var(--bs-list-group-active-border-color)

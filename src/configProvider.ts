@@ -21,6 +21,9 @@ export class AutoCompleteConfigProvider extends ConfigProvider {
             history: {
                 "enable": false,
                 "countInRegExp": true,
+            },
+            arguments: {
+                "enable": false,
             }
         },
         hotkeys: {

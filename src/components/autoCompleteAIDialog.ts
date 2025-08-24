@@ -7,6 +7,7 @@ import jsYaml from "js-yaml"
 import { AddMenuService } from 'services/menuService';
 import { isValidStr, sendInput } from 'utils/commonUtils';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AutoCompleteTranslateService } from 'services/translateService';
 
 interface AICommandItem {
     command: string;
@@ -32,6 +33,7 @@ export class AutoCompleteAIDialogComponent {
         protected appService: AppService,
         protected activeModel: NgbActiveModal,
         protected myTranslate: TranslateService,
+        protected autoCompleteTranslate: AutoCompleteTranslateService,
     ) {
         
     }
@@ -216,5 +218,10 @@ Respond with the following JSON format only:
     }
     isValidStr(s: string) {
         return isValidStr(s);
+    }
+
+    // 翻译方法
+    translate(key: string, params?: any): string {
+        return this.myTranslate.instant(key, params);
     }
 }

@@ -26,7 +26,7 @@ This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://g
 
 - [x] The cmds saved in `tabby-quick-cmds`
 - [x] Use AI to complete cmds (Available only when triggered by a shortcut key)
-- [ ] Command arguments
+- [x] Command arguments
 - [x] History
 - [x] Multilingual support
 

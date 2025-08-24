@@ -262,9 +262,9 @@ export class AutoCompleteHintMenuComponent {
         sendInput({
             tab: this.app.activeTab,
             cmd: this.options[index].content,
-            appendCR: type == 1,
+            appendCR: type == 1 && !this.options[index].doNotEnterExec,
             singleLine: false,
-            clearFirst: true,
+            clearFirst: this.options[index].clearThenInput === undefined ? true : this.options[index].clearThenInput,
             refocus: true
         });
         if (type == 1) {

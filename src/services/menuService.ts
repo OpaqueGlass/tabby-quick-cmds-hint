@@ -21,6 +21,7 @@ import { Subject } from 'rxjs';
 import { MySignalService } from './signalService';
 import { AutoCompleteTranslateService } from './translateService';
 import { StyleService } from './styleService';
+import { ArgumentsContentProvider } from './provider/argumentsContentProvider';
 
 @Injectable({
     providedIn: 'root'
@@ -52,6 +53,7 @@ export class AddMenuService {
         private configService: ConfigService,
         quickCmdContentProvider: QuickCmdContentProvider,
         historyContentProvider: HistoryContentProvider,
+        argumentsContentProvider: ArgumentsContentProvider,
         private myTranslate: AutoCompleteTranslateService, // 这个东西，放在Provider、index都会导致其他中文内容丢失
         // openAIContentProvider: OpenAIContentProvider,
         // private buttonProvider: ButtonProvider, // 直接引用会卡在Cannot access 'AddMenuService' before initialization
@@ -64,6 +66,7 @@ export class AddMenuService {
         this.contentProviderList = [
             quickCmdContentProvider,
             historyContentProvider,
+            argumentsContentProvider,
         ];
         logger.log("Add menu service init");
         if (this.menuStatus) {

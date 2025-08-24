@@ -4,15 +4,15 @@
             type='text', 
             [(ngModel)]='askUserInput', 
             autofocus, 
-            placeholder="Ask AI", 
+            [placeholder]="translate('ui.ask_ai')", 
             (keyup)='handleKeydown($event)',
         )
-        button.btn.btn-outline-primary((click)='ask()', translate) Ask
+        button.btn.btn-outline-primary((click)='ask()') {{translate('ui.ask')}}
     div(*ngIf='loadingFlag')
         .spinner-border.text-primary(role='status')
-            span.sr-only(translate) Loading...
+            span.sr-only {{translate('ui.loading')}}
     div(*ngIf='isValidStr(notReady)')
-        span An Error Occured: [{{notReady}}]
+        span {{translate('ui.error_occurred', {"desp": notReady})}} 
     .list-group.mt-3.connections-list
         ng-container(*ngFor='let cmd of commands; let i = index')
             .list-group-item.list-group-item-action.d-flex.align-items-center.rounded-rectangle(
@@ -24,4 +24,4 @@
                         code.command-text {{cmd.command}}
                         //- .text-muted {{cmd.text}}{{cmd.appendCR ? "\\n" : ""}}
                         .description {{cmd.desp}}
-                        .danger-rating([ngClass]="getRatingColor(cmd)") Danger Rating: {{cmd.dangerRating}}
+                        .danger-rating([ngClass]="getRatingColor(cmd)") {{translate('ui.danger_rating')}}: {{cmd.dangerRating}}
