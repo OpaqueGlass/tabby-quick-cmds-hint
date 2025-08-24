@@ -104,12 +104,15 @@ export class ArgumentsContentProvider extends BaseContentProvider {
     /**
      * 将命令参数转换为OptionItem数组
      */
-    private convertArgumentsToOptionItems(commandConfig: CommandConfig, inputCmd: string): OptionItem[] {
+    private convertArgumentsToOptionItems(commandConfig: CommandConfig, inputCmd: string, backspaceCount: number = 0): OptionItem[] {
         const result: OptionItem[] = [];
         
         if (!commandConfig.arguments) {
             return result;
         }
+
+        // 生成退格符串
+        const backspaceString = '\b'.repeat(backspaceCount);
 
         // 遍历所有参数
         commandConfig.arguments.forEach(arg => {
@@ -124,10 +127,10 @@ export class ArgumentsContentProvider extends BaseContentProvider {
                 }
             }
             
-            // 创建参数选项
+            // 创建参数选项，在content前加上退格符
             const optionItem: OptionItem = {
                 name: arg.name,           // 显示名称，包含占位符提示
-                content: arg.content,     // 实际输入内容
+                content: backspaceString + arg.content,     // 实际输入内容，前面加上退格符
                 desp: description,        // 描述：翻译结果或回退到 name
                 type: ArgumentsContentProvider.providerTypeKey,
                 doNotEnterExec: true,
@@ -139,15 +142,19 @@ export class ArgumentsContentProvider extends BaseContentProvider {
         return result;
     }
     
-    async getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
+    async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
         if (!envBasicInfo.config.store.ogAutoCompletePlugin.arguments.enable) {
             return null;
         }
 
         const result: OptionItem[] = [];
         
-        // 清理并解析输入命令
-        const cleanCmd = inputCmd.replace(new RegExp("\\s+", "g"), " ").trim();
+        // 处理光标位置：以光标前的内容为基础进行匹配
+        const beforeCursor = inputCmd.substring(0, cursorIndexAt);
+        const afterCursor = inputCmd.substring(cursorIndexAt);
+        
+        // 清理并解析光标前的命令
+        const cleanCmd = beforeCursor.replace(new RegExp("\\s+", "g"), " ").trim();
         const cmdParts = cleanCmd.split(" ");
         const mainExecCmd = cmdParts[0];
 
@@ -155,24 +162,48 @@ export class ArgumentsContentProvider extends BaseContentProvider {
             return null;
         }
 
-        this.logger.log("处理命令参数补全", { inputCmd, mainExecCmd, cmdParts });
+        // 计算需要清除的内容：从光标前第一个空格到光标位置的内容
+        const lastSpaceIndex = beforeCursor.lastIndexOf(" ");
+        const contentToClear = lastSpaceIndex === -1 ? 
+            beforeCursor.substring(mainExecCmd.length).trimStart() :  // 如果没有空格，清除主命令后的内容
+            beforeCursor.substring(lastSpaceIndex + 1); // 从最后一个空格后开始清除
+        
+        // 计算需要的退格符数量
+        const backspaceCount = contentToClear.length;
+
+        // 获取用于匹配的当前输入（光标前最后一个空格到光标位置的内容）
+        const currentInputForMatching = lastSpaceIndex === -1 ? "" : contentToClear;
+
+        this.logger.debug("处理命令参数补全", { 
+            inputCmd, 
+            cursorIndexAt, 
+            beforeCursor, 
+            afterCursor,
+            mainExecCmd, 
+            cmdParts, 
+            contentToClear,
+            backspaceCount,
+            currentInputForMatching,
+            lastSpaceIndex
+        });
 
         // 从YAML配置中查找对应的命令
         const commandConfig = this.findCommandConfig(mainExecCmd);
         
         if (commandConfig) {
-            // 获取YAML配置中的参数建议
-            const yamlBasedOptions = this.convertArgumentsToOptionItems(commandConfig, inputCmd);
+            // 获取YAML配置中的参数建议，传入退格符数量
+            const yamlBasedOptions = this.convertArgumentsToOptionItems(commandConfig, inputCmd, backspaceCount);
             result.push(...yamlBasedOptions);
             
             this.logger.log(`找到${mainExecCmd}命令的${yamlBasedOptions.length}个参数建议`);
         }
+        
         // 如果有结果，使用Fuse.js进行二次过滤和排序
         if (result.length > 0) {
-            const currentInput = cmdParts.slice(1).join(" "); // 除了主命令之外的部分
-            if (currentInput) {
+            // 使用光标前最后一个空格到光标位置的内容进行匹配
+            if (currentInputForMatching) {
                 const fuse = new Fuse(result, this.fuseOptions);
-                const filteredResults = fuse.search(currentInput);
+                const filteredResults = fuse.search(currentInputForMatching);
                 return {
                     optionItem: filteredResults.map(item => item.item),
                     envBasicInfo: envBasicInfo,
@@ -181,7 +212,7 @@ export class ArgumentsContentProvider extends BaseContentProvider {
             }
         }
 
-        this.logger.log(`最终返回${result.length}个参数建议`);
+        this.logger.debug(`最终返回${result.length}个参数建议`);
 
         return {
             optionItem: result,

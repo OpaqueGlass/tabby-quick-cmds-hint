@@ -16,7 +16,7 @@ export class BaseContentProvider {
     ) {
 
     }
-    async getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
+    async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
         // do sth
         
         return null;

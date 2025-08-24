@@ -29,6 +29,7 @@ import { ArgumentsContentProvider } from './provider/argumentsContentProvider';
 export class AddMenuService {
     private componentRef: ComponentRef<AutoCompleteHintMenuComponent>;
     private lastCmd: string;
+    private lastCursorIndexAt: number;
     private recentUuid: string;
     private currentCmd: string; // 仅用于对外呈现
     private recentBlockedUuid: string;
@@ -188,6 +189,7 @@ export class AddMenuService {
         this.menuStatus = true;
         this.currentSessionId = "";
         this.lastCmd = "";
+        this.lastCursorIndexAt = -1;
         this.recentBlockedUuid = "";
         this.menuStatusNotificationSubject.next(this.menuStatus);
         this.document.querySelector(".og-tac-tool-btn").setAttribute("stroke", "green");
@@ -201,7 +203,7 @@ export class AddMenuService {
         return this.menuStatus;
     }
 
-    public sendCurrentText(text: string, uuid: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>, ignoreStatus) {
+    public sendCurrentText(text: string, cursorIndexAt: number, uuid: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>, ignoreStatus) {
         this.currentCmd = text;
         if (!this.menuStatus && !ignoreStatus) {
             this.logger.debug("Ignore sended cmd for menuStatus == false")
@@ -211,7 +213,7 @@ export class AddMenuService {
             this.logger.debug("Ignored due to recent history input");
             return;
         }
-        if (this.lastCmd === text && this.currentSessionId == sessionId) {
+        if (this.lastCmd === text && this.lastCursorIndexAt === cursorIndexAt && this.currentSessionId == sessionId) {
             // 和上一个一致，无需处理
             this.logger.debug("和上一个一致，无需处理");
             return;
@@ -238,7 +240,7 @@ export class AddMenuService {
             sessionId: sessionId
         }
         this.contentProviderList.forEach((provider) => {
-            provider.getQuickCmdList(text, envBasicInfo)
+            provider.getQuickCmdList(text, cursorIndexAt, envBasicInfo)
              .then(this.optionItemTypePostProcess.bind(this)).catch((err)=>{
                 this.logger.error("获取快捷命令列表失败", err);
              });
@@ -246,6 +248,7 @@ export class AddMenuService {
         
         this.componentRef.instance.test(text);
         this.lastCmd = text;
+        this.lastCursorIndexAt = cursorIndexAt;
     }
 
     public getCurrentCmd() {

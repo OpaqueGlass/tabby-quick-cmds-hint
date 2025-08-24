@@ -17,7 +17,7 @@ export class QuickCmdContentProvider extends BaseContentProvider {
         super(logger, configService);
     }
     
-    async getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
+    async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
         const result: OptionItem[] = [];
         const options = {
             keys: ['name'], // 搜索的字段

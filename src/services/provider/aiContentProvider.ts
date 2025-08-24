@@ -25,7 +25,7 @@ export class AIContentProvider extends BaseContentProvider {
     }
     
     // TODO: 需要提供给gpt具体的终端等信息
-    async getQuickCmdList(inputCmd: string, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
+    async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
         // xs
         // const quickCmdList = response.split("\n").map((cmd) => {
         //     return {

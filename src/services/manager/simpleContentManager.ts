@@ -44,7 +44,7 @@ export class SimpleManager extends BaseManager {
         const lastStateLineObj = await this.getLastStateLine();
         // 检查
         // FIXME: 避免进vim之后会出现的，每次回车都广播
-        const cmd = await this.getCmd(lastStateLineObj.raw, lastStateLineObj.cleaned);
+        const [cmd, _] = await this.getCmd(lastStateLineObj.raw, lastStateLineObj.cleaned);
         if (isValidStr(cmd) && cmd[0] != " " && !cmd.trim().endsWith("/")) {
             this.logger.log("广播命令", cmd);
             this.addMenuService.broadcastUserEnteredCmd(cmd, this.sessionUniqueId, this.tab, this.usingRegExp);
@@ -161,6 +161,8 @@ export class SimpleManager extends BaseManager {
                     scrollback: 200,
                 });
                 this.logger.debug("使用xterm内部Serialze api");
+                // @ts-ignore
+                this.logger.debug("使用xterm内部Serialze api", this.tab.frontend?.xterm);
             } else {
                 this.logger.debug("使用包装API");
             }
@@ -186,7 +188,7 @@ export class SimpleManager extends BaseManager {
      * @param cleanedLine 清理转义符后的stateline，取最后一行
      * @returns 用户输入的命令，可能为空字符串
      */
-    async getCmd(rawLine: string, cleanedLine: string) {
+    async getCmd(rawLine: string, cleanedLine: string): Promise<[string, number]> {
         let cmd = "";
         // some times [1B still not provided in vim, tmux or screen
         // "[1B" means cursor go to next line. in most cases, it means the command is finished
@@ -203,16 +205,29 @@ export class SimpleManager extends BaseManager {
         } else if (this.tab.hasFocus) {
             this.logger.messyDebug("getCmd未匹配 [recentCleanPrompt, isIncludeCleanPrompt, isContainMoveDown, cmdStatus]", this.recentCleanPrompt, cleanedLastStateLineStr.includes(this.recentCleanPrompt), !containMoveDownFlag, this.cmdStatusFlag)
         }
-        return cmd;
+        let cursorIndexAt = cmd.length;
+        try {
+            // @ts-ignore
+            cursorIndexAt = this.tab.frontend.xterm.buffer.active.cursorX - this.recentCleanPrompt.length;
+            // @ts-ignore
+            this.logger.messyDebug("命令位置检查", this.tab.frontend.xterm.buffer.active.cursorX, this.tab.frontend.xterm.buffer.active.cursorY, this.tab.frontend.xterm.buffer.active.cursorX - this.recentCleanPrompt.length, cmd.slice(0, this.tab.frontend.xterm.buffer.active.cursorX - this.recentCleanPrompt.length));
+        } catch (e) {
+            this.logger.messyDebug("ERROR: 定位光标位置失败")
+        } finally {
+            if (cursorIndexAt <= -1 || cursorIndexAt > cmd.length) {
+                cursorIndexAt = cmd.length; 
+            }
+        }
+        return [cmd, cursorIndexAt];
     }
     /**
      * 发送命令，给出提示菜单
      * @param cmd 提示的命令
      */
-    sendCmd(cmd: string, force: boolean = false) {
+    sendCmd(cmd: string, cursorIndexAt = -1, force: boolean = false) {
         if (isValidStr(cmd) && this.tab.hasFocus) {
             this.logger.messyDebug("menu sending", cmd);
-            this.addMenuService.sendCurrentText(cmd, this.recentUuid, this.sessionUniqueId, this.tab, force);
+            this.addMenuService.sendCurrentText(cmd, cursorIndexAt, this.recentUuid, this.sessionUniqueId, this.tab, force);
         } else if (this.tab.hasFocus) {
             if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
                 this.logger.debug("menu close");
@@ -227,10 +242,10 @@ export class SimpleManager extends BaseManager {
      */
     async getCmdAndSuggest(lastStateLineObj: LastStateLinesObj, force: boolean=false) {
         const cleanedLastSerialLinesStr = cleanTerminalText(lastStateLineObj.raw);
-        const cmd = await this.getCmd(lastStateLineObj.raw, lastStateLineObj.cleaned);
+        const [cmd, cursorIndexAt] = await this.getCmd(lastStateLineObj.raw, lastStateLineObj.cleaned);
         if (isValidStr(cmd) && this.cmdStatusFlag) {
             this.logger.messyDebug("命令为", cmd);
-            this.sendCmd(cmd, force);
+            this.sendCmd(cmd, cursorIndexAt, force);
         } else if (this.tab.hasFocus) {
             this.logger.messyDebug("menu close by not match or cmd disabled", this.recentCleanPrompt,  cleanedLastSerialLinesStr.includes(this.recentCleanPrompt), !lastStateLineObj.raw.includes("["));
             this.addMenuService.hideMenu();
