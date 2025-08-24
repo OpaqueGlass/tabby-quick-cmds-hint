@@ -1,5 +1,19 @@
 ## 更新日志
 
+### v1.0.0 (2025-08-24)
+
+- 新增：为命令参数进行补全提示；
+- 改进：ContentProvider API现在提供光标位置；
+- 改进：单一匹配项过长时，超长部分强制隐藏；
+- 变更：`i18n.yaml`文件结构；
+
+---
+
+- Added: Autocompletion hints for command parameters
+- Improved: `ContentProvider` API now provides cursor position
+- Improved: When a single match item is too long, the overflow part is forcibly hidden
+- Changed: Structure of the `i18n.yaml` file
+
 ### v0.1.3 (2025年7月23日)
 
 - 修复：由于插件Bug导致长时间运行后性能下降的问题（插件错误频繁创建临时div元素、且未删除）；

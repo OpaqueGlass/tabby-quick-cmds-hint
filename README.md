@@ -4,6 +4,14 @@
 
 This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://github.com/Eugeny/tabby). 
 
+## Features
+
+- Reads and matches commands saved in the `tabby-quick-cmds` plugin
+- Uses AI to complete commands (available only when triggered by a shortcut key)
+- Matches and suggests command parameters (first enter the full command name, then type a space followed by matching content) (the matching content is AI-generated, please verify carefully)
+- Reads and matches command history
+
+
 ## Quick Start
 
 > [!NOTE]
@@ -20,15 +28,6 @@ This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://g
          ```
 2. Download and enable `tabby-quick-cmds` plugin. Add some commands.
 3. Start annoying hint experience.
-
-
-## TODO
-
-- [x] The cmds saved in `tabby-quick-cmds`
-- [x] Use AI to complete cmds (Available only when triggered by a shortcut key)
-- [x] Command arguments
-- [x] History
-- [x] Multilingual support
 
 ## Reference & Appreciations
 
