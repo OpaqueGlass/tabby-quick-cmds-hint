@@ -50,17 +50,47 @@
     border-top: 1px solid #ddd;
 }
 
+.og-autocomplete-item {
+    display: flex;
+    align-items: stretch;   /* 子项等高 */
+    max-width: 35vw;
+    margin-bottom: 1px;
+    cursor: pointer;
+}
+
+/* ac-type 占满高度，最大宽度 1em */
 .og-autocomplete-item .og-ac-type {
+    flex: 0 0 1em;
+    max-width: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2px;
+    box-sizing: border-box;
+}
+
+/* 其余内容占用剩余空间 */
+.og-autocomplete-item .og-ac-name,
+.og-autocomplete-item .og-ac-desp {
+    flex: 1 1 auto;
+    min-width: 0;              /* 防止 flex 子项溢出 */
     padding: 4px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    text-overflow: ellipsis;
 }
 
 .og-autocomplete-item .og-ac-name {
-    padding: 4px;
+    word-break: break-all;
 }
 
 .og-autocomplete-item .og-ac-desp {
     color: var(--bs-gray);
-    padding: 4px;
+    font-size: 0.9em;
+    text-align: right;
 }
 
 .og-ac-type {

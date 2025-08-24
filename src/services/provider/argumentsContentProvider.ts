@@ -146,7 +146,6 @@ export class ArgumentsContentProvider extends BaseContentProvider {
         if (!envBasicInfo.config.store.ogAutoCompletePlugin.arguments.enable) {
             return null;
         }
-
         const result: OptionItem[] = [];
         
         // 处理光标位置：以光标前的内容为基础进行匹配
@@ -158,8 +157,19 @@ export class ArgumentsContentProvider extends BaseContentProvider {
         const cmdParts = cleanCmd.split(" ");
         const mainExecCmd = cmdParts[0];
 
+        if (cmdParts.length <= 1) {
+            return {
+                optionItem: result,
+                envBasicInfo: envBasicInfo,
+                type: ArgumentsContentProvider.providerTypeKey
+            };
+        }
         if (!isValidStr(mainExecCmd)) {
-            return null;
+            return {
+                optionItem: result,
+                envBasicInfo: envBasicInfo,
+                type: ArgumentsContentProvider.providerTypeKey
+            };
         }
 
         // 计算需要清除的内容：从光标前第一个空格到光标位置的内容
