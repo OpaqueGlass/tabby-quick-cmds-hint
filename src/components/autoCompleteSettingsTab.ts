@@ -8,10 +8,6 @@ import { ConfigService } from 'tabby-core'
     styles: [require("./autoCompleteSettingsTab.scss")]
 })
 export class AutoCompleteSettingsTabComponent {
-    agents = [
-        'Bonzi',
-        
-    ]
     constructor (
         public config: ConfigService,
         private translate: AutoCompleteTranslateService,
@@ -23,6 +19,9 @@ export class AutoCompleteSettingsTabComponent {
         this.platform.openExternal('https://github.com/OpaqueGlass/tabby-quick-cmds-hint')
     }
     openNewIssue() {
-        this.platform.openExternal('https://github.com/OpaqueGlass/tabby-quick-cmds-hint/issues/new')
+        this.platform.openExternal('https://github.com/OpaqueGlass/tabby-quick-cmds-hint/issues/new/choose')
+    }
+    isQuickCmdsInstalled() {
+        return this.config.store["qc"] && Object.keys(this.config.store["qc"]).length > 0
     }
 }

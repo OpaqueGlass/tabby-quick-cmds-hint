@@ -199,7 +199,7 @@ export class AddMenuService {
         this.menuStatus = false;
         this.hideMenu();
         this.menuStatusNotificationSubject.next(this.menuStatus);
-        this.document.querySelector(".og-tac-tool-btn").setAttribute("stroke", "purple");
+        this.document.querySelector(".og-tac-tool-btn")?.setAttribute("stroke", "purple");
     }
 
     public enable() {
@@ -209,7 +209,9 @@ export class AddMenuService {
         this.lastCursorIndexAt = -1;
         this.recentBlockedUuid = "";
         this.menuStatusNotificationSubject.next(this.menuStatus);
-        this.document.querySelector(".og-tac-tool-btn").setAttribute("stroke", "green");
+        setTimeout(()=>{
+            this.document.querySelector(".og-tac-tool-btn")?.setAttribute("stroke", "green");
+        }, 300);
     }
 
     /**

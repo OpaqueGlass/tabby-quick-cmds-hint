@@ -3,22 +3,23 @@ h3(translate='settings.title')
 .alert.alert-info.d-flex.align-items-center
     .me-auto
         div(translate="intro.tested_scenarios") 
-        strong(translate='intro.ubuntu_centos') 
-        span(translate='intro.or') 
-        strong(translate='intro.centos') 
-        span(translate='intro.via_ssh') 
-        strong(translate='intro.ssh') 
-        span(translate='intro.using_bash') 
-        strong(translate='intro.bash') 
-        span(translate='intro.on_windows') 
+            strong(translate='intro.ubuntu_centos') 
+            span(translate='intro.or') 
+            strong(translate='intro.centos') 
+            span(translate='intro.via_ssh') 
+            strong(translate='intro.ssh') 
+            span(translate='intro.using_bash') 
+            strong(translate='intro.bash') 
+            span(translate='intro.on_windows') 
         div 
-            p(translate='intro.usage_instruction') 
-            code(translate='intro.tab_key') 
-            span(translate='intro.tab_action') 
-            code(translate='intro.enter_key') 
-            span(translate='intro.enter_action')
+            p
+                span(translate='intro.usage_instruction')
+                code(translate='intro.tab_key') 
+                span(translate='intro.tab_action') 
+                code(translate='intro.enter_key') 
+                span(translate='intro.enter_action')
 
-.alert.alert-info.d-flex.align-items-center(*ngIf='config.store["qc"] == undefined || config.store["qc"] == {}')
+.alert.alert-info.d-flex.align-items-center(*ngIf='!isQuickCmdsInstalled()')
     .me-auto
         div(translate='intro.plugin_requirement')
 
