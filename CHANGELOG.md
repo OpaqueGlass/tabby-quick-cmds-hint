@@ -1,5 +1,13 @@
 ## 更新日志
 
+### v1.0.1 (2026-01-16)
+
+- 修复：和其他创建Tab页插件冲突的问题；
+
+---
+
+- Fixed: Resolved conflicts with other tab - creating plugins.
+
 ### v1.0.0 (2025-08-24)
 
 - 新增：为命令参数进行补全提示；

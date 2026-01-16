@@ -16,7 +16,6 @@ This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://g
 
 > [!NOTE]
 > 
-> - This plugin is still in development.
 > - It may not be compatible with shells other than Bash, or with systems other than Ubuntu. See [docs/INIT.md](./docs/INIT_en-US.md) for more info.
 > - The console log output may also be quite messy.
 
