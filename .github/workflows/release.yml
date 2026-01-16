@@ -72,8 +72,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           files: dist.zip
 
-      - uses: JS-DevTools/npm-publish@v3
+      - uses: JS-DevTools/npm-publish@v4
         if: ${{ ! (contains(github.ref, 'beta') || contains(github.ref, 'alpha') || contains(github.ref, 'dev')) }}
         with:
-          token: ${{ secrets.NPM_TOKEN }}
           provenance: true
