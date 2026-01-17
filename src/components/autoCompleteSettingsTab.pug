@@ -1,34 +1,34 @@
-h3(translate='settings.title')
+h3(translate='ogac.settings.title')
 
 .alert.alert-info.d-flex.align-items-center
     .me-auto
-        div(translate="intro.tested_scenarios") 
-            strong(translate='intro.ubuntu_centos') 
-            span(translate='intro.or') 
-            strong(translate='intro.centos') 
-            span(translate='intro.via_ssh') 
-            strong(translate='intro.ssh') 
-            span(translate='intro.using_bash') 
-            strong(translate='intro.bash') 
-            span(translate='intro.on_windows') 
+        div(translate="ogac.intro.tested_scenarios") 
+            strong(translate='ogac.intro.ubuntu_centos') 
+            span(translate='ogac.intro.or') 
+            strong(translate='ogac.intro.centos') 
+            span(translate='ogac.intro.via_ssh') 
+            strong(translate='ogac.intro.ssh') 
+            span(translate='ogac.intro.using_bash') 
+            strong(translate='ogac.intro.bash') 
+            span(translate='ogac.intro.on_windows') 
         div 
             p
-                span(translate='intro.usage_instruction')
-                code(translate='intro.tab_key') 
-                span(translate='intro.tab_action') 
-                code(translate='intro.enter_key') 
-                span(translate='intro.enter_action')
+                span(translate='ogac.intro.usage_instruction')
+                code(translate='ogac.intro.tab_key') 
+                span(translate='ogac.intro.tab_action') 
+                code(translate='ogac.intro.enter_key') 
+                span(translate='ogac.intro.enter_action')
 
 .alert.alert-info.d-flex.align-items-center(*ngIf='!isQuickCmdsInstalled()')
     .me-auto
-        div(translate='intro.plugin_requirement')
+        div(translate='ogac.intro.plugin_requirement')
 
-h3(translate='settings.general')
+h3(translate='ogac.settings.general')
 
 .form-line
     .header
-        .title(translate='settings.use_regexp_prompt')
-        .description(translate='settings.use_regexp_prompt_desc')
+        .title(translate='ogac.settings.use_regexp_prompt')
+        .description(translate='ogac.settings.use_regexp_prompt_desc')
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.useRegExpDetectPrompt',
         (ngModelChange)='config.save()',
@@ -36,8 +36,8 @@ h3(translate='settings.general')
 
 .form-line
     .header
-        .title(translate='settings.auto_init')
-        .description(translate='settings.auto_init_desc')
+        .title(translate='ogac.settings.auto_init')
+        .description(translate='ogac.settings.auto_init_desc')
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.autoInit',
         (ngModelChange)='config.save()',
@@ -45,8 +45,8 @@ h3(translate='settings.general')
 
 .form-line
     .header
-        .title(translate='settings.enable_on_startup')
-        .description(translate='settings.enable_on_startup_desc')
+        .title(translate='ogac.settings.enable_on_startup')
+        .description(translate='ogac.settings.enable_on_startup_desc')
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.enableCompleteWithCompleteStart',
         (ngModelChange)='config.save()',
@@ -54,8 +54,8 @@ h3(translate='settings.general')
 
 .form-line
     .header
-        .title(translate='settings.menu_show_item_max')
-        .description(translate='settings.menu_show_item_max_desc')
+        .title(translate='ogac.settings.menu_show_item_max')
+        .description(translate='ogac.settings.menu_show_item_max_desc')
     input.form-control(
         type='number',
         min=2,
@@ -64,12 +64,12 @@ h3(translate='settings.general')
     )
 
 
-h3(translate='ai.title')
+h3(translate='ogac.ai.title')
 
 .form-line
     .header
-        .title(translate='ai.openai_base_url')
-        .description(translate='ai.openai_base_url') 
+        .title(translate='ogac.ai.openai_base_url')
+        .description(translate='ogac.ai.openai_base_url') 
     input.form-control(
         type='text',
         [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIBaseUrl',
@@ -78,8 +78,8 @@ h3(translate='ai.title')
 
 .form-line
     .header
-        .title(translate='ai.openai_key')
-        .description(translate='ai.openai_key_desc')
+        .title(translate='ogac.ai.openai_key')
+        .description(translate='ogac.ai.openai_key_desc')
     input.form-control(
         type='password',
         [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIKey',
@@ -89,8 +89,8 @@ h3(translate='ai.title')
 
 .form-line
     .header
-        .title(translate='ai.openai_model')
-        .description(translate='ai.openai_model') 
+        .title(translate='ogac.ai.openai_model')
+        .description(translate='ogac.ai.openai_model') 
     input.form-control(
         type='text',
         [(ngModel)]='config.store.ogAutoCompletePlugin.ai.openAIModel',
@@ -98,11 +98,11 @@ h3(translate='ai.title')
     )
 
 
-h3(translate='appearance.title')
+h3(translate='ogac.appearance.title')
 
 .form-line
     .header
-        .title(translate='appearance.font_size')
+        .title(translate='ogac.appearance.font_size')
     input.form-control(
         type='number',
         max=90,
@@ -112,14 +112,14 @@ h3(translate='appearance.title')
     )
 
 
-h3(translate='history.title')
+h3(translate='ogac.history.title')
 
-.form-line(translate='history.manage_desc')
+.form-line(translate='ogac.history.manage_desc')
 
 .form-line
     .header
-        .title(translate='history.enable')
-        .description(translate='history.enable_desc')
+        .title(translate='ogac.history.enable')
+        .description(translate='ogac.history.enable_desc')
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.history.enable',
         (ngModelChange)='config.save()',
@@ -127,32 +127,32 @@ h3(translate='history.title')
 
 .form-line
     .header
-        .title(translate='history.count_regexp')
-        .description(translate='history.count_regexp_desc')
+        .title(translate='ogac.history.count_regexp')
+        .description(translate='ogac.history.count_regexp_desc')
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.history.countInRegExp',
         (ngModelChange)='config.save()',
     )
 
-h3(translate='arguments.title')
+h3(translate='ogac.arguments.title')
 
-.form-line(translate='arguments.manage_desc')
+.form-line(translate='ogac.arguments.manage_desc')
 
 .form-line
     .header
-        .title(translate='arguments.enable')
-        .description(translate='arguments.enable_desc')
+        .title(translate='ogac.arguments.enable')
+        .description(translate='ogac.arguments.enable_desc')
     toggle(
         [(ngModel)]='config.store.ogAutoCompletePlugin.arguments.enable',
         (ngModelChange)='config.save()',
     )
 
-h3(translate='debug.title')
+h3(translate='ogac.debug.title')
 
 .form-line
     .header
-        .title(translate='debug.enable_debug')
-        .description(translate='debug.log_level_desc')
+        .title(translate='ogac.debug.enable_debug')
+        .description(translate='ogac.debug.log_level_desc')
     input.form-control(
         type='number',
         max=4,
@@ -164,8 +164,8 @@ h3(translate='debug.title')
 
 .form-line 
     .header 
-        .title(translate='debug.custom_regexp')
-        .description(translate='debug.custom_regexp_desc')
+        .title(translate='ogac.debug.custom_regexp')
+        .description(translate='ogac.debug.custom_regexp_desc')
 textarea.form-control(
     rows='2',
     [(ngModel)]='config.store.ogAutoCompletePlugin.customRegExp',
@@ -174,10 +174,10 @@ textarea.form-control(
 
 .footer-of-setting
     div() 
-        span(translate='support.give_star_prefix') 
-        a.og-tac-a((click)='openGithub()',translate='support.give_star_link')
-        span(translate='support.give_star_suffix')
+        span(translate='ogac.support.give_star_prefix') 
+        a.og-tac-a((click)='openGithub()',translate='ogac.support.give_star_link')
+        span(translate='ogac.support.give_star_suffix')
     div()
-        span(translate='support.issue_prefix') 
-        a.og-tac-a((click)='openNewIssue()',translate='support.issue_link')
-        span(translate='support.issue_suffix')
+        span(translate='ogac.support.issue_prefix') 
+        a.og-tac-a((click)='openNewIssue()',translate='ogac.support.issue_link')
+        span(translate='ogac.support.issue_suffix')

@@ -1,1062 +1,1063 @@
-settings:
-  title:
-    en_US: "Quick Cmd Hint Settings"
-    zh_CN: "快速命令提示设置"
-  general:
-    en_US: "General"
-    zh_CN: "通用设置"
-  use_regexp_prompt:
-    en_US: "Use regular expressions to identify shell prompts"
-    zh_CN: "使用正则表达式识别shell prompt"
-  use_regexp_prompt_desc:
-    en_US: "When enabled, the prompt may be triggered by mistake, or the wrong command may be captured, but it can avoid modifying the shell configuration file"
-    zh_CN: "启用后，可能错误地触发提示，或捕获到错误的命令，但可以避免修改shell配置文件"
-  auto_init:
-    en_US: "Try to run init scripts when session connected"
-    zh_CN: "在每次连接后，自动尝试运行初始化脚本"
-  auto_init_desc:
-    en_US: "For Bash Only. In some cases, it may not work properly."
-    zh_CN: "仅支持Bash。一些情况下不能正常运行。"
-  enable_on_startup:
-    en_US: "Enable completion when startup"
-    zh_CN: "在Tabby启动后，启用命令补全提示"
-  enable_on_startup_desc:
-    en_US: "When disabled, the autocomplete menu will not appear automatically, and users will need to enable the feature manually. You can manually control the auto-completion feature via the bird icon in the toolbar. Green means it is enabled."
-    zh_CN: "禁用后，自动完成菜单不会自动出现，用户需要手动启用该功能。您可以通过工具栏中的小鸟图标手动控制自动完成功能。绿色意味着已启用。"
-  menu_show_item_max:
-    en_US: Max Hint Item Count
-    zh_CN: 提示菜单显示数量限制
-  menu_show_item_max_desc:
-    en_US: When there are enough matches, regardless of the settings, at least 3 items of each enabled type will be displayed.
-    zh_CN: 匹配数量足够的情况下，无论如何设定，各启用类型至少显示3个。
+ogac:
+  settings:
+    title:
+      en_US: "Quick Cmd Hint Settings"
+      zh_CN: "快速命令提示设置"
+    general:
+      en_US: "General"
+      zh_CN: "通用设置"
+    use_regexp_prompt:
+      en_US: "Use regular expressions to identify shell prompts"
+      zh_CN: "使用正则表达式识别shell prompt"
+    use_regexp_prompt_desc:
+      en_US: "When enabled, the prompt may be triggered by mistake, or the wrong command may be captured, but it can avoid modifying the shell configuration file"
+      zh_CN: "启用后，可能错误地触发提示，或捕获到错误的命令，但可以避免修改shell配置文件"
+    auto_init:
+      en_US: "Try to run init scripts when session connected"
+      zh_CN: "在每次连接后，自动尝试运行初始化脚本"
+    auto_init_desc:
+      en_US: "For Bash Only. In some cases, it may not work properly."
+      zh_CN: "仅支持Bash。一些情况下不能正常运行。"
+    enable_on_startup:
+      en_US: "Enable completion when startup"
+      zh_CN: "在Tabby启动后，启用命令补全提示"
+    enable_on_startup_desc:
+      en_US: "When disabled, the autocomplete menu will not appear automatically, and users will need to enable the feature manually. You can manually control the auto-completion feature via the bird icon in the toolbar. Green means it is enabled."
+      zh_CN: "禁用后，自动完成菜单不会自动出现，用户需要手动启用该功能。您可以通过工具栏中的小鸟图标手动控制自动完成功能。绿色意味着已启用。"
+    menu_show_item_max:
+      en_US: Max Hint Item Count
+      zh_CN: 提示菜单显示数量限制
+    menu_show_item_max_desc:
+      en_US: When there are enough matches, regardless of the settings, at least 3 items of each enabled type will be displayed.
+      zh_CN: 匹配数量足够的情况下，无论如何设定，各启用类型至少显示3个。
 
-# AI相关设置
-ai:
-  title:
-    en_US: "AI"
-    zh_CN: "AI"
-  openai_base_url:
-    en_US: "Open AI Base URL"
-    zh_CN: "Open AI Base URL"
-  openai_key:
-    en_US: "Open AI Key"
-    zh_CN: "Open AI Key"
-  openai_key_desc:
-    en_US: "Note that all information will be saved in plain text locally"
-    zh_CN: "请注意所有信息将明文保存在本地"
-  openai_model:
-    en_US: "Open AI Model name"
-    zh_CN: "Open AI 模型名称"
+  # AI相关设置
+  ai:
+    title:
+      en_US: "AI"
+      zh_CN: "AI"
+    openai_base_url:
+      en_US: "Open AI Base URL"
+      zh_CN: "Open AI Base URL"
+    openai_key:
+      en_US: "Open AI Key"
+      zh_CN: "Open AI Key"
+    openai_key_desc:
+      en_US: "Note that all information will be saved in plain text locally"
+      zh_CN: "请注意所有信息将明文保存在本地"
+    openai_model:
+      en_US: "Open AI Model name"
+      zh_CN: "Open AI 模型名称"
 
-# 外观设置
-appearance:
-  title:
-    en_US: "Appearance"
-    zh_CN: "外观"
-  font_size:
-    en_US: "Font size"
-    zh_CN: "字体大小"
+  # 外观设置
+  appearance:
+    title:
+      en_US: "Appearance"
+      zh_CN: "外观"
+    font_size:
+      en_US: "Font size"
+      zh_CN: "字体大小"
 
-# 历史记录设置
-history:
-  title:
-    en_US: "History"
-    zh_CN: "历史记录"
-  manage_desc:
-    en_US: "Open \"Developer Tools\", \"Application\", \"Storage\" \"Indexed DB\" in the list on the left, and manage the saved history in \"og_tac_HistoryDB\"."
-    zh_CN: "打开\"开发者工具\"，\"应用\"，左侧列表中的\"存储\"\"Indexed DB\"，\"og_tac_HistoryDB\"中管理已保存的历史记录。"
-  enable:
-    en_US: "Enable the history of user input commands"
-    zh_CN: "启用用户输入命令历史"
-  enable_desc:
-    en_US: "Turning this off will still create the database (but without recording history) and will not clear the history that was previously saved."
-    zh_CN: "关闭此项，仍然会创建历史记录数据库（但不记录历史），先前记录的历史不会被自动清除。"
-  count_regexp:
-    en_US: "Record input commands matched by regular expressions"
-    zh_CN: "记录由正则表达式匹配到的命令"
-  count_regexp_desc:
-    en_US: "It may record incorrect or incomplete commands. When disabled, only input commands matched by the prompt escape sequence will be saved."
-    zh_CN: "可能记录到错误或不完整的命令。禁用后，只保存由prompt转义序列匹配的输入命令。"
+  # 历史记录设置
+  history:
+    title:
+      en_US: "History"
+      zh_CN: "历史记录"
+    manage_desc:
+      en_US: "Open \"Developer Tools\", \"Application\", \"Storage\" \"Indexed DB\" in the list on the left, and manage the saved history in \"og_tac_HistoryDB\"."
+      zh_CN: "打开\"开发者工具\"，\"应用\"，左侧列表中的\"存储\"\"Indexed DB\"，\"og_tac_HistoryDB\"中管理已保存的历史记录。"
+    enable:
+      en_US: "Enable the history of user input commands"
+      zh_CN: "启用用户输入命令历史"
+    enable_desc:
+      en_US: "Turning this off will still create the database (but without recording history) and will not clear the history that was previously saved."
+      zh_CN: "关闭此项，仍然会创建历史记录数据库（但不记录历史），先前记录的历史不会被自动清除。"
+    count_regexp:
+      en_US: "Record input commands matched by regular expressions"
+      zh_CN: "记录由正则表达式匹配到的命令"
+    count_regexp_desc:
+      en_US: "It may record incorrect or incomplete commands. When disabled, only input commands matched by the prompt escape sequence will be saved."
+      zh_CN: "可能记录到错误或不完整的命令。禁用后，只保存由prompt转义序列匹配的输入命令。"
 
-arguments:
-  title:
-    en_US: "Arguments Complete"
-    zh_CN: "参数提示"
-  manage_desc:
-    en_US: "The preset content matched by the argument prompts is generated by AI and has not been reviewed by the developers. Please carefully verify the correctness of the argument prompts. The current functionality is still under testing, and during argument input completion, it may not check for or remove/partially remove existing content. If you encounter any bugs, please provide feedback. If you need more argument prompts, please submit a PR."
-    zh_CN: "参数提示匹配到的预设内容由AI生成，开发者没有进行检查，请注意检查内容的正确性；目前功能仍在测试，参数输入上屏时，可能不会判断删除/部分删除已有内容。如有bug请反馈，如需要更多参数提示请PR。"
-  enable:
-    en_US: "Enable Arguments Complete"
-    zh_CN: "启用命令参数提示补全"
-  enable_desc:
-    en_US: ""
-    zh_CN: ""
+  arguments:
+    title:
+      en_US: "Arguments Complete"
+      zh_CN: "参数提示"
+    manage_desc:
+      en_US: "The preset content matched by the argument prompts is generated by AI and has not been reviewed by the developers. Please carefully verify the correctness of the argument prompts. The current functionality is still under testing, and during argument input completion, it may not check for or remove/partially remove existing content. If you encounter any bugs, please provide feedback. If you need more argument prompts, please submit a PR."
+      zh_CN: "参数提示匹配到的预设内容由AI生成，开发者没有进行检查，请注意检查内容的正确性；目前功能仍在测试，参数输入上屏时，可能不会判断删除/部分删除已有内容。如有bug请反馈，如需要更多参数提示请PR。"
+    enable:
+      en_US: "Enable Arguments Complete"
+      zh_CN: "启用命令参数提示补全"
+    enable_desc:
+      en_US: ""
+      zh_CN: ""
 
-# 调试设置
-debug:
-  title:
-    en_US: "Debug"
-    zh_CN: "调试"
-  enable_debug:
-    en_US: "Enable debug mode and detailed logs"
-    zh_CN: "显示详细日志和调错信息"
-  log_level_desc:
-    en_US: "0 All, 1 log, 2 warn, 3 ErrorOnly, 4 No log"
-    zh_CN: "0 输出全部日志，1 输出日志，2 输出警告，3 仅输出错误，4 不输出日志"
-  custom_regexp:
-    en_US: "Use a custom regular expression to match the shell prompt"
-    zh_CN: "使用自定义正则表达式匹配shell prompt"
-  custom_regexp_desc:
-    en_US: "If it doesn't work, don't forget to check the output in the developer tools"
-    zh_CN: "如果没有生效，别忘记查看开发者工具中的输出"
+  # 调试设置
+  debug:
+    title:
+      en_US: "Debug"
+      zh_CN: "调试"
+    enable_debug:
+      en_US: "Enable debug mode and detailed logs"
+      zh_CN: "显示详细日志和调错信息"
+    log_level_desc:
+      en_US: "0 All, 1 log, 2 warn, 3 ErrorOnly, 4 No log"
+      zh_CN: "0 输出全部日志，1 输出日志，2 输出警告，3 仅输出错误，4 不输出日志"
+    custom_regexp:
+      en_US: "Use a custom regular expression to match the shell prompt"
+      zh_CN: "使用自定义正则表达式匹配shell prompt"
+    custom_regexp_desc:
+      en_US: "If it doesn't work, don't forget to check the output in the developer tools"
+      zh_CN: "如果没有生效，别忘记查看开发者工具中的输出"
 
-# 通用UI
-ui:
-  loading:
-    en_US: "Loading..."
-    zh_CN: "加载中..."
-  ask:
-    en_US: "Ask"
-    zh_CN: "询问"
-  ask_ai:
-    en_US: "Ask AI"
-    zh_CN: "询问 AI"
-  no_results:
-    en_US: "No results found"
-    zh_CN: "未找到结果"
-  error_occurred:
-    en_US: "Error occurred: {desp}"
-    zh_CN: "发生错误：{desp}"
-  danger_rating:
-    en_US: "Danger Rating"
-    zh_CN: "危险级别"
-  quick_hint:
-    en_US: "Quick Hint"
-    zh_CN: "命令提示"
-  show_complete_menu:
-    en_US: "Show complete menu now"
-    zh_CN: "立刻显示提示菜单"
+  # 通用UI
+  ui:
+    loading:
+      en_US: "Loading..."
+      zh_CN: "加载中..."
+    ask:
+      en_US: "Ask"
+      zh_CN: "询问"
+    ask_ai:
+      en_US: "Ask AI"
+      zh_CN: "询问 AI"
+    no_results:
+      en_US: "No results found"
+      zh_CN: "未找到结果"
+    error_occurred:
+      en_US: "Error occurred: {desp}"
+      zh_CN: "发生错误：{desp}"
+    danger_rating:
+      en_US: "Danger Rating"
+      zh_CN: "危险级别"
+    quick_hint:
+      en_US: "Quick Hint"
+      zh_CN: "命令提示"
+    show_complete_menu:
+      en_US: "Show complete menu now"
+      zh_CN: "立刻显示提示菜单"
 
-# 插件介绍和说明
-intro:
-  plugin_requirement:
-    en_US: "To use this plugin, first download and enable the plugin `tabby-quick-cmds`, and then create some commands within it."
-    zh_CN: "为使用此插件，请先下载启用tabby-quick-cmds插件，并在其中创建一些命令。"
-  tested_scenarios:
-    en_US: "The plugin has been primarily tested in the following scenarios: connecting to servers running"
-    zh_CN: "插件主要在以下情况进行测试：连接到运行"
-  ubuntu_centos:
-    en_US: "Ubuntu"
-    zh_CN: "Ubuntu"
-  or:
-    en_US: "or"
-    zh_CN: "或"
-  centos:
-    en_US: "CentOS"
-    zh_CN: "CentOS"
-  via_ssh:
-    en_US: "via"
-    zh_CN: "的设备（通过"
-  ssh:
-    en_US: "SSH"
-    zh_CN: "SSH"
-  using_bash:
-    en_US: "; using"
-    zh_CN: "）；使用"
-  bash:
-    en_US: "Bash"
-    zh_CN: "Bash"
-  on_windows:
-    en_US: "as the shell environment; and using Tabby on Windows systems."
-    zh_CN: "作为Shell；在Windows系统上使用Tabby。"
-  usage_instruction:
-    en_US: "After enabling the plugin, entering content will trigger a prompt.  (Tips mainly come from quick-cmds plug-in, see README.md) Use the up and down arrow keys to select an item. Pressing"
-    zh_CN: "启用此插件，输入内容将触发提示。（提示内容主要来源于 quick-cmds 插件，详见README.md）使用方向上下键选择一个项目。按下"
-  tab_key:
-    en_US: "Tab"
-    zh_CN: "Tab"
-  tab_action:
-    en_US: "will input the selected item into the terminal, while pressing"
-    zh_CN: "将输入选择的项目到终端。按下"
-  enter_key:
-    en_US: "Enter"
-    zh_CN: "Enter"
-  enter_action:
-    en_US: "will input the selected item into the terminal and execute it by pressing enter."
-    zh_CN: "将输入选择的项目到终端，并回车执行它。"
+  # 插件介绍和说明
+  intro:
+    plugin_requirement:
+      en_US: "To use this plugin, first download and enable the plugin `tabby-quick-cmds`, and then create some commands within it."
+      zh_CN: "为使用此插件，请先下载启用tabby-quick-cmds插件，并在其中创建一些命令。"
+    tested_scenarios:
+      en_US: "The plugin has been primarily tested in the following scenarios: connecting to servers running"
+      zh_CN: "插件主要在以下情况进行测试：连接到运行"
+    ubuntu_centos:
+      en_US: "Ubuntu"
+      zh_CN: "Ubuntu"
+    or:
+      en_US: "or"
+      zh_CN: "或"
+    centos:
+      en_US: "CentOS"
+      zh_CN: "CentOS"
+    via_ssh:
+      en_US: "via"
+      zh_CN: "的设备（通过"
+    ssh:
+      en_US: "SSH"
+      zh_CN: "SSH"
+    using_bash:
+      en_US: "; using"
+      zh_CN: "）；使用"
+    bash:
+      en_US: "Bash"
+      zh_CN: "Bash"
+    on_windows:
+      en_US: "as the shell environment; and using Tabby on Windows systems."
+      zh_CN: "作为Shell；在Windows系统上使用Tabby。"
+    usage_instruction:
+      en_US: "After enabling the plugin, entering content will trigger a prompt.  (Tips mainly come from quick-cmds plug-in, see README.md) Use the up and down arrow keys to select an item. Pressing"
+      zh_CN: "启用此插件，输入内容将触发提示。（提示内容主要来源于 quick-cmds 插件，详见README.md）使用方向上下键选择一个项目。按下"
+    tab_key:
+      en_US: "Tab"
+      zh_CN: "Tab"
+    tab_action:
+      en_US: "will input the selected item into the terminal, while pressing"
+      zh_CN: "将输入选择的项目到终端。按下"
+    enter_key:
+      en_US: "Enter"
+      zh_CN: "Enter"
+    enter_action:
+      en_US: "will input the selected item into the terminal and execute it by pressing enter."
+      zh_CN: "将输入选择的项目到终端，并回车执行它。"
 
-# 菜单和工具
-menu:
-  open_dev_tools:
-    en_US: "Open Dev Tools"
-    zh_CN: "打开开发者工具"
-  init_current_session:
-    en_US: "Init QuickCmdHint for Current Session (Bash only)"
-    zh_CN: "为当前会话初始化快速命令提示（仅支持Bash）"
-  ai_command_generation:
-    en_US: "AI Command Generation"
-    zh_CN: "让AI生成命令"
-  noresult:
-    en_US: "No results found"
-    zh_CN: "无匹配结果"
+  # 菜单和工具
+  menu:
+    open_dev_tools:
+      en_US: "Open Dev Tools"
+      zh_CN: "打开开发者工具"
+    init_current_session:
+      en_US: "Init QuickCmdHint for Current Session (Bash only)"
+      zh_CN: "为当前会话初始化快速命令提示（仅支持Bash）"
+    ai_command_generation:
+      en_US: "AI Command Generation"
+      zh_CN: "让AI生成命令"
+    noresult:
+      en_US: "No results found"
+      zh_CN: "无匹配结果"
 
-# 支持和反馈
-support:
-  give_star_prefix:
-    en_US: "⭐ If this project helps you, please"
-    zh_CN: "⭐ 如果这个项目对你有帮助，请"
-  give_star_link:
-    en_US: "give it a star!"
-    zh_CN: "点亮Star。"
-  give_star_suffix:
-    en_US: "Your support is greatly appreciated and motivates me to keep improving it. 😊"
-    zh_CN: "感谢你的支持！这将鼓励我继续改进它。😊"
-  issue_prefix:
-    en_US: "💡 If you encounter any issues,"
-    zh_CN: "💡 如果遇到问题，"
-  issue_link:
-    en_US: "feel free to open an issue on GitHub!"
-    zh_CN: "请到Github创建issue"
-  issue_suffix:
-    en_US: "😊"
-    zh_CN: "😊"
+  # 支持和反馈
+  support:
+    give_star_prefix:
+      en_US: "⭐ If this project helps you, please"
+      zh_CN: "⭐ 如果这个项目对你有帮助，请"
+    give_star_link:
+      en_US: "give it a star!"
+      zh_CN: "点亮Star。"
+    give_star_suffix:
+      en_US: "Your support is greatly appreciated and motivates me to keep improving it. 😊"
+      zh_CN: "感谢你的支持！这将鼓励我继续改进它。😊"
+    issue_prefix:
+      en_US: "💡 If you encounter any issues,"
+      zh_CN: "💡 如果遇到问题，"
+    issue_link:
+      en_US: "feel free to open an issue on GitHub!"
+      zh_CN: "请到Github创建issue"
+    issue_suffix:
+      en_US: "😊"
+      zh_CN: "😊"
 
-# 测试用例
-test:
-  en_US: "test"
-  zh_CN: "testA"
+  # 测试用例
+  test:
+    en_US: "test"
+    zh_CN: "testA"
 
-# 命令参数补全
-arguments_complete:
-  git:
-    add:
-      en_US: "Add files to staging area"
-      zh_CN: "将文件添加到暂存区"
-    add_all:
-      en_US: "Add all files in current directory"
-      zh_CN: "添加当前目录的所有文件"
-    add_all_changes:
-      en_US: "Add all changes including deletions"
-      zh_CN: "添加所有更改包括删除的文件"
-    commit:
-      en_US: "Commit staged changes with message"
-      zh_CN: "提交暂存的更改并添加提交信息"
-    commit_amend:
-      en_US: "Amend the last commit"
-      zh_CN: "修改最后一次提交"
-    commit_all:
-      en_US: "Add all changes and commit with message"
-      zh_CN: "添加所有更改并提交"
-    push:
-      en_US: "Push changes to remote repository"
-      zh_CN: "推送更改到远程仓库"
-    push_upstream:
-      en_US: "Push and set upstream branch"
-      zh_CN: "推送并设置上游分支"
-    push_force:
-      en_US: "Force push (dangerous operation)"
-      zh_CN: "强制推送（危险操作）"
-    pull:
-      en_US: "Pull changes from remote repository"
-      zh_CN: "从远程仓库拉取更改"
-    pull_rebase:
-      en_US: "Pull with rebase strategy"
-      zh_CN: "使用 rebase 方式拉取"
-    branch_list:
-      en_US: "List all branches"
-      zh_CN: "列出所有分支"
-    branch_create:
-      en_US: "Create a new branch"
-      zh_CN: "创建新分支"
-    branch_delete:
-      en_US: "Delete a branch"
-      zh_CN: "删除分支"
-    checkout:
-      en_US: "Switch to a branch or restore files"
-      zh_CN: "切换分支或恢复文件"
-    checkout_create:
-      en_US: "Create and switch to new branch"
-      zh_CN: "创建并切换到新分支"
-    merge:
-      en_US: "Merge branches"
-      zh_CN: "合并分支"
-    status:
-      en_US: "Show working directory status"
-      zh_CN: "显示工作目录状态"
-    status_short:
-      en_US: "Show status in short format"
-      zh_CN: "以简短格式显示状态"
-    log_oneline:
-      en_US: "Show commit history in one line"
-      zh_CN: "单行显示提交历史"
-    log_graph:
-      en_US: "Show commit history with graph"
-      zh_CN: "图形化显示提交历史"
-    log_limit:
-      en_US: "Show limited number of commits"
-      zh_CN: "显示指定数量的提交"
-  docker:
-    # 基础系统命令
-    info:
-      en_US: "Display Docker system information"
-      zh_CN: "显示 Docker 系统信息"
-    login:
-      en_US: "Login to Docker registry server"
-      zh_CN: "登录到 Docker 仓库服务器"
-    login_default:
-      en_US: "Login to default Docker registry"
-      zh_CN: "登录到默认 Docker 仓库"
-    help:
-      en_US: "Show help information"
-      zh_CN: "显示帮助信息"
-    
-    # 镜像管理命令
-    images:
-      en_US: "List Docker images"
-      zh_CN: "列出 Docker 镜像"
-    images_all:
-      en_US: "List all Docker images including intermediate"
-      zh_CN: "列出所有 Docker 镜像（包括中间镜像）"
-    pull:
-      en_US: "Pull an image from registry"
-      zh_CN: "从仓库拉取镜像"
-    push:
-      en_US: "Push an image to registry"
-      zh_CN: "推送镜像到仓库"
-    build:
-      en_US: "Build Docker image with tag"
-      zh_CN: "构建带标签的 Docker 镜像"
-    build_no_cache:
-      en_US: "Build image without using cache"
-      zh_CN: "不使用缓存构建镜像"
-    rmi:
-      en_US: "Remove one or more images"
-      zh_CN: "删除一个或多个镜像"
-    rmi_force:
-      en_US: "Force remove one or more images"
-      zh_CN: "强制删除一个或多个镜像"
-    history:
-      en_US: "Show the history of an image"
-      zh_CN: "显示镜像的历史变更"
-    tag:
-      en_US: "Create a tag for an image"
-      zh_CN: "为镜像创建标签"
-    
-    # 容器运行命令
-    run_interactive:
-      en_US: "Run container in interactive mode"
-      zh_CN: "以交互模式运行容器"
-    run_detached:
-      en_US: "Run container in detached mode"
-      zh_CN: "以后台模式运行容器"
-    run_port:
-      en_US: "Run container with port mapping"
-      zh_CN: "运行容器并映射端口"
-    run_remove:
-      en_US: "Run container and remove it after exit"
-      zh_CN: "运行容器，退出后自动删除"
-    run_env:
-      en_US: "Run container with environment variables"
-      zh_CN: "运行容器并设置环境变量"
-    run_volume:
-      en_US: "Run container with volume mounting"
-      zh_CN: "运行容器并挂载数据卷"
-    run_name:
-      en_US: "Run container with custom name"
-      zh_CN: "运行容器并指定名称"
-    run_network:
-      en_US: "Run container with specific network"
-      zh_CN: "运行容器并指定网络"
-    
-    # 容器管理命令
-    ps:
-      en_US: "List running containers"
-      zh_CN: "列出运行中的容器"
-    ps_all:
-      en_US: "List all containers"
-      zh_CN: "列出所有容器"
-    start:
-      en_US: "Start one or more stopped containers"
-      zh_CN: "启动一个或多个已停止的容器"
-    stop:
-      en_US: "Stop one or more running containers"
-      zh_CN: "停止一个或多个运行中的容器"
-    restart:
-      en_US: "Restart one or more containers"
-      zh_CN: "重启一个或多个容器"
-    rm:
-      en_US: "Remove one or more containers"
-      zh_CN: "删除一个或多个容器"
-    rm_force:
-      en_US: "Force remove one or more containers"
-      zh_CN: "强制删除一个或多个容器"
-    exec_bash:
-      en_US: "Execute bash in running container"
-      zh_CN: "在运行中的容器内执行 bash"
-    exec_sh:
-      en_US: "Execute shell in running container"
-      zh_CN: "在运行中的容器内执行 shell"
-    logs:
-      en_US: "Show container logs"
-      zh_CN: "显示容器日志"
-    logs_follow:
-      en_US: "Follow container logs output"
-      zh_CN: "实时跟踪容器日志输出"
-    inspect:
-      en_US: "Display detailed information about container"
-      zh_CN: "显示容器的详细信息"
-    
-    # 数据卷命令
-    volume_create:
-      en_US: "Create a new volume"
-      zh_CN: "创建新的数据卷"
-    volume_list:
-      en_US: "List all volumes"
-      zh_CN: "列出所有数据卷"
-    volume_inspect:
-      en_US: "Display detailed information about volume"
-      zh_CN: "显示数据卷的详细信息"
-    volume_remove:
-      en_US: "Remove one or more volumes"
-      zh_CN: "删除一个或多个数据卷"
-    volume_prune:
-      en_US: "Remove all unused volumes"
-      zh_CN: "删除所有未使用的数据卷"
-    
-    # 网络命令
-    network_list:
-      en_US: "List all networks"
-      zh_CN: "列出所有网络"
-    network_create:
-      en_US: "Create a new network"
-      zh_CN: "创建新的网络"
-    network_remove:
-      en_US: "Remove one or more networks"
-      zh_CN: "删除一个或多个网络"
-    network_inspect:
-      en_US: "Display detailed information about network"
-      zh_CN: "显示网络的详细信息"
-    network_connect:
-      en_US: "Connect container to a network"
-      zh_CN: "将容器连接到网络"
-    
-    # 系统管理命令
-    system_df:
-      en_US: "Show Docker filesystem usage"
-      zh_CN: "显示 Docker 文件系统使用情况"
-    system_prune:
-      en_US: "Remove unused data"
-      zh_CN: "清理未使用的数据"
-    system_prune_all:
-      en_US: "Remove all unused data including images"
-      zh_CN: "清理所有未使用的数据（包括镜像）"
-    system_info:
-      en_US: "Display system-wide information"
-      zh_CN: "显示系统级信息"
-    
-    # Docker Compose 相关
-    compose_up:
-      en_US: "Create and start containers using compose"
-      zh_CN: "使用 compose 创建并启动容器"
-    compose_up_detached:
-      en_US: "Create and start containers in detached mode"
-      zh_CN: "以后台模式创建并启动容器"
-    compose_down:
-      en_US: "Stop and remove containers, networks"
-      zh_CN: "停止并删除容器、网络"
-    compose_ps:
-      en_US: "List containers managed by compose"
-      zh_CN: "列出由 compose 管理的容器"
-  tar:
-    extract:
-      en_US: "Extract files from archive"
-      zh_CN: "从归档文件中解压文件"
-    create:
-      en_US: "Create a new archive file"
-      zh_CN: "创建新的归档文件"
-    list:
-      en_US: "List contents of archive"
-      zh_CN: "列出归档文件的内容"
-    create_gzip:
-      en_US: "Create gzip compressed archive"
-      zh_CN: "创建 gzip 压缩的归档文件"
-    extract_gzip:
-      en_US: "Extract gzip compressed archive"
-      zh_CN: "解压 gzip 压缩的归档文件"
-    list_gzip:
-      en_US: "List contents of gzip archive"
-      zh_CN: "列出 gzip 归档文件的内容"
-    create_bzip2:
-      en_US: "Create bzip2 compressed archive"
-      zh_CN: "创建 bzip2 压缩的归档文件"
-    extract_bzip2:
-      en_US: "Extract bzip2 compressed archive"
-      zh_CN: "解压 bzip2 压缩的归档文件"
-    list_bzip2:
-      en_US: "List contents of bzip2 archive"
-      zh_CN: "列出 bzip2 归档文件的内容"
-    create_xz:
-      en_US: "Create xz compressed archive (high compression)"
-      zh_CN: "创建 xz 压缩的归档文件（高压缩率）"
-    extract_xz:
-      en_US: "Extract xz compressed archive"
-      zh_CN: "解压 xz 压缩的归档文件"
-    list_xz:
-      en_US: "List contents of xz archive"
-      zh_CN: "列出 xz 归档文件的内容"
-    exclude:
-      en_US: "Exclude files matching pattern"
-      zh_CN: "排除匹配模式的文件"
-    exclude_from:
-      en_US: "Exclude files listed in file"
-      zh_CN: "排除文件中列出的文件"
-    extract_to:
-      en_US: "Extract to specified directory"
-      zh_CN: "解压到指定目录"
-    incremental:
-      en_US: "Create incremental backup"
-      zh_CN: "创建增量备份"
-  rsync:
-    recursive:
-      en_US: "Recursive sync (basic)"
-      zh_CN: "递归同步（基础）"
-    archive:
-      en_US: "Archive mode (preserve metadata)"
-      zh_CN: "归档模式（保留元数据）"
-    archive_verbose:
-      en_US: "Archive mode with verbose output"
-      zh_CN: "归档模式并显示详细信息"
-    dry_run:
-      en_US: "Simulate sync without actual execution"
-      zh_CN: "模拟同步，不实际执行"
-    dry_run_verbose:
-      en_US: "Verbose dry run simulation"
-      zh_CN: "详细的模拟同步"
-    mirror:
-      en_US: "Mirror sync (delete extra files in destination)"
-      zh_CN: "镜像同步（删除目标中多余的文件）"
-    exclude:
-      en_US: "Exclude files matching pattern"
-      zh_CN: "排除匹配模式的文件"
-    exclude_from:
-      en_US: "Exclude files listed in file"
-      zh_CN: "排除文件中列出的文件"
-    include_only:
-      en_US: "Include only specific patterns"
-      zh_CN: "仅包含特定模式的文件"
-    remote_upload:
-      en_US: "Upload to remote server via SSH"
-      zh_CN: "通过SSH上传到远程服务器"
-    remote_download:
-      en_US: "Download from remote server via SSH"
-      zh_CN: "从远程服务器通过SSH下载"
-    ssh_port:
-      en_US: "Use custom SSH port"
-      zh_CN: "使用自定义SSH端口"
-    daemon:
-      en_US: "Sync using rsync daemon protocol"
-      zh_CN: "使用rsync守护进程协议同步"
-    daemon_url:
-      en_US: "Sync using rsync:// URL"
-      zh_CN: "使用rsync://协议同步"
-    incremental:
-      en_US: "Incremental backup with hard links"
-      zh_CN: "使用硬链接的增量备份"
-    progress:
-      en_US: "Show progress and allow partial transfers"
-      zh_CN: "显示进度并允许断点续传"
-    resume:
-      en_US: "Resume interrupted transfers"
-      zh_CN: "恢复中断的传输"
-    checksum:
-      en_US: "Use checksum for file comparison"
-      zh_CN: "使用校验和比较文件"
-    compress:
-      en_US: "Compress data during transfer"
-      zh_CN: "传输时压缩数据"
-    bandwidth:
-      en_US: "Limit bandwidth usage (KB/s)"
-      zh_CN: "限制带宽使用（KB/s）"
-    max_size:
-      en_US: "Skip files larger than specified size"
-      zh_CN: "跳过大于指定大小的文件"
-    min_size:
-      en_US: "Skip files smaller than specified size"
-      zh_CN: "跳过小于指定大小的文件"
-    update:
-      en_US: "Skip files newer in destination"
-      zh_CN: "跳过目标中较新的文件"
-    ignore_existing:
-      en_US: "Skip files that exist in destination"
-      zh_CN: "跳过目标中已存在的文件"
-    existing_only:
-      en_US: "Only update files that exist in destination"
-      zh_CN: "仅更新目标中已存在的文件"
-  crontab:
-    list:
-      en_US: "List current user's crontab"
-      zh_CN: "列出当前用户的定时任务"
-    edit:
-      en_US: "Edit current user's crontab"
-      zh_CN: "编辑当前用户的定时任务"
-    remove:
-      en_US: "Remove current user's crontab"
-      zh_CN: "删除当前用户的定时任务"
-    remove_interactive:
-      en_US: "Remove crontab with confirmation prompt"
-      zh_CN: "删除定时任务（需确认）"
-    list_user:
-      en_US: "List specified user's crontab"
-      zh_CN: "列出指定用户的定时任务"
-    edit_user:
-      en_US: "Edit specified user's crontab"
-      zh_CN: "编辑指定用户的定时任务"
-    remove_user:
-      en_US: "Remove specified user's crontab"
-      zh_CN: "删除指定用户的定时任务"
-    remove_user_interactive:
-      en_US: "Remove user's crontab with confirmation"
-      zh_CN: "删除指定用户的定时任务（需确认）"
-    install_file:
-      en_US: "Install crontab from file"
-      zh_CN: "从文件安装定时任务"
-    install_file_user:
-      en_US: "Install crontab from file for specified user"
-      zh_CN: "为指定用户从文件安装定时任务"
-    install_stdin:
-      en_US: "Install crontab from standard input"
-      zh_CN: "从标准输入安装定时任务"
-  journalctl:
-    view_all:
-      en_US: "View all system logs"
-      zh_CN: "查看所有系统日志"
-    follow:
-      en_US: "Follow log output in real time"
-      zh_CN: "实时跟踪日志输出"
-    follow_long:
-      en_US: "Follow log output in real time (long option)"
-      zh_CN: "实时跟踪日志输出（完整选项）"
-    lines:
-      en_US: "Show specified number of recent lines"
-      zh_CN: "显示指定行数的最新日志"
-    lines_long:
-      en_US: "Show specified number of recent lines (long option)"
-      zh_CN: "显示指定行数的最新日志（完整选项）"
-    lines_50:
-      en_US: "Show last 50 lines"
-      zh_CN: "显示最后50行日志"
-    lines_100:
-      en_US: "Show last 100 lines"
-      zh_CN: "显示最后100行日志"
-    since:
-      en_US: "Show logs since specified time"
-      zh_CN: "显示指定时间后的日志"
-    until:
-      en_US: "Show logs until specified time"
-      zh_CN: "显示指定时间前的日志"
-    since_today:
-      en_US: "Show logs since today"
-      zh_CN: "显示今天的日志"
-    since_yesterday:
-      en_US: "Show logs since yesterday"
-      zh_CN: "显示昨天以来的日志"
-    since_hour:
-      en_US: "Show logs from last hour"
-      zh_CN: "显示最近1小时的日志"
-    priority_error:
-      en_US: "Show only error messages"
-      zh_CN: "仅显示错误消息"
-    priority_warning:
-      en_US: "Show warning and error messages"
-      zh_CN: "显示警告和错误消息"
-    priority_info:
-      en_US: "Show info, warning and error messages"
-      zh_CN: "显示信息、警告和错误消息"
-    priority:
-      en_US: "Filter by log priority level"
-      zh_CN: "按日志优先级过滤"
-    unit:
-      en_US: "Show logs for specific systemd unit"
-      zh_CN: "显示指定系统服务的日志"
-    unit_long:
-      en_US: "Show logs for specific systemd unit (long option)"
-      zh_CN: "显示指定系统服务的日志（完整选项）"
-    unit_nginx:
-      en_US: "Show nginx service logs"
-      zh_CN: "显示 nginx 服务日志"
-    unit_ssh:
-      en_US: "Show SSH service logs"
-      zh_CN: "显示 SSH 服务日志"
-    unit_docker:
-      en_US: "Show Docker service logs"
-      zh_CN: "显示 Docker 服务日志"
-    kernel:
-      en_US: "Show kernel messages"
-      zh_CN: "显示内核消息"
-    dmesg:
-      en_US: "Show kernel messages (dmesg equivalent)"
-      zh_CN: "显示内核消息（相当于dmesg）"
-    boot:
-      en_US: "Show logs from current boot"
-      zh_CN: "显示当前启动的日志"
-    boot_long:
-      en_US: "Show logs from current boot (long option)"
-      zh_CN: "显示当前启动的日志（完整选项）"
-    boot_previous:
-      en_US: "Show logs from previous boot"
-      zh_CN: "显示上一次启动的日志"
-    list_boots:
-      en_US: "List all available boot sessions"
-      zh_CN: "列出所有可用的启动会话"
-    uid:
-      en_US: "Show logs from specific user ID"
-      zh_CN: "显示指定用户ID的日志"
-    pid:
-      en_US: "Show logs from specific process ID"
-      zh_CN: "显示指定进程ID的日志"
-    command:
-      en_US: "Show logs from specific command"
-      zh_CN: "显示指定命令的日志"
-    output_json:
-      en_US: "Output in JSON format"
-      zh_CN: "以JSON格式输出"
-    output_short:
-      en_US: "Output in short format"
-      zh_CN: "以简短格式输出"
-    output_verbose:
-      en_US: "Output in verbose format"
-      zh_CN: "以详细格式输出"
-    output:
-      en_US: "Specify output format"
-      zh_CN: "指定输出格式"
-    reverse:
-      en_US: "Show newest entries first"
-      zh_CN: "最新条目优先显示"
-    reverse_long:
-      en_US: "Show newest entries first (long option)"
-      zh_CN: "最新条目优先显示（完整选项）"
-    no_pager:
-      en_US: "Don't use pager for output"
-      zh_CN: "不使用分页器输出"
-    disk_usage:
-      en_US: "Show journal disk usage"
-      zh_CN: "显示日志磁盘使用情况"
-    vacuum_size:
-      en_US: "Remove logs to reduce disk usage to specified size"
-      zh_CN: "删除日志以减少磁盘使用到指定大小"
-    vacuum_time:
-      en_US: "Remove logs older than specified time"
-      zh_CN: "删除超过指定时间的日志"
-    follow_unit:
-      en_US: "Follow logs for specific service"
-      zh_CN: "实时跟踪指定服务的日志"
-    detailed_unit:
-      en_US: "Show detailed logs for specific service"
-      zh_CN: "显示指定服务的详细日志"
-    lines_follow:
-      en_US: "Show last 50 lines and follow"
-      zh_CN: "显示最后50行并实时跟踪"
-  npm:
-    install:
-      en_US: "Install packages"
-      zh_CN: "安装包"
-    run:
-      en_US: "Run scripts"
-      zh_CN: "运行脚本"
-    build:
-      en_US: "Build project"
-      zh_CN: "构建项目"
-    test:
-      en_US: "Run tests"
-      zh_CN: "运行测试"
-  df:
-    human_readable:
-      en_US: "Display sizes in human-readable format (1K, 1M, 1G)"
-      zh_CN: "以人类可读格式显示大小 (1K, 1M, 1G)"
-    si_format:
-      en_US: "Display sizes using SI units (1000-based)"
-      zh_CN: "使用 SI 单位显示大小（1000进制）"
-    inodes:
-      en_US: "Display inode information instead of block usage"
-      zh_CN: "显示 inode 信息而不是块使用情况"
-    print_type:
-      en_US: "Print filesystem type"
-      zh_CN: "显示文件系统类型"
-    type_filter:
-      en_US: "Show only specified filesystem type"
-      zh_CN: "只显示指定的文件系统类型"
-    exclude_type:
-      en_US: "Exclude specified filesystem type"
-      zh_CN: "排除指定的文件系统类型"
-    all_filesystems:
-      en_US: "Include dummy filesystems"
-      zh_CN: "包含虚拟文件系统"
-    local_only:
-      en_US: "Limit listing to local filesystems"
-      zh_CN: "仅显示本地文件系统"
-    posix_format:
-      en_US: "Use POSIX output format"
-      zh_CN: "使用 POSIX 输出格式"
-    show_total:
-      en_US: "Display a grand total"
-      zh_CN: "显示总计"
-    human_with_type:
-      en_US: "Human-readable format with filesystem type"
-      zh_CN: "人类可读格式并显示文件系统类型"
-    human_inodes:
-      en_US: "Human-readable inode information"
-      zh_CN: "人类可读的 inode 信息"
-    human_local:
-      en_US: "Human-readable format for local filesystems only"
-      zh_CN: "仅本地文件系统的人类可读格式"
-    human_total:
-      en_US: "Human-readable format with total"
-      zh_CN: "人类可读格式并显示总计"
-    human_type_total:
-      en_US: "Human-readable format with type and total"
-      zh_CN: "人类可读格式显示类型和总计"
-    exclude_temp:
-      en_US: "Exclude temporary filesystems"
-      zh_CN: "排除临时文件系统"
-    ext4_only:
-      en_US: "Show only ext4 filesystems"
-      zh_CN: "仅显示 ext4 文件系统"
-    xfs_only:
-      en_US: "Show only XFS filesystems"
-      zh_CN: "仅显示 XFS 文件系统"
-    root_fs:
-      en_US: "Show disk usage for root filesystem"
-      zh_CN: "显示根文件系统磁盘使用情况"
-    home_fs:
-      en_US: "Show disk usage for /home directory"
-      zh_CN: "显示 /home 目录磁盘使用情况"
-    var_fs:
-      en_US: "Show disk usage for /var directory"
-      zh_CN: "显示 /var 目录磁盘使用情况"
-  netstat:
-    listening:
-      en_US: "Show only listening sockets"
-      zh_CN: "仅显示监听端口"
-    all:
-      en_US: "Show all sockets (listening and non-listening)"
-      zh_CN: "显示所有套接字（监听和非监听）"
-    tcp:
-      en_US: "Show TCP connections only"
-      zh_CN: "仅显示 TCP 连接"
-    udp:
-      en_US: "Show UDP connections only"
-      zh_CN: "仅显示 UDP 连接"
-    numeric:
-      en_US: "Show numerical addresses instead of resolving hosts"
-      zh_CN: "显示数字地址而不解析主机名"
-    program:
-      en_US: "Show PID and name of programs"
-      zh_CN: "显示进程 PID 和程序名"
-    route:
-      en_US: "Display routing table"
-      zh_CN: "显示路由表"
-    interfaces:
-      en_US: "Display network interfaces"
-      zh_CN: "显示网络接口"
-    statistics:
-      en_US: "Display network statistics"
-      zh_CN: "显示网络统计信息"
-    continuous:
-      en_US: "Display continuously (refresh every second)"
-      zh_CN: "持续显示（每秒刷新）"
-    verbose:
-      en_US: "Verbose output with additional information"
-      zh_CN: "详细输出，显示额外信息"
-    wide:
-      en_US: "Don't truncate IP addresses (wide output)"
-      zh_CN: "不截断 IP 地址（宽输出）"
-    listening_tcp:
-      en_US: "Show listening TCP sockets"
-      zh_CN: "显示监听的 TCP 套接字"
-    listening_udp:
-      en_US: "Show listening UDP sockets"
-      zh_CN: "显示监听的 UDP 套接字"
-    listening_numeric:
-      en_US: "Show listening sockets with numeric addresses"
-      zh_CN: "显示监听套接字的数字地址"
-    listening_numeric_program:
-      en_US: "Show listening sockets with numeric addresses and programs"
-      zh_CN: "显示监听套接字的数字地址和程序信息"
-    all_numeric:
-      en_US: "Show all sockets with numeric addresses"
-      zh_CN: "显示所有套接字的数字地址"
-    all_numeric_program:
-      en_US: "Show all sockets with numeric addresses and programs"
-      zh_CN: "显示所有套接字的数字地址和程序信息"
-    all_numeric_tcp:
-      en_US: "Show all TCP sockets with numeric addresses"
-      zh_CN: "显示所有 TCP 套接字的数字地址"
-    all_numeric_udp:
-      en_US: "Show all UDP sockets with numeric addresses"
-      zh_CN: "显示所有 UDP 套接字的数字地址"
-    tcp_udp_listening_numeric_program:
-      en_US: "Show TCP/UDP listening sockets with numeric addresses and programs"
-      zh_CN: "显示 TCP/UDP 监听套接字的数字地址和程序信息"
-    route_numeric:
-      en_US: "Display routing table with numeric addresses"
-      zh_CN: "显示路由表的数字地址"
-    interfaces_extended:
-      en_US: "Display network interfaces with extended information"
-      zh_CN: "显示网络接口的扩展信息"
-    statistics_tcp:
-      en_US: "Display TCP statistics"
-      zh_CN: "显示 TCP 统计信息"
-    statistics_udp:
-      en_US: "Display UDP statistics"
-      zh_CN: "显示 UDP 统计信息"
-    ipv4:
-      en_US: "Show IPv4 connections only"
-      zh_CN: "仅显示 IPv4 连接"
-    ipv6:
-      en_US: "Show IPv6 connections only"
-      zh_CN: "仅显示 IPv6 连接"
-    unix:
-      en_US: "Show Unix domain sockets"
-      zh_CN: "显示 Unix 域套接字"
-  nvidia_smi:
-    # 基础命令
-    list_gpus:
-      en_US: "List all NVIDIA GPUs with UUIDs"
-      zh_CN: "列出所有 NVIDIA GPU 及其 UUID"
-    
-    # 查询相关命令
-    query:
-      en_US: "Display detailed GPU information"
-      zh_CN: "显示详细的 GPU 信息"
-    query_long:
-      en_US: "Display detailed GPU information (long option)"
-      zh_CN: "显示详细的 GPU 信息（完整选项）"
-    query_specific:
-      en_US: "Display detailed information for specific GPU"
-      zh_CN: "显示指定 GPU 的详细信息"
-    query_xml:
-      en_US: "Display detailed information in XML format"
-      zh_CN: "以 XML 格式显示详细信息"
-    query_memory:
-      en_US: "Display memory information only"
-      zh_CN: "仅显示内存信息"
-    query_utilization:
-      en_US: "Display utilization information only"
-      zh_CN: "仅显示利用率信息"
-    query_ecc:
-      en_US: "Display ECC error information only"
-      zh_CN: "仅显示 ECC 错误信息"
-    query_temperature:
-      en_US: "Display temperature information only"
-      zh_CN: "仅显示温度信息"
-    query_power:
-      en_US: "Display power information only"
-      zh_CN: "仅显示功耗信息"
-    query_clock:
-      en_US: "Display clock information only"
-      zh_CN: "仅显示时钟信息"
-    
-    # 循环监控命令
-    loop:
-      en_US: "Continuously report data at specified interval"
-      zh_CN: "以指定间隔持续报告数据"
-    loop_1s:
-      en_US: "Monitor GPU status every 1 second"
-      zh_CN: "每1秒监控 GPU 状态"
-    loop_5s:
-      en_US: "Monitor GPU status every 5 seconds"
-      zh_CN: "每5秒监控 GPU 状态"
-    loop_ms:
-      en_US: "Continuously report data at millisecond interval"
-      zh_CN: "以毫秒间隔持续报告数据"
-    
-    # 特定查询命令
-    query_gpu_basic:
-      en_US: "Query GPU name and memory information"
-      zh_CN: "查询 GPU 名称和内存信息"
-    query_utilization_csv:
-      en_US: "Query GPU and memory utilization in CSV format"
-      zh_CN: "以 CSV 格式查询 GPU 和内存利用率"
-    query_temp_power:
-      en_US: "Query temperature and power in clean CSV format"
-      zh_CN: "以简洁 CSV 格式查询温度和功耗"
-    query_compute_apps:
-      en_US: "List currently active compute processes"
-      zh_CN: "列出当前活跃的计算进程"
-    
-    # 拓扑和连接信息
-    topo_matrix:
-      en_US: "Display GPU topology matrix"
-      zh_CN: "显示 GPU 拓扑矩阵"
-    topo_p2p:
-      en_US: "Display peer-to-peer topology information"
-      zh_CN: "显示点对点拓扑信息"
-    nvlink_status:
-      en_US: "Display NVLink status information"
-      zh_CN: "显示 NVLink 状态信息"
-    
-    # 设备修改命令（需要root权限）
-    persistence_enable:
-      en_US: "Enable persistence mode (requires root)"
-      zh_CN: "启用持久模式（需要root权限）"
-    persistence_disable:
-      en_US: "Disable persistence mode (requires root)"
-      zh_CN: "禁用持久模式（需要root权限）"
-    compute_default:
-      en_US: "Set compute mode to default (requires root)"
-      zh_CN: "设置计算模式为默认（需要root权限）"
-    compute_exclusive_thread:
-      en_US: "Set compute mode to exclusive thread (requires root)"
-      zh_CN: "设置计算模式为独占线程（需要root权限）"
-    compute_prohibited:
-      en_US: "Set compute mode to prohibited (requires root)"
-      zh_CN: "设置计算模式为禁止（需要root权限）"
-    
-    # 时钟控制命令
-    lock_gpu_clocks:
-      en_US: "Lock GPU clocks to specified range (requires root)"
-      zh_CN: "锁定 GPU 时钟到指定范围（需要root权限）"
-    lock_memory_clocks:
-      en_US: "Lock memory clocks to specified range (requires root)"
-      zh_CN: "锁定内存时钟到指定范围（需要root权限）"
-    reset_gpu_clocks:
-      en_US: "Reset GPU clocks to default (requires root)"
-      zh_CN: "重置 GPU 时钟到默认值（需要root权限）"
-    reset_memory_clocks:
-      en_US: "Reset memory clocks to default (requires root)"
-      zh_CN: "重置内存时钟到默认值（需要root权限）"
-    
-    # 功耗管理
-    power_limit:
-      en_US: "Set power limit in watts (requires root)"
-      zh_CN: "设置功耗限制（瓦特，需要root权限）"
-    
-    # GPU重置
-    gpu_reset:
-      en_US: "Reset GPU (requires root, use with caution)"
-      zh_CN: "重置 GPU（需要root权限，谨慎使用）"
-    gpu_reset_bus:
-      en_US: "Reset GPU using bus reset (requires root)"
-      zh_CN: "使用总线重置 GPU（需要root权限）"
-    
-    # MIG相关
-    mig_enable:
-      en_US: "Enable Multi-Instance GPU mode (requires root)"
-      zh_CN: "启用多实例 GPU 模式（需要root权限）"
-    mig_disable:
-      en_US: "Disable Multi-Instance GPU mode (requires root)"
-      zh_CN: "禁用多实例 GPU 模式（需要root权限）"
-    mig_list_gpu:
-      en_US: "List MIG GPU instances"
-      zh_CN: "列出 MIG GPU 实例"
-    
-    # 输出格式化
-    output_file:
-      en_US: "Redirect output to specified file"
-      zh_CN: "将输出重定向到指定文件"
-    xml_format:
-      en_US: "Produce XML output format"
-      zh_CN: "生成 XML 输出格式"
-    dtd:
-      en_US: "Embed DTD in XML output"
-      zh_CN: "在 XML 输出中嵌入 DTD"
+  # 命令参数补全
+  arguments_complete:
+    git:
+      add:
+        en_US: "Add files to staging area"
+        zh_CN: "将文件添加到暂存区"
+      add_all:
+        en_US: "Add all files in current directory"
+        zh_CN: "添加当前目录的所有文件"
+      add_all_changes:
+        en_US: "Add all changes including deletions"
+        zh_CN: "添加所有更改包括删除的文件"
+      commit:
+        en_US: "Commit staged changes with message"
+        zh_CN: "提交暂存的更改并添加提交信息"
+      commit_amend:
+        en_US: "Amend the last commit"
+        zh_CN: "修改最后一次提交"
+      commit_all:
+        en_US: "Add all changes and commit with message"
+        zh_CN: "添加所有更改并提交"
+      push:
+        en_US: "Push changes to remote repository"
+        zh_CN: "推送更改到远程仓库"
+      push_upstream:
+        en_US: "Push and set upstream branch"
+        zh_CN: "推送并设置上游分支"
+      push_force:
+        en_US: "Force push (dangerous operation)"
+        zh_CN: "强制推送（危险操作）"
+      pull:
+        en_US: "Pull changes from remote repository"
+        zh_CN: "从远程仓库拉取更改"
+      pull_rebase:
+        en_US: "Pull with rebase strategy"
+        zh_CN: "使用 rebase 方式拉取"
+      branch_list:
+        en_US: "List all branches"
+        zh_CN: "列出所有分支"
+      branch_create:
+        en_US: "Create a new branch"
+        zh_CN: "创建新分支"
+      branch_delete:
+        en_US: "Delete a branch"
+        zh_CN: "删除分支"
+      checkout:
+        en_US: "Switch to a branch or restore files"
+        zh_CN: "切换分支或恢复文件"
+      checkout_create:
+        en_US: "Create and switch to new branch"
+        zh_CN: "创建并切换到新分支"
+      merge:
+        en_US: "Merge branches"
+        zh_CN: "合并分支"
+      status:
+        en_US: "Show working directory status"
+        zh_CN: "显示工作目录状态"
+      status_short:
+        en_US: "Show status in short format"
+        zh_CN: "以简短格式显示状态"
+      log_oneline:
+        en_US: "Show commit history in one line"
+        zh_CN: "单行显示提交历史"
+      log_graph:
+        en_US: "Show commit history with graph"
+        zh_CN: "图形化显示提交历史"
+      log_limit:
+        en_US: "Show limited number of commits"
+        zh_CN: "显示指定数量的提交"
+    docker:
+      # 基础系统命令
+      info:
+        en_US: "Display Docker system information"
+        zh_CN: "显示 Docker 系统信息"
+      login:
+        en_US: "Login to Docker registry server"
+        zh_CN: "登录到 Docker 仓库服务器"
+      login_default:
+        en_US: "Login to default Docker registry"
+        zh_CN: "登录到默认 Docker 仓库"
+      help:
+        en_US: "Show help information"
+        zh_CN: "显示帮助信息"
+      
+      # 镜像管理命令
+      images:
+        en_US: "List Docker images"
+        zh_CN: "列出 Docker 镜像"
+      images_all:
+        en_US: "List all Docker images including intermediate"
+        zh_CN: "列出所有 Docker 镜像（包括中间镜像）"
+      pull:
+        en_US: "Pull an image from registry"
+        zh_CN: "从仓库拉取镜像"
+      push:
+        en_US: "Push an image to registry"
+        zh_CN: "推送镜像到仓库"
+      build:
+        en_US: "Build Docker image with tag"
+        zh_CN: "构建带标签的 Docker 镜像"
+      build_no_cache:
+        en_US: "Build image without using cache"
+        zh_CN: "不使用缓存构建镜像"
+      rmi:
+        en_US: "Remove one or more images"
+        zh_CN: "删除一个或多个镜像"
+      rmi_force:
+        en_US: "Force remove one or more images"
+        zh_CN: "强制删除一个或多个镜像"
+      history:
+        en_US: "Show the history of an image"
+        zh_CN: "显示镜像的历史变更"
+      tag:
+        en_US: "Create a tag for an image"
+        zh_CN: "为镜像创建标签"
+      
+      # 容器运行命令
+      run_interactive:
+        en_US: "Run container in interactive mode"
+        zh_CN: "以交互模式运行容器"
+      run_detached:
+        en_US: "Run container in detached mode"
+        zh_CN: "以后台模式运行容器"
+      run_port:
+        en_US: "Run container with port mapping"
+        zh_CN: "运行容器并映射端口"
+      run_remove:
+        en_US: "Run container and remove it after exit"
+        zh_CN: "运行容器，退出后自动删除"
+      run_env:
+        en_US: "Run container with environment variables"
+        zh_CN: "运行容器并设置环境变量"
+      run_volume:
+        en_US: "Run container with volume mounting"
+        zh_CN: "运行容器并挂载数据卷"
+      run_name:
+        en_US: "Run container with custom name"
+        zh_CN: "运行容器并指定名称"
+      run_network:
+        en_US: "Run container with specific network"
+        zh_CN: "运行容器并指定网络"
+      
+      # 容器管理命令
+      ps:
+        en_US: "List running containers"
+        zh_CN: "列出运行中的容器"
+      ps_all:
+        en_US: "List all containers"
+        zh_CN: "列出所有容器"
+      start:
+        en_US: "Start one or more stopped containers"
+        zh_CN: "启动一个或多个已停止的容器"
+      stop:
+        en_US: "Stop one or more running containers"
+        zh_CN: "停止一个或多个运行中的容器"
+      restart:
+        en_US: "Restart one or more containers"
+        zh_CN: "重启一个或多个容器"
+      rm:
+        en_US: "Remove one or more containers"
+        zh_CN: "删除一个或多个容器"
+      rm_force:
+        en_US: "Force remove one or more containers"
+        zh_CN: "强制删除一个或多个容器"
+      exec_bash:
+        en_US: "Execute bash in running container"
+        zh_CN: "在运行中的容器内执行 bash"
+      exec_sh:
+        en_US: "Execute shell in running container"
+        zh_CN: "在运行中的容器内执行 shell"
+      logs:
+        en_US: "Show container logs"
+        zh_CN: "显示容器日志"
+      logs_follow:
+        en_US: "Follow container logs output"
+        zh_CN: "实时跟踪容器日志输出"
+      inspect:
+        en_US: "Display detailed information about container"
+        zh_CN: "显示容器的详细信息"
+      
+      # 数据卷命令
+      volume_create:
+        en_US: "Create a new volume"
+        zh_CN: "创建新的数据卷"
+      volume_list:
+        en_US: "List all volumes"
+        zh_CN: "列出所有数据卷"
+      volume_inspect:
+        en_US: "Display detailed information about volume"
+        zh_CN: "显示数据卷的详细信息"
+      volume_remove:
+        en_US: "Remove one or more volumes"
+        zh_CN: "删除一个或多个数据卷"
+      volume_prune:
+        en_US: "Remove all unused volumes"
+        zh_CN: "删除所有未使用的数据卷"
+      
+      # 网络命令
+      network_list:
+        en_US: "List all networks"
+        zh_CN: "列出所有网络"
+      network_create:
+        en_US: "Create a new network"
+        zh_CN: "创建新的网络"
+      network_remove:
+        en_US: "Remove one or more networks"
+        zh_CN: "删除一个或多个网络"
+      network_inspect:
+        en_US: "Display detailed information about network"
+        zh_CN: "显示网络的详细信息"
+      network_connect:
+        en_US: "Connect container to a network"
+        zh_CN: "将容器连接到网络"
+      
+      # 系统管理命令
+      system_df:
+        en_US: "Show Docker filesystem usage"
+        zh_CN: "显示 Docker 文件系统使用情况"
+      system_prune:
+        en_US: "Remove unused data"
+        zh_CN: "清理未使用的数据"
+      system_prune_all:
+        en_US: "Remove all unused data including images"
+        zh_CN: "清理所有未使用的数据（包括镜像）"
+      system_info:
+        en_US: "Display system-wide information"
+        zh_CN: "显示系统级信息"
+      
+      # Docker Compose 相关
+      compose_up:
+        en_US: "Create and start containers using compose"
+        zh_CN: "使用 compose 创建并启动容器"
+      compose_up_detached:
+        en_US: "Create and start containers in detached mode"
+        zh_CN: "以后台模式创建并启动容器"
+      compose_down:
+        en_US: "Stop and remove containers, networks"
+        zh_CN: "停止并删除容器、网络"
+      compose_ps:
+        en_US: "List containers managed by compose"
+        zh_CN: "列出由 compose 管理的容器"
+    tar:
+      extract:
+        en_US: "Extract files from archive"
+        zh_CN: "从归档文件中解压文件"
+      create:
+        en_US: "Create a new archive file"
+        zh_CN: "创建新的归档文件"
+      list:
+        en_US: "List contents of archive"
+        zh_CN: "列出归档文件的内容"
+      create_gzip:
+        en_US: "Create gzip compressed archive"
+        zh_CN: "创建 gzip 压缩的归档文件"
+      extract_gzip:
+        en_US: "Extract gzip compressed archive"
+        zh_CN: "解压 gzip 压缩的归档文件"
+      list_gzip:
+        en_US: "List contents of gzip archive"
+        zh_CN: "列出 gzip 归档文件的内容"
+      create_bzip2:
+        en_US: "Create bzip2 compressed archive"
+        zh_CN: "创建 bzip2 压缩的归档文件"
+      extract_bzip2:
+        en_US: "Extract bzip2 compressed archive"
+        zh_CN: "解压 bzip2 压缩的归档文件"
+      list_bzip2:
+        en_US: "List contents of bzip2 archive"
+        zh_CN: "列出 bzip2 归档文件的内容"
+      create_xz:
+        en_US: "Create xz compressed archive (high compression)"
+        zh_CN: "创建 xz 压缩的归档文件（高压缩率）"
+      extract_xz:
+        en_US: "Extract xz compressed archive"
+        zh_CN: "解压 xz 压缩的归档文件"
+      list_xz:
+        en_US: "List contents of xz archive"
+        zh_CN: "列出 xz 归档文件的内容"
+      exclude:
+        en_US: "Exclude files matching pattern"
+        zh_CN: "排除匹配模式的文件"
+      exclude_from:
+        en_US: "Exclude files listed in file"
+        zh_CN: "排除文件中列出的文件"
+      extract_to:
+        en_US: "Extract to specified directory"
+        zh_CN: "解压到指定目录"
+      incremental:
+        en_US: "Create incremental backup"
+        zh_CN: "创建增量备份"
+    rsync:
+      recursive:
+        en_US: "Recursive sync (basic)"
+        zh_CN: "递归同步（基础）"
+      archive:
+        en_US: "Archive mode (preserve metadata)"
+        zh_CN: "归档模式（保留元数据）"
+      archive_verbose:
+        en_US: "Archive mode with verbose output"
+        zh_CN: "归档模式并显示详细信息"
+      dry_run:
+        en_US: "Simulate sync without actual execution"
+        zh_CN: "模拟同步，不实际执行"
+      dry_run_verbose:
+        en_US: "Verbose dry run simulation"
+        zh_CN: "详细的模拟同步"
+      mirror:
+        en_US: "Mirror sync (delete extra files in destination)"
+        zh_CN: "镜像同步（删除目标中多余的文件）"
+      exclude:
+        en_US: "Exclude files matching pattern"
+        zh_CN: "排除匹配模式的文件"
+      exclude_from:
+        en_US: "Exclude files listed in file"
+        zh_CN: "排除文件中列出的文件"
+      include_only:
+        en_US: "Include only specific patterns"
+        zh_CN: "仅包含特定模式的文件"
+      remote_upload:
+        en_US: "Upload to remote server via SSH"
+        zh_CN: "通过SSH上传到远程服务器"
+      remote_download:
+        en_US: "Download from remote server via SSH"
+        zh_CN: "从远程服务器通过SSH下载"
+      ssh_port:
+        en_US: "Use custom SSH port"
+        zh_CN: "使用自定义SSH端口"
+      daemon:
+        en_US: "Sync using rsync daemon protocol"
+        zh_CN: "使用rsync守护进程协议同步"
+      daemon_url:
+        en_US: "Sync using rsync:// URL"
+        zh_CN: "使用rsync://协议同步"
+      incremental:
+        en_US: "Incremental backup with hard links"
+        zh_CN: "使用硬链接的增量备份"
+      progress:
+        en_US: "Show progress and allow partial transfers"
+        zh_CN: "显示进度并允许断点续传"
+      resume:
+        en_US: "Resume interrupted transfers"
+        zh_CN: "恢复中断的传输"
+      checksum:
+        en_US: "Use checksum for file comparison"
+        zh_CN: "使用校验和比较文件"
+      compress:
+        en_US: "Compress data during transfer"
+        zh_CN: "传输时压缩数据"
+      bandwidth:
+        en_US: "Limit bandwidth usage (KB/s)"
+        zh_CN: "限制带宽使用（KB/s）"
+      max_size:
+        en_US: "Skip files larger than specified size"
+        zh_CN: "跳过大于指定大小的文件"
+      min_size:
+        en_US: "Skip files smaller than specified size"
+        zh_CN: "跳过小于指定大小的文件"
+      update:
+        en_US: "Skip files newer in destination"
+        zh_CN: "跳过目标中较新的文件"
+      ignore_existing:
+        en_US: "Skip files that exist in destination"
+        zh_CN: "跳过目标中已存在的文件"
+      existing_only:
+        en_US: "Only update files that exist in destination"
+        zh_CN: "仅更新目标中已存在的文件"
+    crontab:
+      list:
+        en_US: "List current user's crontab"
+        zh_CN: "列出当前用户的定时任务"
+      edit:
+        en_US: "Edit current user's crontab"
+        zh_CN: "编辑当前用户的定时任务"
+      remove:
+        en_US: "Remove current user's crontab"
+        zh_CN: "删除当前用户的定时任务"
+      remove_interactive:
+        en_US: "Remove crontab with confirmation prompt"
+        zh_CN: "删除定时任务（需确认）"
+      list_user:
+        en_US: "List specified user's crontab"
+        zh_CN: "列出指定用户的定时任务"
+      edit_user:
+        en_US: "Edit specified user's crontab"
+        zh_CN: "编辑指定用户的定时任务"
+      remove_user:
+        en_US: "Remove specified user's crontab"
+        zh_CN: "删除指定用户的定时任务"
+      remove_user_interactive:
+        en_US: "Remove user's crontab with confirmation"
+        zh_CN: "删除指定用户的定时任务（需确认）"
+      install_file:
+        en_US: "Install crontab from file"
+        zh_CN: "从文件安装定时任务"
+      install_file_user:
+        en_US: "Install crontab from file for specified user"
+        zh_CN: "为指定用户从文件安装定时任务"
+      install_stdin:
+        en_US: "Install crontab from standard input"
+        zh_CN: "从标准输入安装定时任务"
+    journalctl:
+      view_all:
+        en_US: "View all system logs"
+        zh_CN: "查看所有系统日志"
+      follow:
+        en_US: "Follow log output in real time"
+        zh_CN: "实时跟踪日志输出"
+      follow_long:
+        en_US: "Follow log output in real time (long option)"
+        zh_CN: "实时跟踪日志输出（完整选项）"
+      lines:
+        en_US: "Show specified number of recent lines"
+        zh_CN: "显示指定行数的最新日志"
+      lines_long:
+        en_US: "Show specified number of recent lines (long option)"
+        zh_CN: "显示指定行数的最新日志（完整选项）"
+      lines_50:
+        en_US: "Show last 50 lines"
+        zh_CN: "显示最后50行日志"
+      lines_100:
+        en_US: "Show last 100 lines"
+        zh_CN: "显示最后100行日志"
+      since:
+        en_US: "Show logs since specified time"
+        zh_CN: "显示指定时间后的日志"
+      until:
+        en_US: "Show logs until specified time"
+        zh_CN: "显示指定时间前的日志"
+      since_today:
+        en_US: "Show logs since today"
+        zh_CN: "显示今天的日志"
+      since_yesterday:
+        en_US: "Show logs since yesterday"
+        zh_CN: "显示昨天以来的日志"
+      since_hour:
+        en_US: "Show logs from last hour"
+        zh_CN: "显示最近1小时的日志"
+      priority_error:
+        en_US: "Show only error messages"
+        zh_CN: "仅显示错误消息"
+      priority_warning:
+        en_US: "Show warning and error messages"
+        zh_CN: "显示警告和错误消息"
+      priority_info:
+        en_US: "Show info, warning and error messages"
+        zh_CN: "显示信息、警告和错误消息"
+      priority:
+        en_US: "Filter by log priority level"
+        zh_CN: "按日志优先级过滤"
+      unit:
+        en_US: "Show logs for specific systemd unit"
+        zh_CN: "显示指定系统服务的日志"
+      unit_long:
+        en_US: "Show logs for specific systemd unit (long option)"
+        zh_CN: "显示指定系统服务的日志（完整选项）"
+      unit_nginx:
+        en_US: "Show nginx service logs"
+        zh_CN: "显示 nginx 服务日志"
+      unit_ssh:
+        en_US: "Show SSH service logs"
+        zh_CN: "显示 SSH 服务日志"
+      unit_docker:
+        en_US: "Show Docker service logs"
+        zh_CN: "显示 Docker 服务日志"
+      kernel:
+        en_US: "Show kernel messages"
+        zh_CN: "显示内核消息"
+      dmesg:
+        en_US: "Show kernel messages (dmesg equivalent)"
+        zh_CN: "显示内核消息（相当于dmesg）"
+      boot:
+        en_US: "Show logs from current boot"
+        zh_CN: "显示当前启动的日志"
+      boot_long:
+        en_US: "Show logs from current boot (long option)"
+        zh_CN: "显示当前启动的日志（完整选项）"
+      boot_previous:
+        en_US: "Show logs from previous boot"
+        zh_CN: "显示上一次启动的日志"
+      list_boots:
+        en_US: "List all available boot sessions"
+        zh_CN: "列出所有可用的启动会话"
+      uid:
+        en_US: "Show logs from specific user ID"
+        zh_CN: "显示指定用户ID的日志"
+      pid:
+        en_US: "Show logs from specific process ID"
+        zh_CN: "显示指定进程ID的日志"
+      command:
+        en_US: "Show logs from specific command"
+        zh_CN: "显示指定命令的日志"
+      output_json:
+        en_US: "Output in JSON format"
+        zh_CN: "以JSON格式输出"
+      output_short:
+        en_US: "Output in short format"
+        zh_CN: "以简短格式输出"
+      output_verbose:
+        en_US: "Output in verbose format"
+        zh_CN: "以详细格式输出"
+      output:
+        en_US: "Specify output format"
+        zh_CN: "指定输出格式"
+      reverse:
+        en_US: "Show newest entries first"
+        zh_CN: "最新条目优先显示"
+      reverse_long:
+        en_US: "Show newest entries first (long option)"
+        zh_CN: "最新条目优先显示（完整选项）"
+      no_pager:
+        en_US: "Don't use pager for output"
+        zh_CN: "不使用分页器输出"
+      disk_usage:
+        en_US: "Show journal disk usage"
+        zh_CN: "显示日志磁盘使用情况"
+      vacuum_size:
+        en_US: "Remove logs to reduce disk usage to specified size"
+        zh_CN: "删除日志以减少磁盘使用到指定大小"
+      vacuum_time:
+        en_US: "Remove logs older than specified time"
+        zh_CN: "删除超过指定时间的日志"
+      follow_unit:
+        en_US: "Follow logs for specific service"
+        zh_CN: "实时跟踪指定服务的日志"
+      detailed_unit:
+        en_US: "Show detailed logs for specific service"
+        zh_CN: "显示指定服务的详细日志"
+      lines_follow:
+        en_US: "Show last 50 lines and follow"
+        zh_CN: "显示最后50行并实时跟踪"
+    npm:
+      install:
+        en_US: "Install packages"
+        zh_CN: "安装包"
+      run:
+        en_US: "Run scripts"
+        zh_CN: "运行脚本"
+      build:
+        en_US: "Build project"
+        zh_CN: "构建项目"
+      test:
+        en_US: "Run tests"
+        zh_CN: "运行测试"
+    df:
+      human_readable:
+        en_US: "Display sizes in human-readable format (1K, 1M, 1G)"
+        zh_CN: "以人类可读格式显示大小 (1K, 1M, 1G)"
+      si_format:
+        en_US: "Display sizes using SI units (1000-based)"
+        zh_CN: "使用 SI 单位显示大小（1000进制）"
+      inodes:
+        en_US: "Display inode information instead of block usage"
+        zh_CN: "显示 inode 信息而不是块使用情况"
+      print_type:
+        en_US: "Print filesystem type"
+        zh_CN: "显示文件系统类型"
+      type_filter:
+        en_US: "Show only specified filesystem type"
+        zh_CN: "只显示指定的文件系统类型"
+      exclude_type:
+        en_US: "Exclude specified filesystem type"
+        zh_CN: "排除指定的文件系统类型"
+      all_filesystems:
+        en_US: "Include dummy filesystems"
+        zh_CN: "包含虚拟文件系统"
+      local_only:
+        en_US: "Limit listing to local filesystems"
+        zh_CN: "仅显示本地文件系统"
+      posix_format:
+        en_US: "Use POSIX output format"
+        zh_CN: "使用 POSIX 输出格式"
+      show_total:
+        en_US: "Display a grand total"
+        zh_CN: "显示总计"
+      human_with_type:
+        en_US: "Human-readable format with filesystem type"
+        zh_CN: "人类可读格式并显示文件系统类型"
+      human_inodes:
+        en_US: "Human-readable inode information"
+        zh_CN: "人类可读的 inode 信息"
+      human_local:
+        en_US: "Human-readable format for local filesystems only"
+        zh_CN: "仅本地文件系统的人类可读格式"
+      human_total:
+        en_US: "Human-readable format with total"
+        zh_CN: "人类可读格式并显示总计"
+      human_type_total:
+        en_US: "Human-readable format with type and total"
+        zh_CN: "人类可读格式显示类型和总计"
+      exclude_temp:
+        en_US: "Exclude temporary filesystems"
+        zh_CN: "排除临时文件系统"
+      ext4_only:
+        en_US: "Show only ext4 filesystems"
+        zh_CN: "仅显示 ext4 文件系统"
+      xfs_only:
+        en_US: "Show only XFS filesystems"
+        zh_CN: "仅显示 XFS 文件系统"
+      root_fs:
+        en_US: "Show disk usage for root filesystem"
+        zh_CN: "显示根文件系统磁盘使用情况"
+      home_fs:
+        en_US: "Show disk usage for /home directory"
+        zh_CN: "显示 /home 目录磁盘使用情况"
+      var_fs:
+        en_US: "Show disk usage for /var directory"
+        zh_CN: "显示 /var 目录磁盘使用情况"
+    netstat:
+      listening:
+        en_US: "Show only listening sockets"
+        zh_CN: "仅显示监听端口"
+      all:
+        en_US: "Show all sockets (listening and non-listening)"
+        zh_CN: "显示所有套接字（监听和非监听）"
+      tcp:
+        en_US: "Show TCP connections only"
+        zh_CN: "仅显示 TCP 连接"
+      udp:
+        en_US: "Show UDP connections only"
+        zh_CN: "仅显示 UDP 连接"
+      numeric:
+        en_US: "Show numerical addresses instead of resolving hosts"
+        zh_CN: "显示数字地址而不解析主机名"
+      program:
+        en_US: "Show PID and name of programs"
+        zh_CN: "显示进程 PID 和程序名"
+      route:
+        en_US: "Display routing table"
+        zh_CN: "显示路由表"
+      interfaces:
+        en_US: "Display network interfaces"
+        zh_CN: "显示网络接口"
+      statistics:
+        en_US: "Display network statistics"
+        zh_CN: "显示网络统计信息"
+      continuous:
+        en_US: "Display continuously (refresh every second)"
+        zh_CN: "持续显示（每秒刷新）"
+      verbose:
+        en_US: "Verbose output with additional information"
+        zh_CN: "详细输出，显示额外信息"
+      wide:
+        en_US: "Don't truncate IP addresses (wide output)"
+        zh_CN: "不截断 IP 地址（宽输出）"
+      listening_tcp:
+        en_US: "Show listening TCP sockets"
+        zh_CN: "显示监听的 TCP 套接字"
+      listening_udp:
+        en_US: "Show listening UDP sockets"
+        zh_CN: "显示监听的 UDP 套接字"
+      listening_numeric:
+        en_US: "Show listening sockets with numeric addresses"
+        zh_CN: "显示监听套接字的数字地址"
+      listening_numeric_program:
+        en_US: "Show listening sockets with numeric addresses and programs"
+        zh_CN: "显示监听套接字的数字地址和程序信息"
+      all_numeric:
+        en_US: "Show all sockets with numeric addresses"
+        zh_CN: "显示所有套接字的数字地址"
+      all_numeric_program:
+        en_US: "Show all sockets with numeric addresses and programs"
+        zh_CN: "显示所有套接字的数字地址和程序信息"
+      all_numeric_tcp:
+        en_US: "Show all TCP sockets with numeric addresses"
+        zh_CN: "显示所有 TCP 套接字的数字地址"
+      all_numeric_udp:
+        en_US: "Show all UDP sockets with numeric addresses"
+        zh_CN: "显示所有 UDP 套接字的数字地址"
+      tcp_udp_listening_numeric_program:
+        en_US: "Show TCP/UDP listening sockets with numeric addresses and programs"
+        zh_CN: "显示 TCP/UDP 监听套接字的数字地址和程序信息"
+      route_numeric:
+        en_US: "Display routing table with numeric addresses"
+        zh_CN: "显示路由表的数字地址"
+      interfaces_extended:
+        en_US: "Display network interfaces with extended information"
+        zh_CN: "显示网络接口的扩展信息"
+      statistics_tcp:
+        en_US: "Display TCP statistics"
+        zh_CN: "显示 TCP 统计信息"
+      statistics_udp:
+        en_US: "Display UDP statistics"
+        zh_CN: "显示 UDP 统计信息"
+      ipv4:
+        en_US: "Show IPv4 connections only"
+        zh_CN: "仅显示 IPv4 连接"
+      ipv6:
+        en_US: "Show IPv6 connections only"
+        zh_CN: "仅显示 IPv6 连接"
+      unix:
+        en_US: "Show Unix domain sockets"
+        zh_CN: "显示 Unix 域套接字"
+    nvidia_smi:
+      # 基础命令
+      list_gpus:
+        en_US: "List all NVIDIA GPUs with UUIDs"
+        zh_CN: "列出所有 NVIDIA GPU 及其 UUID"
+      
+      # 查询相关命令
+      query:
+        en_US: "Display detailed GPU information"
+        zh_CN: "显示详细的 GPU 信息"
+      query_long:
+        en_US: "Display detailed GPU information (long option)"
+        zh_CN: "显示详细的 GPU 信息（完整选项）"
+      query_specific:
+        en_US: "Display detailed information for specific GPU"
+        zh_CN: "显示指定 GPU 的详细信息"
+      query_xml:
+        en_US: "Display detailed information in XML format"
+        zh_CN: "以 XML 格式显示详细信息"
+      query_memory:
+        en_US: "Display memory information only"
+        zh_CN: "仅显示内存信息"
+      query_utilization:
+        en_US: "Display utilization information only"
+        zh_CN: "仅显示利用率信息"
+      query_ecc:
+        en_US: "Display ECC error information only"
+        zh_CN: "仅显示 ECC 错误信息"
+      query_temperature:
+        en_US: "Display temperature information only"
+        zh_CN: "仅显示温度信息"
+      query_power:
+        en_US: "Display power information only"
+        zh_CN: "仅显示功耗信息"
+      query_clock:
+        en_US: "Display clock information only"
+        zh_CN: "仅显示时钟信息"
+      
+      # 循环监控命令
+      loop:
+        en_US: "Continuously report data at specified interval"
+        zh_CN: "以指定间隔持续报告数据"
+      loop_1s:
+        en_US: "Monitor GPU status every 1 second"
+        zh_CN: "每1秒监控 GPU 状态"
+      loop_5s:
+        en_US: "Monitor GPU status every 5 seconds"
+        zh_CN: "每5秒监控 GPU 状态"
+      loop_ms:
+        en_US: "Continuously report data at millisecond interval"
+        zh_CN: "以毫秒间隔持续报告数据"
+      
+      # 特定查询命令
+      query_gpu_basic:
+        en_US: "Query GPU name and memory information"
+        zh_CN: "查询 GPU 名称和内存信息"
+      query_utilization_csv:
+        en_US: "Query GPU and memory utilization in CSV format"
+        zh_CN: "以 CSV 格式查询 GPU 和内存利用率"
+      query_temp_power:
+        en_US: "Query temperature and power in clean CSV format"
+        zh_CN: "以简洁 CSV 格式查询温度和功耗"
+      query_compute_apps:
+        en_US: "List currently active compute processes"
+        zh_CN: "列出当前活跃的计算进程"
+      
+      # 拓扑和连接信息
+      topo_matrix:
+        en_US: "Display GPU topology matrix"
+        zh_CN: "显示 GPU 拓扑矩阵"
+      topo_p2p:
+        en_US: "Display peer-to-peer topology information"
+        zh_CN: "显示点对点拓扑信息"
+      nvlink_status:
+        en_US: "Display NVLink status information"
+        zh_CN: "显示 NVLink 状态信息"
+      
+      # 设备修改命令（需要root权限）
+      persistence_enable:
+        en_US: "Enable persistence mode (requires root)"
+        zh_CN: "启用持久模式（需要root权限）"
+      persistence_disable:
+        en_US: "Disable persistence mode (requires root)"
+        zh_CN: "禁用持久模式（需要root权限）"
+      compute_default:
+        en_US: "Set compute mode to default (requires root)"
+        zh_CN: "设置计算模式为默认（需要root权限）"
+      compute_exclusive_thread:
+        en_US: "Set compute mode to exclusive thread (requires root)"
+        zh_CN: "设置计算模式为独占线程（需要root权限）"
+      compute_prohibited:
+        en_US: "Set compute mode to prohibited (requires root)"
+        zh_CN: "设置计算模式为禁止（需要root权限）"
+      
+      # 时钟控制命令
+      lock_gpu_clocks:
+        en_US: "Lock GPU clocks to specified range (requires root)"
+        zh_CN: "锁定 GPU 时钟到指定范围（需要root权限）"
+      lock_memory_clocks:
+        en_US: "Lock memory clocks to specified range (requires root)"
+        zh_CN: "锁定内存时钟到指定范围（需要root权限）"
+      reset_gpu_clocks:
+        en_US: "Reset GPU clocks to default (requires root)"
+        zh_CN: "重置 GPU 时钟到默认值（需要root权限）"
+      reset_memory_clocks:
+        en_US: "Reset memory clocks to default (requires root)"
+        zh_CN: "重置内存时钟到默认值（需要root权限）"
+      
+      # 功耗管理
+      power_limit:
+        en_US: "Set power limit in watts (requires root)"
+        zh_CN: "设置功耗限制（瓦特，需要root权限）"
+      
+      # GPU重置
+      gpu_reset:
+        en_US: "Reset GPU (requires root, use with caution)"
+        zh_CN: "重置 GPU（需要root权限，谨慎使用）"
+      gpu_reset_bus:
+        en_US: "Reset GPU using bus reset (requires root)"
+        zh_CN: "使用总线重置 GPU（需要root权限）"
+      
+      # MIG相关
+      mig_enable:
+        en_US: "Enable Multi-Instance GPU mode (requires root)"
+        zh_CN: "启用多实例 GPU 模式（需要root权限）"
+      mig_disable:
+        en_US: "Disable Multi-Instance GPU mode (requires root)"
+        zh_CN: "禁用多实例 GPU 模式（需要root权限）"
+      mig_list_gpu:
+        en_US: "List MIG GPU instances"
+        zh_CN: "列出 MIG GPU 实例"
+      
+      # 输出格式化
+      output_file:
+        en_US: "Redirect output to specified file"
+        zh_CN: "将输出重定向到指定文件"
+      xml_format:
+        en_US: "Produce XML output format"
+        zh_CN: "生成 XML 输出格式"
+      dtd:
+        en_US: "Embed DTD in XML output"
+        zh_CN: "在 XML 输出中嵌入 DTD"
