@@ -1,5 +1,13 @@
 ## 更新日志
 
+### v1.0.2 (2026-01-17)
+
+- 修复：语言名称定义的较为宽泛，易和其他插件冲突的问题；
+
+---
+
+- Fixed: The issue that the language name definition is too broad and prone to conflicts with other plugins.
+
 ### v1.0.1 (2026-01-16)
 
 - 修复：和其他创建Tab页插件冲突的问题；

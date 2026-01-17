@@ -21,27 +21,15 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
           registry-url: "https://registry.npmjs.org"
+          cache: "yarn"
+
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - name: Setup yarn
         run: npm i -g yarn
-
-      # Get yarn store directory
-      - name: Get yarn store directory
-        id: yarn-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(yarn cache dir)" >> $GITHUB_OUTPUT
-
-      # Setup yarn cache
-      - name: Setup yarn cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.yarn-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-yarn-store-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-store-
 
       # Install dependencies
       - name: Install dependencies
@@ -74,4 +62,4 @@ jobs:
 
       - name: publish on npm
         if: ${{ ! (contains(github.ref, 'beta') || contains(github.ref, 'alpha') || contains(github.ref, 'dev')) }}
-        run: npm publish
+        run: npm publish --provenance
