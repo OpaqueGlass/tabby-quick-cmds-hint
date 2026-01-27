@@ -144,43 +144,43 @@ ogac:
       en_US: "To use this plugin, first download and enable the plugin `tabby-quick-cmds`, and then create some commands within it."
       zh_CN: "为使用此插件，请先下载启用tabby-quick-cmds插件，并在其中创建一些命令。"
     tested_scenarios:
-      en_US: "The plugin has been primarily tested in the following scenarios: connecting to servers running"
+      en_US: "The plugin has been primarily tested in the following scenarios: connecting to servers running "
       zh_CN: "插件主要在以下情况进行测试：连接到运行"
     ubuntu_centos:
-      en_US: "Ubuntu"
+      en_US: "Ubuntu "
       zh_CN: "Ubuntu"
     or:
-      en_US: "or"
+      en_US: "or "
       zh_CN: "或"
     centos:
-      en_US: "CentOS"
+      en_US: "CentOS "
       zh_CN: "CentOS"
     via_ssh:
       en_US: "via"
       zh_CN: "的设备（通过"
     ssh:
-      en_US: "SSH"
+      en_US: "SSH "
       zh_CN: "SSH"
     using_bash:
-      en_US: "; using"
+      en_US: "; using "
       zh_CN: "）；使用"
     bash:
-      en_US: "Bash"
+      en_US: "Bash "
       zh_CN: "Bash"
     on_windows:
       en_US: "as the shell environment; and using Tabby on Windows systems."
       zh_CN: "作为Shell；在Windows系统上使用Tabby。"
     usage_instruction:
-      en_US: "After enabling the plugin, entering content will trigger a prompt.  (Tips mainly come from quick-cmds plug-in, see README.md) Use the up and down arrow keys to select an item. Pressing"
+      en_US: "After enabling the plugin, entering content will trigger a prompt.  (Tips mainly come from quick-cmds plug-in, see README.md) Use the up and down arrow keys to select an item. Pressing "
       zh_CN: "启用此插件，输入内容将触发提示。（提示内容主要来源于 quick-cmds 插件，详见README.md）使用方向上下键选择一个项目。按下"
     tab_key:
-      en_US: "Tab"
+      en_US: "Tab "
       zh_CN: "Tab"
     tab_action:
-      en_US: "will input the selected item into the terminal, while pressing"
+      en_US: "will input the selected item into the terminal, while pressing "
       zh_CN: "将输入选择的项目到终端。按下"
     enter_key:
-      en_US: "Enter"
+      en_US: "Enter "
       zh_CN: "Enter"
     enter_action:
       en_US: "will input the selected item into the terminal and execute it by pressing enter."

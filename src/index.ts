@@ -19,7 +19,7 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap'
-import { ConfigProvider, HotkeyProvider, ToolbarButtonProvider } from 'tabby-core'
+import { AppService, ConfigProvider, HotkeyProvider, ToolbarButtonProvider } from 'tabby-core'
 import TabbyCoreModule from 'tabby-core'
 import { SettingsTabProvider } from 'tabby-settings'
 import { AutoCompleteConfigProvider } from './configProvider'
@@ -59,4 +59,12 @@ import { AutoCompleteTranslateService } from 'services/translateService'
         AutoCompleteAIDialogComponent,
     ],
 })
-export default class AutoCompleteModule { }
+export default class AutoCompleteModule {
+    constructor(
+        app: AppService, translate: AutoCompleteTranslateService
+    ) {
+        app.ready$.subscribe(() => {
+            translate.initMyTranslate();
+        })
+    }
+}
