@@ -1,6 +1,6 @@
 {
   "name": "tabby-quick-cmds-hint",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "It's a simple complete hint (i.e. auto-complete) plugin for tabby. (beta)",
   "repository": {
     "url": "git+https://github.com/OpaqueGlass/tabby-quick-cmds-hint.git"
