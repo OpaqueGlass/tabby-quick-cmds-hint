@@ -138,6 +138,18 @@ export class AutoCompleteHintMenuComponent {
         // this.currentItemIndex = -1;
     }
 
+    /**
+     * 仅在菜单当前处于显示状态时写入内容。
+     * 用于异步到达的结果（如 AI 生成），避免用户已按 Escape 隐藏菜单后又被重新点亮。
+     */
+    public setContentIfShowing(newVal: OptionItem[], type: string) {
+        if (!this.showingFlag) {
+            this.logger.debug("Menu not showing, dropped async content of type " + type);
+            return;
+        }
+        this.setContent(newVal, type);
+    }
+
     public test(text: string) {
         this.mainText = text;
     }

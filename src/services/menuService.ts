@@ -39,6 +39,7 @@ import { MySignalService } from './signalService';
 import { AutoCompleteTranslateService } from './translateService';
 import { StyleService } from './styleService';
 import { ArgumentsContentProvider } from './provider/argumentsContentProvider';
+import { AIContentProvider, AI_PROVIDER_TYPE_KEY } from './provider/aiContentProvider';
 
 @Injectable({
     providedIn: 'root'
@@ -72,6 +73,7 @@ export class AddMenuService {
         quickCmdContentProvider: QuickCmdContentProvider,
         historyContentProvider: HistoryContentProvider,
         argumentsContentProvider: ArgumentsContentProvider,
+        aiContentProvider: AIContentProvider,
         private myTranslate: AutoCompleteTranslateService, // 这个东西，放在Provider、index都会导致其他中文内容丢失
         // openAIContentProvider: OpenAIContentProvider,
         // private buttonProvider: ButtonProvider, // 直接引用会卡在Cannot access 'AddMenuService' before initialization
@@ -85,6 +87,7 @@ export class AddMenuService {
             quickCmdContentProvider,
             historyContentProvider,
             argumentsContentProvider,
+            aiContentProvider,
         ];
         logger.log("Add menu service init");
         if (this.menuStatus) {
@@ -171,6 +174,11 @@ export class AddMenuService {
             return;
         }
         this.logger.debug("Provider 返回option", resultWrap.optionItem);
+        if (resultWrap.type === AI_PROVIDER_TYPE_KEY) {
+            // AI 结果是异步到达的：菜单已被用户隐藏则直接丢弃，不重新点亮
+            this.componentRef.instance.setContentIfShowing(resultWrap.optionItem, resultWrap.type);
+            return;
+        }
         this.componentRef.instance.setContent(resultWrap.optionItem, resultWrap.type);
     }
 
@@ -222,7 +230,10 @@ export class AddMenuService {
         return this.menuStatus;
     }
 
-    public sendCurrentText(text: string, cursorIndexAt: number, uuid: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>, ignoreStatus) {
+    /**
+     * @param extra 附加的终端运行态信息（当前目录 / 最近输出），供 AI provider 使用
+     */
+    public sendCurrentText(text: string, cursorIndexAt: number, uuid: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>, ignoreStatus, extra?: { cwd?: string, recentOutput?: string }) {
         this.currentCmd = text;
         if (!this.menuStatus && !ignoreStatus) {
             this.logger.debug("Ignore sended cmd for menuStatus == false")
@@ -256,7 +267,9 @@ export class AddMenuService {
             config: this.configService,
             document: this.document,
             tab: tab,
-            sessionId: sessionId
+            sessionId: sessionId,
+            cwd: extra?.cwd ?? '',
+            recentOutput: extra?.recentOutput ?? '',
         }
         this.contentProviderList.forEach((provider) => {
             provider.getQuickCmdList(text, cursorIndexAt, envBasicInfo)

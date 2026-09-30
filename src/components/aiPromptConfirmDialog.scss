@@ -1,0 +1,14 @@
+.og-ac-ai-confirm {
+    .og-ac-prompt-editor {
+        font-family: var(--bs-font-monospace, monospace);
+        font-size: 12px;
+        line-height: 1.5;
+        white-space: pre;
+        overflow-wrap: normal;
+        overflow-x: auto;
+    }
+
+    .form-check-label {
+        user-select: none;
+    }
+}

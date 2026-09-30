@@ -1,0 +1,18 @@
+.modal-body.og-ac-ai-confirm
+    h5.mb-2 {{t('ogac.ai.confirm.title')}}
+    p.text-warning.small {{t('ogac.ai.confirm.warn')}}
+    textarea.form-control.og-ac-prompt-editor(
+        rows='14',
+        spellcheck='false',
+        [(ngModel)]='promptText'
+    )
+    .form-check.mt-2
+        input.form-check-input(
+            type='checkbox',
+            id='ogacAiNeverAsk',
+            [(ngModel)]='neverAskAgain'
+        )
+        label.form-check-label(for='ogacAiNeverAsk') {{t('ogac.ai.confirm.never_ask')}}
+    .d-flex.justify-content-end.mt-3
+        button.btn.btn-secondary.mr-2((click)='cancel()') {{t('ogac.ui.cancel')}}
+        button.btn.btn-primary((click)='confirm()') {{t('ogac.ui.send')}}
