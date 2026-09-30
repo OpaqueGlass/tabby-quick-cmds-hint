@@ -95,7 +95,9 @@ export class AIContentProvider extends BaseContentProvider {
         return {
             optionItem: items,
             envBasicInfo: envBasicInfo,
-            type: AIContentProvider.providerTypeKey
+            type: AIContentProvider.providerTypeKey,
+            // 自动补全是异步到达的，菜单已隐藏则丢弃
+            dropIfMenuHidden: true,
         };
     }
 

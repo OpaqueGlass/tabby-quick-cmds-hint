@@ -39,7 +39,7 @@ import { MySignalService } from './signalService';
 import { AutoCompleteTranslateService } from './translateService';
 import { StyleService } from './styleService';
 import { ArgumentsContentProvider } from './provider/argumentsContentProvider';
-import { AIContentProvider, AI_PROVIDER_TYPE_KEY } from './provider/aiContentProvider';
+import { AIContentProvider } from './provider/aiContentProvider';
 
 @Injectable({
     providedIn: 'root'
@@ -174,8 +174,8 @@ export class AddMenuService {
             return;
         }
         this.logger.debug("Provider 返回option", resultWrap.optionItem);
-        if (resultWrap.type === AI_PROVIDER_TYPE_KEY) {
-            // AI 结果是异步到达的：菜单已被用户隐藏则直接丢弃，不重新点亮
+        if (resultWrap.dropIfMenuHidden === true) {
+            // 异步到达的结果：菜单已被用户隐藏则直接丢弃，不重新点亮
             this.componentRef.instance.setContentIfShowing(resultWrap.optionItem, resultWrap.type);
             return;
         }

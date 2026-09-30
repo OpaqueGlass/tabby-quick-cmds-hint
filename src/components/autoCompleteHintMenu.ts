@@ -363,6 +363,11 @@ export class AutoCompleteHintMenuComponent {
         this.setContent([this.buildLoadingItem(type)], type);
         setTimeout(this.adjustPosition.bind(this), 0);
         pending.then(list => {
+            if (!this.showingFlag) {
+                // 用户在等待期间已隐藏菜单，不再重新显示
+                this.logger.debug("Menu hidden while waiting async options, dropped");
+                return;
+            }
             if (list == null || list.length == 0) {
                 this.hideAutocompleteList();
                 return;
