@@ -134,7 +134,7 @@ export class AIContentProvider extends BaseContentProvider {
             && this.aiConfig?.includeLastOutput === true
             && isValidStr(envBasicInfo?.recentOutput)
             && this.aiCompletion.needConfirm(envBasicInfo.sessionId)) {
-            const confirmed = await this.confirmPrompt(prompt, envBasicInfo.sessionId);
+            const confirmed = await this.confirmPrompt(prompt, envBasicInfo.sessionId, envBasicInfo.tab);
             if (confirmed == null) {
                 // 用户取消
                 return null;
@@ -152,7 +152,7 @@ export class AIContentProvider extends BaseContentProvider {
     /**
      * 弹出确认窗口，返回用户确认后的 prompt；取消则返回 null。
      */
-    private confirmPrompt(prompt: string, sessionId: string): Promise<string | null> {
+    private confirmPrompt(prompt: string, sessionId: string, tab?: any): Promise<string | null> {
         return new Promise<string | null>((resolve) => {
             const ref = this.ngbModal.open(AIPromptConfirmDialogComponent, { backdrop: 'static' });
             ref.componentInstance.promptText = prompt;
@@ -164,8 +164,19 @@ export class AIContentProvider extends BaseContentProvider {
             }).catch(() => {
                 this.logger.debug("AI prompt confirmation cancelled");
                 resolve(null);
+            }).finally(() => {
+                // 弹窗关闭后把焦点还给终端，避免用户需要手动点回终端
+                setTimeout(() => this.refocusTerminal(tab), 0);
             });
         });
+    }
+
+    private refocusTerminal(tab?: any) {
+        try {
+            tab?.frontend?.focus();
+        } catch (err) {
+            this.logger.debug("Refocus terminal failed", err);
+        }
     }
 
     /**
