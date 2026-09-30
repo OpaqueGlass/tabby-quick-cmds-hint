@@ -20,6 +20,7 @@ import { OptionItem } from '../api/pluginType'
 import { AppService, ConfigService, PlatformService, ThemesService } from 'tabby-core';
 import { isValidStr, sendInput } from 'utils/commonUtils';
 import { MyLogger } from 'services/myLogService';
+import { AI_PROVIDER_TYPE_KEY } from 'services/provider/aiContentProvider';
 import { DOCUMENT } from '@angular/common';
 
 @Component({
@@ -49,7 +50,8 @@ export class AutoCompleteHintMenuComponent {
         this.contentGroups = {
             "q": [],// quick cmd
             "h": [],// highlight
-            "a": [],// ai
+            "a": [],// arguments
+            "i": [],// ai
         };
         this.themeChanged();
         this.themeService.themeChanged$.subscribe(()=>{
@@ -75,6 +77,39 @@ export class AutoCompleteHintMenuComponent {
         }
     }
 
+    /**
+     * AI 组的显示条数上限，独立于 menuShowItemMaxCount。
+     */
+    getAIMaxCount(): number {
+        const n = Number(this.configService.store.ogAutoCompletePlugin?.ai?.inlineMaxCount);
+        return Number.isFinite(n) && n > 0 ? Math.floor(n) : 3;
+    }
+
+    /**
+     * AI 分组在渲染列表中的起始下标，用于在其之前渲染分组标题。
+     * 不存在 AI 条目时返回 -1。
+     */
+    getAiGroupStartIndex(): number {
+        return this.options.findIndex(option => option.type === AI_PROVIDER_TYPE_KEY);
+    }
+
+    /**
+     * 危险等级着色，与 AI 弹窗的阈值保持一致。
+     */
+    getRatingClass(option: OptionItem) {
+        const rating = option?.dangerRating;
+        if (rating === undefined || rating === null) {
+            return {};
+        }
+        if (rating <= 2) {
+            return { 'rate-safe': true };
+        }
+        if (rating <= 4) {
+            return { 'rate-warn': true };
+        }
+        return { 'rate-danger': true };
+    }
+
     private doRegetItems() {
         // 记录当前的option
         const currentOption = this.getCurrentItem();
@@ -88,7 +123,9 @@ export class AutoCompleteHintMenuComponent {
         }
         // 计算每组的最大显示数
         const maxTotal = this.configService.store.ogAutoCompletePlugin.menuShowItemMaxCount;
-        const groupKeys = Object.keys(this.contentGroups);
+        // AI 组使用独立配额、不参与均分：
+        // AI 结果是异步到达的，参与事后均分会让其他组的条数随结果到达而抖动
+        const groupKeys = Object.keys(this.contentGroups).filter(key => key !== AI_PROVIDER_TYPE_KEY);
         const groupCount = groupKeys.length;
         // 统计每组实际数量
         const groupActualCounts = groupKeys.map(key => this.contentGroups[key].length);
@@ -114,6 +151,11 @@ export class AutoCompleteHintMenuComponent {
         // 合并结果
         for (let i = 0; i < groupCount; i++) {
             this.options = this.options.concat(this.contentGroups[groupKeys[i]].slice(0, groupShowCounts[i]));
+        }
+        // AI 组追加在最后，条数仅由 ai.inlineMaxCount 决定
+        const aiItems = this.contentGroups[AI_PROVIDER_TYPE_KEY];
+        if (aiItems && aiItems.length > 0) {
+            this.options = this.options.concat(aiItems.slice(0, this.getAIMaxCount()));
         }
         if (this.options.length == 0) {
             this.hideAutocompleteList();
@@ -251,7 +293,12 @@ export class AutoCompleteHintMenuComponent {
             return null;
         }
         if (this.currentItemIndex >= 0) {
-            this.currentItemIndex--;
+            // 跳过加载中占位项
+            let next = this.currentItemIndex - 1;
+            while (next >= 0 && this.options[next]?.loading === true) {
+                next--;
+            }
+            this.currentItemIndex = next;
             setTimeout(this.scrollIntoVisible.bind(this), 0);
         } else {
             this.logger.log("???", this.currentItemIndex);
@@ -265,7 +312,15 @@ export class AutoCompleteHintMenuComponent {
             return null;
         }
         if (this.currentItemIndex < this.options.length - 1) {
-            this.currentItemIndex++;
+            // 跳过加载中占位项
+            let next = this.currentItemIndex + 1;
+            while (next < this.options.length && this.options[next]?.loading === true) {
+                next++;
+            }
+            if (next >= this.options.length) {
+                return this.currentItemIndex;
+            }
+            this.currentItemIndex = next;
             setTimeout(this.scrollIntoVisible.bind(this), 0);
             // setTimeout(this.adjustPosition.bind(this), 0);
         } else {
@@ -330,6 +385,10 @@ export class AutoCompleteHintMenuComponent {
         this.logger.log(`Selected index: ${index}, type: ${type}, content: ${JSON.stringify(this.options)}`);
         const option = this.options[index];
         if (option == null) {
+            return;
+        }
+        if (option.loading === true) {
+            // 加载中占位项不可选中
             return;
         }
         if (option.callback) {

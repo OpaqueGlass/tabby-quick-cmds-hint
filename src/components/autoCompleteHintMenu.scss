@@ -106,7 +106,65 @@
     &[data-cmd-type='a'] {
         background-color: rgba(153, 2, 2, 0.527);
     }
+    &[data-cmd-type='i'] {
+        background-color: #2b7fd4;
+    }
 }
+/* AI 分组标题 */
+.og-autocomplete-item-list .og-ac-ai-title {
+    padding: 2px 6px;
+    font-size: 0.8em;
+    letter-spacing: 0.05em;
+    color: var(--bs-gray);
+    border-top: 1px solid var(--bs-list-group-border-color);
+    background-color: var(--bs-list-group-bg);
+}
+
+/* 加载中占位项：灰显、不可点选 */
+.og-autocomplete-item.og-ac-loading {
+    cursor: default;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.og-autocomplete-item .og-ac-loading-text {
+    display: flex;
+    align-items: center;
+    font-style: italic;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+}
+
+.og-ac-spinner {
+    display: inline-block;
+    width: 0.8em;
+    height: 0.8em;
+    margin-right: 6px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: og-ac-spin 0.75s linear infinite;
+}
+
+@keyframes og-ac-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 危险等级着色，与 AI 弹窗保持一致 */
+.og-autocomplete-item.rate-safe .og-ac-name {
+    color: #2e9e4f;
+}
+
+.og-autocomplete-item.rate-warn .og-ac-name {
+    color: #c98a00;
+}
+
+.og-autocomplete-item.rate-danger .og-ac-name {
+    color: #d13b3b;
+}
+
 /* var(--bs-list-group-active-border-color)
 var(--bs-list-group-active-color)  var(--bs-list-group-active-bg)
 

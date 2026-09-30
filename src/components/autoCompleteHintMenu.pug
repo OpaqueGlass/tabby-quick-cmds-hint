@@ -6,16 +6,23 @@
     .og-autocomplete-main-text {{ mainText }}
     .og-autocomplete-item-list
         ng-container(*ngFor='let option of options; let i = index')
+            .og-ac-ai-title(*ngIf='i === getAiGroupStartIndex()', translate='ogac.menu.ai_suggestion')
             .og-autocomplete-item(
                 [attr.data-index]='i',
                 [class.og-tac-selected]='i === currentItemIndex',
+                [class.og-ac-loading]='option.loading === true',
+                [ngClass]='getRatingClass(option)',
                 (click)='inputItem(i, 0)'
             )
-                div.og-ac-type(
-                    [attr.data-cmd-type]='option.type'
-                ) {{option.type}}
-                div.og-ac-name {{option.name}}
-                div.og-ac-desp {{option.desp}}
+                ng-container(*ngIf='option.loading === true')
+                    div.og-ac-type([attr.data-cmd-type]='option.type') {{option.type}}
+                    div.og-ac-name.og-ac-loading-text
+                        span.og-ac-spinner
+                        span(translate='ogac.menu.loading_ai')
+                ng-container(*ngIf='option.loading !== true')
+                    div.og-ac-type([attr.data-cmd-type]='option.type') {{option.type}}
+                    div.og-ac-name {{option.name}}
+                    div.og-ac-desp {{option.desp}}
     ng-container(*ngIf='options.length > 0 && currentItemIndex != -1 && isValidStr(options[currentItemIndex]?.desp)')
         .og-autocomplete-footer {{options[currentItemIndex].desp}}
     ng-container(*ngIf='options.length === 0')
