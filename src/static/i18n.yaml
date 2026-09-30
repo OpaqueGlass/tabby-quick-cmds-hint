@@ -48,6 +48,165 @@ ogac:
     openai_model:
       en_US: "Open AI Model name"
       zh_CN: "Open AI 模型名称"
+    # AI 触发模式
+    enable:
+      en_US: "AI completion mode"
+      zh_CN: "AI 补全模式"
+    enable_desc:
+      en_US: "Off: disabled. Manual: only via the 'ask AI' entry or hotkey. Auto: also requests after typing pauses."
+      zh_CN: "关闭：不启用。手动：仅通过列表中的 ask AI 入口或快捷键触发。自动：输入停顿后自动请求。"
+    mode_off:
+      en_US: "Off"
+      zh_CN: "关闭"
+    mode_manual:
+      en_US: "Manual trigger only"
+      zh_CN: "仅手动触发"
+    mode_auto:
+      en_US: "Manual + inline auto completion"
+      zh_CN: "手动触发 + 输入自动补全"
+    inline_min_length:
+      en_US: "Minimum input length"
+      zh_CN: "触发的最小输入长度"
+    inline_min_length_desc:
+      en_US: "Auto completion starts only when the input reaches this length"
+      zh_CN: "输入达到该长度后才会触发自动补全"
+    inline_debounce:
+      en_US: "Input pause (ms)"
+      zh_CN: "输入停顿时长（毫秒）"
+    inline_debounce_desc:
+      en_US: "Request is sent only after the input stays unchanged for this long"
+      zh_CN: "输入静止超过该时长后才会发起请求"
+    inline_max_count:
+      en_US: "Max suggestions"
+      zh_CN: "最多生成条数"
+    inline_max_count_desc:
+      en_US: "Maximum number of AI suggestions shown in the menu"
+      zh_CN: "菜单中最多展示的 AI 建议条数"
+    timeout:
+      en_US: "Request timeout (ms)"
+      zh_CN: "请求超时（毫秒）"
+    timeout_desc:
+      en_US: "Timed out requests are silently discarded"
+      zh_CN: "超时的请求会被静默丢弃"
+    include_cwd:
+      en_US: "Include current directory"
+      zh_CN: "附带当前工作目录"
+    include_cwd_desc:
+      en_US: "Send the current working directory (from shell integration) to the AI"
+      zh_CN: "将当前工作目录（依赖 shell 集成）发送给 AI"
+    include_last_output:
+      en_US: "Include recent terminal output"
+      zh_CN: "附带最近的终端输出"
+    include_last_output_desc:
+      en_US: "Privacy risk: terminal output may contain secrets. Requires manual confirmation before sending."
+      zh_CN: "存在隐私风险：输出中可能包含敏感信息，发送前会要求人工确认。"
+    output_manual_only_hint:
+      en_US: "Recent terminal output is only used when triggering manually from the hint list, never for inline auto completion."
+      zh_CN: "最近的终端输出仅在通过提示列表手动触发时使用，输入自动补全时不会采集。"
+    # 发送前确认
+    confirm:
+      title:
+        en_US: "Confirm before sending to AI"
+        zh_CN: "发送前确认"
+      warn:
+        en_US: "The content below will be sent to the AI provider. Please check for secrets, you may edit it before sending."
+        zh_CN: "以下内容将被发送给 AI 服务，请检查其中是否包含敏感信息；发送前可以直接编辑。"
+      never_ask:
+        en_US: "Don't ask again in this session"
+        zh_CN: "本次会话内不再询问"
+
+  # 环境标签
+  envTags:
+    title:
+      en_US: "Environment tags"
+      zh_CN: "环境标签"
+    desc:
+      en_US: "Bind profiles that share the same shell or system to a tag. A profile can match multiple tags; matched contents are concatenated in order, and per-server settings are applied last."
+      zh_CN: "把使用相同 shell 或系统的连接配置绑定到同一个标签。一个服务器可以命中多个标签，命中的内容按顺序拼接，服务器自身的设置最后生效。"
+    system_version:
+      en_US: "System version"
+      zh_CN: "系统版本"
+    system_version_desc:
+      en_US: "For example: Ubuntu 22.04 / CentOS 7.9 / macOS 15.1"
+      zh_CN: "例如：Ubuntu 22.04 / CentOS 7.9 / macOS 15.1"
+    custom_prompt:
+      en_US: "Custom prompt"
+      zh_CN: "自定义提示词"
+    custom_prompt_desc:
+      en_US: "Extra requirements for this environment, appended to the AI prompt"
+      zh_CN: "该环境的额外要求，会追加到发送给 AI 的提示词中"
+    bind_profiles:
+      en_US: "Bound profiles"
+      zh_CN: "关联的服务器"
+    bind_profiles_desc:
+      en_US: "Select which profiles use this environment tag"
+      zh_CN: "勾选使用此环境标签的服务器"
+    search_profile:
+      en_US: "Search profiles..."
+      zh_CN: "搜索服务器..."
+    no_profile:
+      en_US: "No matching profile"
+      zh_CN: "没有匹配的服务器"
+    new_tag_placeholder:
+      en_US: "New tag name"
+      zh_CN: "新标签名称"
+    add_tag:
+      en_US: "Add tag"
+      zh_CN: "新增标签"
+    reset_tags:
+      en_US: "Reset to presets"
+      zh_CN: "重置为预设标签"
+
+  # 提示词模板
+  promptTemplate:
+    title:
+      en_US: "Prompt template"
+      zh_CN: "提示词模板"
+    desc:
+      en_US: "Available placeholders (missing values are replaced with empty text):"
+      zh_CN: "可用占位符（未取到值时替换为空）："
+    template:
+      en_US: "Template"
+      zh_CN: "模板内容"
+    preview:
+      en_US: "Preview"
+      zh_CN: "预览"
+    preview_desc:
+      en_US: "Preview the rendered prompt. The output format requirement is appended automatically and is not editable."
+      zh_CN: "预览渲染后的提示词。输出格式要求会自动追加，不开放编辑。"
+    no_profile:
+      en_US: "(No profile selected)"
+      zh_CN: "（未选择服务器）"
+    missing_hint:
+      en_US: "These placeholders currently have no value:"
+      zh_CN: "以下占位符当前没有值："
+    reset:
+      en_US: "Restore default"
+      zh_CN: "恢复默认"
+
+  # 服务器自定义
+  profileOverrides:
+    title:
+      en_US: "Per-server customization"
+      zh_CN: "服务器自定义"
+    desc:
+      en_US: "Override the system version for a specific server, or append extra notes to its prompt."
+      zh_CN: "为指定服务器覆盖系统版本，或追加额外的说明内容。"
+    toggle:
+      en_US: "Expand / collapse"
+      zh_CN: "展开 / 收起"
+    system_version:
+      en_US: "System version (overrides tags)"
+      zh_CN: "系统版本（覆盖标签）"
+    system_version_desc:
+      en_US: "When set, it replaces the value concatenated from the matched tags"
+      zh_CN: "填写后将替换由命中标签拼接出的系统版本"
+    extra_note:
+      en_US: "Extra note"
+      zh_CN: "额外说明"
+    extra_note_desc:
+      en_US: "Appended after the custom prompts of the matched tags"
+      zh_CN: "追加在命中标签的自定义提示词之后"
 
   # 外观设置
   appearance:
@@ -137,6 +296,12 @@ ogac:
     show_complete_menu:
       en_US: "Show complete menu now"
       zh_CN: "立刻显示提示菜单"
+    cancel:
+      en_US: "Cancel"
+      zh_CN: "取消"
+    send:
+      en_US: "Send"
+      zh_CN: "发送"
 
   # 插件介绍和说明
   intro:
@@ -200,6 +365,12 @@ ogac:
     noresult:
       en_US: "No results found"
       zh_CN: "无匹配结果"
+    ai_suggestion:
+      en_US: "AI suggestions"
+      zh_CN: "AI 建议"
+    loading_ai:
+      en_US: "AI is thinking..."
+      zh_CN: "AI 正在思考..."
 
   # 支持和反馈
   support:
