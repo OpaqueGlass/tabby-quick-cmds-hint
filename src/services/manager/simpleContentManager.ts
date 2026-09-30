@@ -27,7 +27,12 @@ import { MySignalService } from "services/signalService";
 interface LastStateLinesObj {
     raw: string;
     cleaned: string;
+    /** 清理后的整屏文本，仅在需要采集终端输出时非空，且已截断 */
+    full: string;
 }
+
+/** 采集终端输出时的最大字符数 */
+const RECENT_OUTPUT_MAX_LENGTH = 2000;
 export class SimpleManager extends BaseManager {
     // 命令输入状态，由enter清除，由匹配到prefix开始
     private cmdStatusFlag: boolean;
@@ -40,6 +45,10 @@ export class SimpleManager extends BaseManager {
     // private regExp: RegExp;
     // 使用正则表达式匹配的
     private usingRegExp: boolean;
+    /** 由 OSC 1337 采集到的当前工作目录 */
+    private currentCwd: string = "";
+    /** 最近一次采集到的终端输出（仅在用户开启采集时非空） */
+    private recentOutputFull: string = "";
     constructor(
         public tab: BaseTerminalTabComponent<BaseTerminalProfile>, 
         public logger: MyLogger, 
@@ -113,6 +122,12 @@ export class SimpleManager extends BaseManager {
             this.logger.debug("匹配到的前缀", matchGroup);
             if (matchGroup && matchGroup.length > 0) {
                 lastValidPrompt = matchGroup[matchGroup.length - 1];
+                // 顺带取出 CurrentDir 的值作为当前工作目录
+                const dirMatch = lastValidPrompt.match(/CurrentDir=([^\x07\x1b]*)/);
+                if (dirMatch && isValidStr(dirMatch[1])) {
+                    this.currentCwd = dirMatch[1];
+                    this.logger.debug("更新当前目录", this.currentCwd);
+                }
                 // 获取清理后内容
                 this.recentCleanPrompt = await this.cleanTerminalText(lastValidPrompt)
                 this.logger.log("更新：清理后命令前缀", this.recentCleanPrompt);
@@ -195,10 +210,25 @@ export class SimpleManager extends BaseManager {
         // FIX: 有时state捕捉到空白行的问题
         const lines = allStateStr.split("\n");
         const lastRawStateLineStr = lines.slice(-1).join("\n");
-        return {
+        const result = {
             "raw": lastRawStateLineStr, 
-            "cleaned": lastCleanedStateLineStr
-        } as LastStateLinesObj
+            "cleaned": lastCleanedStateLineStr,
+            "full": this.needRecentOutput()
+                ? cleanedAllStateStr.trim().slice(-RECENT_OUTPUT_MAX_LENGTH)
+                : "",
+        } as LastStateLinesObj;
+        this.recentOutputFull = result.full;
+        return result;
+    }
+
+    /**
+     * 是否需要采集最近的终端输出。
+     * 仅在 AI 功能非关闭、且用户显式开启时采集：
+     * auto 档不采集（内联补全不打扰用户输入），故限定为 manual 档。
+     */
+    private needRecentOutput(): boolean {
+        const ai = this.configService.store?.ogAutoCompletePlugin?.ai;
+        return ai?.enable === 'manual' && ai?.includeLastOutput === true;
     }
     /**
      * 从输入字符串中，获取用户输入的命令
@@ -245,7 +275,10 @@ export class SimpleManager extends BaseManager {
     sendCmd(cmd: string, cursorIndexAt = -1, force: boolean = false) {
         if (isValidStr(cmd) && this.tab.hasFocus) {
             this.logger.messyDebug("menu sending", cmd);
-            this.addMenuService.sendCurrentText(cmd, cursorIndexAt, this.recentUuid, this.sessionUniqueId, this.tab, force);
+            this.addMenuService.sendCurrentText(
+                cmd, cursorIndexAt, this.recentUuid, this.sessionUniqueId, this.tab, force,
+                { cwd: this.currentCwd, recentOutput: this.recentOutputFull }
+            );
         } else if (this.tab.hasFocus) {
             if (this.configService.store.ogAutoCompletePlugin.debugLevel < 0) {
                 this.logger.debug("menu close");
