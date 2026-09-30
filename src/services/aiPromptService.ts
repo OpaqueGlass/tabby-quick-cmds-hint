@@ -61,6 +61,13 @@ export class AIPromptService {
         this.config.save();
     }
 
+    /**
+     * 供设置页在编辑完标签内容后触发保存。
+     */
+    updateEnvTags(tags: EnvTag[]) {
+        this.saveEnvTags(tags);
+    }
+
     addEnvTag(name: string) {
         const tagName = (name ?? '').trim();
         if (!isValidStr(tagName)) {

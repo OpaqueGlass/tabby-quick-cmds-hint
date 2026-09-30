@@ -98,6 +98,218 @@ h3(translate='ogac.ai.title')
     )
 
 
+.alert.alert-warning(*ngIf='!isAutoMode() && aiConfig?.includeLastOutput')
+    div(translate='ogac.ai.output_manual_only_hint')
+
+.form-line
+    .header
+        .title(translate='ogac.ai.enable')
+        .description(translate='ogac.ai.enable_desc')
+    select.form-control(
+        [(ngModel)]='aiConfig.enable',
+        (ngModelChange)='config.save()',
+    )
+        option(value='off', translate='ogac.ai.mode_off')
+        option(value='manual', translate='ogac.ai.mode_manual')
+        option(value='auto', translate='ogac.ai.mode_auto')
+
+ng-container(*ngIf='isAutoMode()')
+    .form-line
+        .header
+            .title(translate='ogac.ai.inline_min_length')
+            .description(translate='ogac.ai.inline_min_length_desc')
+        input.form-control(
+            type='number',
+            min=1,
+            [(ngModel)]='aiConfig.inlineMinLength',
+            (ngModelChange)='config.save()',
+        )
+
+    .form-line
+        .header
+            .title(translate='ogac.ai.inline_debounce')
+            .description(translate='ogac.ai.inline_debounce_desc')
+        input.form-control(
+            type='number',
+            min=0,
+            step=100,
+            [(ngModel)]='aiConfig.inlineDebounce',
+            (ngModelChange)='config.save()',
+        )
+
+.form-line
+    .header
+        .title(translate='ogac.ai.inline_max_count')
+        .description(translate='ogac.ai.inline_max_count_desc')
+    input.form-control(
+        type='number',
+        min=1,
+        [(ngModel)]='aiConfig.inlineMaxCount',
+        (ngModelChange)='config.save()',
+    )
+
+.form-line
+    .header
+        .title(translate='ogac.ai.timeout')
+        .description(translate='ogac.ai.timeout_desc')
+    input.form-control(
+        type='number',
+        min=1000,
+        step=1000,
+        [(ngModel)]='aiConfig.timeout',
+        (ngModelChange)='config.save()',
+    )
+
+.form-line
+    .header
+        .title(translate='ogac.ai.include_cwd')
+        .description(translate='ogac.ai.include_cwd_desc')
+    toggle(
+        [(ngModel)]='aiConfig.includeCwd',
+        (ngModelChange)='config.save()',
+    )
+
+.form-line
+    .header
+        .title(translate='ogac.ai.include_last_output')
+        .description(translate='ogac.ai.include_last_output_desc')
+    toggle(
+        [(ngModel)]='aiConfig.includeLastOutput',
+        (ngModelChange)='config.save()',
+    )
+
+h4(translate='ogac.envTags.title')
+
+.alert.alert-info
+    div(translate='ogac.envTags.desc')
+
+.og-ac-env-tag(*ngFor='let tag of getEnvTags(); let ti = index')
+    .og-ac-tag-header
+        input.form-control.og-ac-tag-name(
+            type='text',
+            [(ngModel)]='tag.name',
+            (ngModelChange)='onEnvTagChanged()',
+        )
+        button.btn.btn-outline-danger.btn-sm((click)='removeEnvTag(tag.id)') ×
+
+    .form-line
+        .header
+            .title(translate='ogac.envTags.system_version')
+            .description(translate='ogac.envTags.system_version_desc')
+        input.form-control(
+            type='text',
+            [(ngModel)]='tag.systemVersion',
+            (ngModelChange)='onEnvTagChanged()',
+        )
+
+    .form-line
+        .header
+            .title(translate='ogac.envTags.custom_prompt')
+            .description(translate='ogac.envTags.custom_prompt_desc')
+        textarea.form-control(
+            rows='3',
+            [(ngModel)]='tag.customPrompt',
+            (ngModelChange)='onEnvTagChanged()',
+        )
+
+    .form-line
+        .header
+            .title(translate='ogac.envTags.bind_profiles')
+            .description(translate='ogac.envTags.bind_profiles_desc')
+        input.form-control.og-ac-profile-search(
+            type='text',
+            [placeholder]='t("ogac.envTags.search_profile")',
+            [(ngModel)]='profileSearchText[tag.id]',
+        )
+        .og-ac-profile-list
+            .og-ac-profile-row(*ngFor='let profile of getFilteredProfiles(tag)')
+                input(
+                    type='checkbox',
+                    [id]="'ogac-tag-' + tag.id + '-p-' + profile.id",
+                    [checked]='isProfileInTag(tag, profile.id)',
+                    (change)='toggleProfileInTag(tag, profile.id, $event)',
+                )
+                label(
+                    [for]="'ogac-tag-' + tag.id + '-p-' + profile.id"
+                ) {{profile.name}}
+            .text-muted.small(*ngIf='getFilteredProfiles(tag).length === 0', translate='ogac.envTags.no_profile')
+
+.og-ac-tag-actions
+    input.form-control.og-ac-tag-name(
+        type='text',
+        [(ngModel)]='newTagName',
+        [placeholder]='t("ogac.envTags.new_tag_placeholder")',
+    )
+    button.btn.btn-outline-primary.btn-sm((click)='addEnvTag()', translate='ogac.envTags.add_tag')
+    button.btn.btn-outline-secondary.btn-sm((click)='resetEnvTags()', translate='ogac.envTags.reset_tags')
+
+h4(translate='ogac.promptTemplate.title')
+
+.alert.alert-info
+    div(translate='ogac.promptTemplate.desc')
+    div
+        code(*ngFor='let ph of getPlaceholders()') {{ph}}
+
+.form-line
+    .header
+        .title(translate='ogac.promptTemplate.template')
+    textarea.form-control.og-ac-template(
+        rows='12',
+        spellcheck='false',
+        [(ngModel)]='aiConfig.promptTemplate',
+        (ngModelChange)='config.save()',
+    )
+
+.form-line
+    .header
+        .title(translate='ogac.promptTemplate.preview')
+        .description(translate='ogac.promptTemplate.preview_desc')
+    input.form-control(
+        type='text',
+        [(ngModel)]='previewCmd',
+    )
+    select.form-control.mt-1(
+        [(ngModel)]='previewProfileId',
+    )
+        option(value='', translate='ogac.promptTemplate.no_profile')
+        option(*ngFor='let profile of getProfiles()', [value]='profile.id') {{profile.name}}
+    pre.og-ac-preview {{getRenderedPromptPreview()}}
+    .text-muted.small(*ngIf='getMissingPlaceholderKeys().length > 0')
+        span(translate='ogac.promptTemplate.missing_hint')
+        span {{' '}}
+        code(*ngFor='let key of getMissingPlaceholderKeys()') {{key}}
+    button.btn.btn-outline-secondary.btn-sm.mt-1((click)='resetPromptTemplate()', translate='ogac.promptTemplate.reset')
+
+h4(translate='ogac.profileOverrides.title')
+
+.form-line
+    .header
+        .title(translate='ogac.profileOverrides.title')
+        .description(translate='ogac.profileOverrides.desc')
+    button.btn.btn-outline-secondary.btn-sm((click)='toggleProfileOverrides()', translate='ogac.profileOverrides.toggle')
+
+ng-container(*ngIf='showProfileOverrides')
+    .og-ac-profile-override(*ngFor='let profile of getProfiles()')
+        .og-ac-profile-override-name {{profile.name}}
+        .form-line
+            .header
+                .title(translate='ogac.profileOverrides.system_version')
+                .description(translate='ogac.profileOverrides.system_version_desc')
+            input.form-control(
+                type='text',
+                [ngModel]='getProfileSystemVersion(profile.id)',
+                (ngModelChange)='setProfileSystemVersion(profile.id, $event)',
+            )
+        .form-line
+            .header
+                .title(translate='ogac.profileOverrides.extra_note')
+                .description(translate='ogac.profileOverrides.extra_note_desc')
+            textarea.form-control(
+                rows='2',
+                [ngModel]='getProfileExtraNote(profile.id)',
+                (ngModelChange)='setProfileExtraNote(profile.id, $event)',
+            )
+
 h3(translate='ogac.appearance.title')
 
 .form-line

@@ -10,3 +10,96 @@ a.og-tac-a {
         text-decoration: dotted;
     }
 }
+
+/* 环境标签卡片 */
+.og-ac-env-tag {
+    border: 1px solid var(--bs-border-color, rgba(128, 128, 128, 0.35));
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+
+    .og-ac-tag-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+    }
+
+    .og-ac-tag-name {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: 320px;
+    }
+}
+
+.og-ac-tag-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+
+    .og-ac-tag-name {
+        flex: 0 1 240px;
+    }
+}
+
+/* profile 多选列表（自绘，@ng-select 不可用） */
+.og-ac-profile-list {
+    max-height: 160px;
+    overflow-y: auto;
+    border: 1px solid var(--bs-border-color, rgba(128, 128, 128, 0.35));
+    border-radius: 4px;
+    padding: 4px 6px;
+    margin-top: 6px;
+}
+
+.og-ac-profile-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.6;
+
+    label {
+        margin-bottom: 0;
+        cursor: pointer;
+        word-break: break-all;
+    }
+}
+
+.og-ac-profile-search {
+    max-width: 320px;
+}
+
+/* 提示词模板与预览 */
+.og-ac-template {
+    font-family: var(--bs-font-monospace, monospace);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.og-ac-preview {
+    max-height: 240px;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-size: 12px;
+    background-color: var(--bs-tertiary-bg, rgba(128, 128, 128, 0.12));
+    border-radius: 4px;
+    padding: 8px;
+    margin-top: 6px;
+}
+
+/* 服务器自定义 */
+.og-ac-profile-override {
+    border: 1px solid var(--bs-border-color, rgba(128, 128, 128, 0.35));
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+}
+
+.og-ac-profile-override-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+    word-break: break-all;
+}
