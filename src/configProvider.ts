@@ -1,4 +1,19 @@
 import { ConfigProvider } from 'tabby-core'
+import { EnvTag } from './api/aiType'
+import { DEFAULT_AI_PROMPT_TEMPLATE, PRESET_ENV_TAG_NAMES } from './static/aiPromptTemplate'
+
+/**
+ * 预置环境标签。
+ * 注意：tabby 的 ConfigProxy 对数组类型会在首次读取时物化进真实 store，
+ * 因此这里给数组默认值是安全且有效的（增删改均可正常 save）。
+ */
+const presetEnvTags = (): EnvTag[] => PRESET_ENV_TAG_NAMES.map(name => ({
+    id: name,
+    name: name,
+    systemVersion: '',
+    customPrompt: '',
+    profiles: [],
+}));
 
 /** @hidden */
 export class AutoCompleteConfigProvider extends ConfigProvider {
@@ -13,7 +28,22 @@ export class AutoCompleteConfigProvider extends ConfigProvider {
                 openAIBaseUrl: "https://api.openai.com/v1",
                 openAIKey: "",
                 openAIModel: "gpt-4o-mini",
+                // off | manual | auto，默认关闭
+                enable: 'off',
+                inlineMinLength: 3,
+                inlineDebounce: 800,
+                inlineMaxCount: 3,
+                timeout: 15000,
+                includeCwd: true,
+                includeLastOutput: false,
+                promptTemplate: DEFAULT_AI_PROMPT_TEMPLATE,
             },
+            // 环境标签。数组顺序即提示词拼接顺序
+            envTags: presetEnvTags(),
+            // { [profileId]: { systemVersion, extraNote } }
+            // 注意：必须保持为空对象默认值，且读写统一走 AIPromptService 访问器，
+            // 否则会命中 tabby ConfigProxy 的"等于默认值不落盘"逻辑导致数据丢失
+            profileOverrides: {},
             appearance: {
                 "fontSize": 15,
             },

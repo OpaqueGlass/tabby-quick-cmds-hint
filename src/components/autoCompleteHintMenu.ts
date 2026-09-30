@@ -275,22 +275,70 @@ export class AutoCompleteHintMenuComponent {
     }
 
     /**
+     * 构造一个加载中占位项。灰显、不可选（方向键与回车均跳过）。
+     */
+    private buildLoadingItem(type: string): OptionItem {
+        return {
+            name: '',
+            content: '',
+            type: type,
+            desp: '',
+            loading: true,
+        };
+    }
+
+    /**
+     * 处理返回 Promise 的候选项回调：先占位，结果到达后整组替换。
+     * 结果为空或异常时隐藏菜单，不残留占位项。
+     */
+    private showAsyncOptions(pending: Promise<OptionItem[] | null>, type: string) {
+        this.clearContent();
+        this.setContent([this.buildLoadingItem(type)], type);
+        setTimeout(this.adjustPosition.bind(this), 0);
+        pending.then(list => {
+            if (list == null || list.length == 0) {
+                this.hideAutocompleteList();
+                return;
+            }
+            this.clearContent();
+            this.setContent(list, type);
+            setTimeout(this.adjustPosition.bind(this), 0);
+        }).catch(err => {
+            this.logger.error('Error while resolving async option items', err);
+            this.hideAutocompleteList();
+        });
+    }
+
+    /**
      * 将用户选择项目上屏
      * @param index cmd index
      * @param type 类型：0 仅上屏 1上屏并回车
      */
     inputItem(index: number, type: number) {
         this.logger.log(`Selected index: ${index}, type: ${type}, content: ${JSON.stringify(this.options)}`);
-        if (this.options[index].callback) {
-            const newOptionList = this.options[index].callback();
-            if (newOptionList == null || newOptionList.length == 0) {
+        const option = this.options[index];
+        if (option == null) {
+            return;
+        }
+        if (option.callback) {
+            const newOptionList = option.callback();
+            if (newOptionList == null) {
+                // Provider 自行实现了下一级，或其他插入方式
                 this.hideAutocompleteList();
                 return;
-            } else {
-                this.clearContent();
-                this.setContent(newOptionList, this.options[index].type);
+            }
+            if (newOptionList instanceof Promise) {
+                // 异步候选：先渲染 loading 占位项，resolve 之后整组替换
+                this.showAsyncOptions(newOptionList, option.type);
                 return;
             }
+            if (newOptionList.length == 0) {
+                this.hideAutocompleteList();
+                return;
+            }
+            this.clearContent();
+            this.setContent(newOptionList, option.type);
+            return;
         }
         sendInput({
             tab: this.app.activeTab,
