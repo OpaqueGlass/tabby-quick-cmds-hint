@@ -30,6 +30,22 @@ a.og-tac-a {
         min-width: 0;
         max-width: 320px;
     }
+
+    /* 单个标签的展开/收起开关 */
+    .og-ac-tag-toggle {
+        flex: 0 0 auto;
+        padding: 0 8px;
+        line-height: 1.2;
+    }
+
+    /* 收起态摘要，过长时省略 */
+    .og-ac-tag-summary {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
 
 .og-ac-tag-actions {

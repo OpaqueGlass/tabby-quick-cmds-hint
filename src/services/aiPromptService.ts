@@ -68,23 +68,29 @@ export class AIPromptService {
         this.saveEnvTags(tags);
     }
 
-    addEnvTag(name: string) {
+    /**
+     * 新增一个自定义标签。
+     * @returns 新标签的 id；名称为空或重名时返回 null
+     */
+    addEnvTag(name: string): string | null {
         const tagName = (name ?? '').trim();
         if (!isValidStr(tagName)) {
-            return;
+            return null;
         }
         const tags = this.getEnvTags();
         if (tags.some(t => t.name === tagName)) {
-            return;
+            return null;
         }
+        const id = `custom-${tagName}-${Date.now()}`;
         tags.push({
-            id: `custom-${tagName}-${Date.now()}`,
+            id: id,
             name: tagName,
             systemVersion: '',
             customPrompt: '',
             profiles: [],
         });
         this.saveEnvTags(tags);
+        return id;
     }
 
     removeEnvTag(id: string) {

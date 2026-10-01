@@ -5,6 +5,7 @@ import { ConfigService } from 'tabby-core'
 import { AIPromptService } from 'services/aiPromptService';
 import { AIRequestContext, EnvTag } from 'api/aiType';
 import { DEFAULT_AI_PROMPT_TEMPLATE, AI_TEMPLATE_PLACEHOLDERS } from 'static/aiPromptTemplate';
+import { isValidStr } from '../utils/commonUtils';
 
 @Component({
     template: require('./autoCompleteSettingsTab.pug'),
@@ -21,6 +22,10 @@ export class AutoCompleteSettingsTabComponent {
     previewProfileId: string = "";
     /** 服务器自定义区块是否展开 */
     showProfileOverrides: boolean = false;
+    /** 环境标签区块是否展开 */
+    showEnvTags: boolean = false;
+    /** 单个环境标签的详情是否展开，key = tag.id */
+    expandedTags: { [tagId: string]: boolean } = {};
 
     constructor (
         public config: ConfigService,
@@ -68,12 +73,52 @@ export class AutoCompleteSettingsTabComponent {
         this.aiPrompt.updateEnvTags(this.getEnvTags());
     }
 
+    /**
+     * 整块环境标签的展开/收起，与「服务器自定义」保持一致的交互。
+     */
+    toggleEnvTags() {
+        this.showEnvTags = !this.showEnvTags;
+    }
+
+    isTagExpanded(tagId: string): boolean {
+        return this.expandedTags[tagId] === true;
+    }
+
+    toggleTag(tagId: string) {
+        this.expandedTags[tagId] = !this.isTagExpanded(tagId);
+    }
+
+    /**
+     * 收起态的一行摘要：系统版本 / 自定义提示词 / 已绑定服务器数。
+     * 未配置任何内容的标签显示「未配置」。
+     */
+    getTagSummary(tag: EnvTag): string {
+        const parts: string[] = [];
+        const version = (tag?.systemVersion ?? '').trim();
+        if (isValidStr(version)) {
+            parts.push(version);
+        }
+        if (isValidStr((tag?.customPrompt ?? '').trim())) {
+            parts.push(this.t('ogac.envTags.summary_prompt'));
+        }
+        const count = Array.isArray(tag?.profiles) ? tag.profiles.length : 0;
+        if (count > 0) {
+            parts.push(`${count} ${this.t('ogac.envTags.summary_profiles')}`);
+        }
+        return parts.length > 0 ? parts.join(' · ') : this.t('ogac.envTags.not_configured');
+    }
+
     addEnvTag() {
-        this.aiPrompt.addEnvTag(this.newTagName);
+        // 新增的标签直接展开，避免用户还要再点一次才能填内容
+        const newId = this.aiPrompt.addEnvTag(this.newTagName);
         this.newTagName = "";
+        if (newId != null) {
+            this.expandedTags[newId] = true;
+        }
     }
 
     removeEnvTag(tagId: string) {
+        delete this.expandedTags[tagId];
         this.aiPrompt.removeEnvTag(tagId);
     }
 

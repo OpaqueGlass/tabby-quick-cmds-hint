@@ -180,68 +180,79 @@ ng-container(*ngIf='isAutoMode()')
 
 h4(translate='ogac.envTags.title')
 
-.alert.alert-info
-    div(translate='ogac.envTags.desc')
+.form-line
+    .header
+        .title(translate='ogac.envTags.title')
+        .description(translate='ogac.envTags.desc')
+    button.btn.btn-outline-secondary.btn-sm((click)='toggleEnvTags()', translate='ogac.envTags.toggle')
 
-.og-ac-env-tag(*ngFor='let tag of getEnvTags(); let ti = index')
-    .og-ac-tag-header
+ng-container(*ngIf='showEnvTags')
+    .og-ac-env-tag(*ngFor='let tag of getEnvTags(); let ti = index')
+        .og-ac-tag-header
+            button.btn.btn-outline-secondary.btn-sm.og-ac-tag-toggle(
+                type='button',
+                (click)='toggleTag(tag.id)',
+                [attr.title]='t("ogac.envTags.toggle")',
+            ) {{isTagExpanded(tag.id) ? '▾' : '▸'}}
+            input.form-control.og-ac-tag-name(
+                type='text',
+                [(ngModel)]='tag.name',
+                (ngModelChange)='onEnvTagChanged()',
+            )
+            .og-ac-tag-summary.text-muted.small(*ngIf='!isTagExpanded(tag.id)') {{getTagSummary(tag)}}
+            button.btn.btn-outline-danger.btn-sm((click)='removeEnvTag(tag.id)') ×
+
+        ng-container(*ngIf='isTagExpanded(tag.id)')
+            .form-line
+                .header
+                    .title(translate='ogac.envTags.system_version')
+                    .description(translate='ogac.envTags.system_version_desc')
+                input.form-control(
+                    type='text',
+                    [(ngModel)]='tag.systemVersion',
+                    (ngModelChange)='onEnvTagChanged()',
+                )
+
+            .form-line
+                .header
+                    .title(translate='ogac.envTags.custom_prompt')
+                    .description(translate='ogac.envTags.custom_prompt_desc')
+                textarea.form-control(
+                    rows='3',
+                    [(ngModel)]='tag.customPrompt',
+                    (ngModelChange)='onEnvTagChanged()',
+                )
+
+            .form-line
+                .header
+                    .title(translate='ogac.envTags.bind_profiles')
+                    .description(translate='ogac.envTags.bind_profiles_desc')
+                input.form-control.og-ac-profile-search(
+                    type='text',
+                    [placeholder]='t("ogac.envTags.search_profile")',
+                    [(ngModel)]='profileSearchText[tag.id]',
+                )
+                .og-ac-profile-list
+                    .og-ac-profile-row(*ngFor='let profile of getFilteredProfiles(tag)')
+                        input(
+                            type='checkbox',
+                            [id]="'ogac-tag-' + tag.id + '-p-' + profile.id",
+                            [checked]='isProfileInTag(tag, profile.id)',
+                            (change)='toggleProfileInTag(tag, profile.id, $event)',
+                        )
+                        label(
+                            [for]="'ogac-tag-' + tag.id + '-p-' + profile.id"
+                        ) {{profile.name}}
+                    .text-muted.small(*ngIf='getFilteredProfiles(tag).length === 0', translate='ogac.envTags.no_profile')
+
+    .og-ac-tag-actions
         input.form-control.og-ac-tag-name(
             type='text',
-            [(ngModel)]='tag.name',
-            (ngModelChange)='onEnvTagChanged()',
+            [(ngModel)]='newTagName',
+            [placeholder]='t("ogac.envTags.new_tag_placeholder")',
         )
-        button.btn.btn-outline-danger.btn-sm((click)='removeEnvTag(tag.id)') ×
-
-    .form-line
-        .header
-            .title(translate='ogac.envTags.system_version')
-            .description(translate='ogac.envTags.system_version_desc')
-        input.form-control(
-            type='text',
-            [(ngModel)]='tag.systemVersion',
-            (ngModelChange)='onEnvTagChanged()',
-        )
-
-    .form-line
-        .header
-            .title(translate='ogac.envTags.custom_prompt')
-            .description(translate='ogac.envTags.custom_prompt_desc')
-        textarea.form-control(
-            rows='3',
-            [(ngModel)]='tag.customPrompt',
-            (ngModelChange)='onEnvTagChanged()',
-        )
-
-    .form-line
-        .header
-            .title(translate='ogac.envTags.bind_profiles')
-            .description(translate='ogac.envTags.bind_profiles_desc')
-        input.form-control.og-ac-profile-search(
-            type='text',
-            [placeholder]='t("ogac.envTags.search_profile")',
-            [(ngModel)]='profileSearchText[tag.id]',
-        )
-        .og-ac-profile-list
-            .og-ac-profile-row(*ngFor='let profile of getFilteredProfiles(tag)')
-                input(
-                    type='checkbox',
-                    [id]="'ogac-tag-' + tag.id + '-p-' + profile.id",
-                    [checked]='isProfileInTag(tag, profile.id)',
-                    (change)='toggleProfileInTag(tag, profile.id, $event)',
-                )
-                label(
-                    [for]="'ogac-tag-' + tag.id + '-p-' + profile.id"
-                ) {{profile.name}}
-            .text-muted.small(*ngIf='getFilteredProfiles(tag).length === 0', translate='ogac.envTags.no_profile')
-
-.og-ac-tag-actions
-    input.form-control.og-ac-tag-name(
-        type='text',
-        [(ngModel)]='newTagName',
-        [placeholder]='t("ogac.envTags.new_tag_placeholder")',
-    )
-    button.btn.btn-outline-primary.btn-sm((click)='addEnvTag()', translate='ogac.envTags.add_tag')
-    button.btn.btn-outline-secondary.btn-sm((click)='resetEnvTags()', translate='ogac.envTags.reset_tags')
+        button.btn.btn-outline-primary.btn-sm((click)='addEnvTag()', translate='ogac.envTags.add_tag')
+        button.btn.btn-outline-secondary.btn-sm((click)='resetEnvTags()', translate='ogac.envTags.reset_tags')
 
 h4(translate='ogac.promptTemplate.title')
 

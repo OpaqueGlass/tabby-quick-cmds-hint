@@ -156,6 +156,18 @@ ogac:
     reset_tags:
       en_US: "Reset to presets"
       zh_CN: "重置为预设标签"
+    toggle:
+      en_US: "Expand / collapse"
+      zh_CN: "展开 / 收起"
+    not_configured:
+      en_US: "Not configured"
+      zh_CN: "未配置"
+    summary_prompt:
+      en_US: "custom prompt"
+      zh_CN: "自定义提示词"
+    summary_profiles:
+      en_US: "profiles"
+      zh_CN: "台服务器"
 
   # 提示词模板
   promptTemplate:
