@@ -58,6 +58,11 @@ export class SimpleManager extends BaseManager {
     private currentCwd: string = "";
     /** 最近一次采集到的终端输出（仅在用户开启采集时非空） */
     private recentOutputFull: string = "";
+    /**
+     * 用户按 Escape 取消了本行提示。
+     * 置位期间不再向菜单推送内容，直到回车换行 / 会话切换 / 用户用快捷键主动呼出。
+     */
+    private escapeDismissed: boolean = false;
     constructor(
         public tab: BaseTerminalTabComponent<BaseTerminalProfile>, 
         public logger: MyLogger, 
@@ -69,14 +74,29 @@ export class SimpleManager extends BaseManager {
         super(tab, logger, addMenuService, configService);
         this.currentLine = "";
         this.subscriptionList.push(addMenuService.enterNotification$.subscribe(this.endCmdStatus.bind(this)));
+        this.subscriptionList.push(addMenuService.escapeNotification$.subscribe(this.dismissCurrentLine.bind(this)));
         this.subscriptionList.push(signalService.startCompleteNow$.subscribe(this.suggestNow.bind(this)));
     }
+    /**
+     * 用户按 Escape：本行不再展示提示。
+     * 只作用于当前获得焦点的终端。
+     */
+    dismissCurrentLine() {
+        if (!this.tab.hasFocus) {
+            return;
+        }
+        this.escapeDismissed = true;
+        this.logger.debug("Hint dismissed by Escape until the next line");
+    }
+
     async endCmdStatus() {
         this.logger.debug("收到Enter信号", this)
         this.cmdStatusFlag = false;
         if (!this.tab.hasFocus) {
             return;
         }
+        // 回车意味着本行结束，解除 Escape 屏蔽
+        this.escapeDismissed = false;
         const lastStateLineObj = await this.getLastStateLine();
         // 检查
         // FIXME: 避免进vim之后会出现的，每次回车都广播
@@ -114,9 +134,16 @@ export class SimpleManager extends BaseManager {
             const matchResult = cleanLastStateLine.match(this.loadRegExp());
             this.logger.debug("RegExp Debug [MatchResult, lastLine]", matchResult, lastStateLinesStr);
             if (matchResult) {
-                this.recentCleanPrompt = matchResult[0];
+                const newPrompt = matchResult[0];
+                // 正则识别 prompt 时，每敲一个字符都会重新命中同一行 prompt。
+                // 若每次都换 uuid，"本次输入"的标识就失去了意义，
+                // Escape 记下的"本行不再提示"也会在下一个字符就失效。
+                // 因此只有在新的一行开始（cmdStatusFlag 为 false）或 prompt 变化时才换 uuid。
+                if (!this.cmdStatusFlag || newPrompt !== this.recentCleanPrompt) {
+                    this.recentUuid = generateUUID();
+                }
+                this.recentCleanPrompt = newPrompt;
                 this.cmdStatusFlag = true;
-                this.recentUuid = generateUUID();
                 this.usingRegExp = true;
             }
         }
@@ -317,6 +344,11 @@ export class SimpleManager extends BaseManager {
      * @param cmd 提示的命令
      */
     sendCmd(cmd: string, cursorIndexAt = -1, force: boolean = false) {
+        if (this.escapeDismissed) {
+            // 用户已用 Escape 取消本行提示，不再推送内容给菜单
+            this.logger.debug("Skipped hint: dismissed by Escape in this line");
+            return;
+        }
         if (isValidStr(cmd) && this.tab.hasFocus) {
             this.logger.messyDebug("menu sending", cmd);
             this.addMenuService.sendCurrentText(
@@ -338,6 +370,11 @@ export class SimpleManager extends BaseManager {
     async getCmdAndSuggest(lastStateLineObj: LastStateLinesObj, force: boolean=false) {
         const cleanedLastSerialLinesStr = cleanTerminalText(lastStateLineObj.raw);
         const [cmd, cursorIndexAt] = await this.getCmd(lastStateLineObj.raw, lastStateLineObj.cleaned);
+        // 出现一个全新的空 prompt（Ctrl+C 之后等）也意味着换了新的一行，解除 Escape 屏蔽
+        if (!isValidStr(cmd.trim()) && isValidStr(this.recentCleanPrompt)
+            && lastStateLineObj.cleaned.includes(this.recentCleanPrompt)) {
+            this.escapeDismissed = false;
+        }
         if (isValidStr(cmd) && this.cmdStatusFlag) {
             this.logger.messyDebug("命令为", cmd);
             this.sendCmd(cmd, cursorIndexAt, force);
@@ -350,11 +387,14 @@ export class SimpleManager extends BaseManager {
         if (!this.tab.hasFocus) {
             return;
         }
+        // 用户用快捷键主动呼出，解除 Escape 屏蔽
+        this.escapeDismissed = false;
         this.recentUuid = generateUUID();
         this.getCmdAndSuggest(await this.getLastStateLine(), true);
     }
     handleSessionChanged = (session) => {
         this.logger.log("session changed", session);
+        this.escapeDismissed = false;
         this.addMenuService.hideMenu();
         this.sessionUniqueId = generateUUID();
     }

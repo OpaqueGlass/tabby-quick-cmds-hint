@@ -58,6 +58,9 @@ export class AddMenuService {
     // 回车输入状态
     private enterNotificationSubject: Subject<void> = new Subject<void>();
     public enterNotification$ = this.enterNotificationSubject.asObservable();
+    // 用户按 Escape 取消提示：终端据此在"当前这一行"内不再弹出提示
+    private escapeNotificationSubject: Subject<void> = new Subject<void>();
+    public escapeNotification$ = this.escapeNotificationSubject.asObservable();
     // 补全菜单工作状态
     private menuStatus: boolean = true;
     private menuStatusNotificationSubject: Subject<boolean> = new Subject<boolean>();
@@ -341,6 +344,8 @@ export class AddMenuService {
             }
         } else if (key === 'Escape') {
             this.recentBlockedUuid = this.recentUuid;
+            // 广播给终端：本行不再展示提示，直到回车换行 / 会话切换 / 用户主动呼出
+            this.escapeNotificationSubject.next();
             if (this.componentRef.instance.showingFlag) {
                 this.hideMenu(true);
                 actFlag = true;
