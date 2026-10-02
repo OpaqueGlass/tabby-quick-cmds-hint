@@ -22,6 +22,7 @@ import { AddMenuService } from 'services/menuService';
 import { MyLogger } from 'services/myLogService';
 import { MySignalService } from 'services/signalService';
 import { AppService, ConfigService, NotificationsService } from 'tabby-core';
+import { TerminalContextService } from 'services/terminalContextService';
 import { BaseTerminalProfile, BaseTerminalTabComponent, TerminalDecorator } from 'tabby-terminal';
 import { inputInitScripts, sleep } from 'utils/commonUtils';
 
@@ -35,7 +36,8 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         private logger: MyLogger,
         private app: AppService,
         private notification: NotificationsService,
-        private signalService: MySignalService
+        private signalService: MySignalService,
+        private terminalContext: TerminalContextService,
     ) {
         super()
         addMenuService.insertComponent();
@@ -74,6 +76,8 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         }, true);
         
         const mangager = new SimpleManager(tab, this.logger, this.addMenuService, this.configService, this.notification, this.signalService);
+        // 登记到上下文服务，供 AI 弹窗等场景按需抓取终端输出
+        this.terminalContext.register(tab, mangager);
         if (mangager.handleInput) {
             super.subscribeUntilDetached(tab, tab.input$.pipe(bufferTime(300)).subscribe(mangager.handleInput));
         }
@@ -82,6 +86,7 @@ export class AutoCompleteTerminalDecorator extends TerminalDecorator {
         }
         super.subscribeUntilDetached(tab, tab.sessionChanged$.subscribe(mangager.handleSessionChanged));
         const destroySub = tab.destroyed$.subscribe(()=>{
+            this.terminalContext.unregister(tab);
             mangager.destroy();
             destroySub.unsubscribe();
         });

@@ -181,8 +181,11 @@ export class AIPromptService {
     /**
      * 构建最终发送给 AI 的完整 prompt。
      * 输出格式约束由本方法硬编码追加，不进入用户可编辑模板。
+     *
+     * @param includeRecentOutput 本次请求是否附带终端输出。不传时按配置 ai.includeLastOutput 决定，
+     *                            传值则以本次选择为准（AI 弹窗支持用户逐次选择）。
      */
-    buildPrompt(ctx: AIRequestContext): string {
+    buildPrompt(ctx: AIRequestContext, includeRecentOutput?: boolean): string {
         const env = this.buildEnvContext(ctx);
         const template = isValidStr(this.aiConfig?.promptTemplate)
             ? this.aiConfig.promptTemplate
@@ -192,8 +195,8 @@ export class AIPromptService {
         const maxCount = Number(this.aiConfig?.inlineMaxCount) > 0 ? Number(this.aiConfig.inlineMaxCount) : 3;
         let prompt = rendered;
 
-        // 终端输出仅在 manual 档且用户开启时才可能非空（auto 档不采集）
-        if (this.aiConfig?.includeLastOutput === true && isValidStr(ctx.recentOutput)) {
+        const wantsOutput = includeRecentOutput ?? (this.aiConfig?.includeLastOutput === true);
+        if (wantsOutput && isValidStr(ctx.recentOutput)) {
             prompt += RECENT_OUTPUT_SECTION(ctx.recentOutput);
         }
         prompt += outputFormatInstruction(maxCount);

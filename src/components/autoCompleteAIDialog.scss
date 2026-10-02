@@ -1,3 +1,14 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+}
+
+.modal-header,
+.modal-footer {
+    flex: 0 0 auto;
+}
+
 .rounded-rectangle {
     border-radius: 15px;
     border: 1px solid #ddd;
@@ -19,4 +30,81 @@
 }
 .rate-danger {
     color: #dc3545;
+}
+
+.og-ac-ai-dialog {
+    // 结果列表较长时，只有中间区域滚动；
+    // max-height 同时兜底：万一宿主元素未被约束，body 自身也最多占 80vh
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 80vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    .ai-dialog-desc {
+        margin-bottom: 0.75rem;
+        line-height: 1.6;
+        opacity: 0.85;
+    }
+
+    .option-desc {
+        font-size: 12px;
+        line-height: 1.5;
+        margin-left: 1.5rem;
+        opacity: 0.75;
+    }
+
+    .form-check-label {
+        user-select: none;
+    }
+
+    .loading-text {
+        margin-left: 0.5rem;
+        opacity: 0.8;
+    }
+
+    .result-hint,
+    .footer-hint {
+        font-size: 12px;
+        opacity: 0.75;
+        margin-bottom: 0;
+    }
+
+    .output-preview {
+        margin-top: 0.5rem;
+        margin-left: 1.5rem;
+        border: 1px solid rgba(127, 127, 127, 0.3);
+        border-radius: 6px;
+        padding: 0.25rem 0.5rem;
+
+        .preview-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+        }
+
+        .preview-title {
+            font-weight: 600;
+        }
+
+        .preview-size {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .output-content {
+            font-family: var(--bs-font-monospace, monospace);
+            font-size: 12px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 180px;
+            overflow: auto;
+            margin: 0.25rem 0 0.5rem;
+            padding: 0.5rem;
+            background-color: rgba(127, 127, 127, 0.12);
+            border-radius: 4px;
+        }
+    }
 }

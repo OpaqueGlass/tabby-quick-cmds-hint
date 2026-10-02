@@ -114,6 +114,59 @@ ogac:
       never_ask:
         en_US: "Don't ask again in this session"
         zh_CN: "本次会话内不再询问"
+    # AI 命令生成弹窗
+    dialog:
+      title:
+        en_US: "AI Command Generation"
+        zh_CN: "AI 命令生成"
+      desc:
+        en_US: "Describe what you want to do here, and the AI returns candidate commands. Selecting one only fills it into the current terminal - it is NOT executed automatically, so review it before pressing Enter."
+        zh_CN: "在这里用自然语言描述你想做的事，AI 会返回若干候选命令。选中命令只会填入当前终端，不会自动执行，请确认无误后再回车。"
+      placeholder:
+        en_US: "Describe the task, e.g. list files modified today"
+        zh_CN: "描述你要做的事，例如：列出今天修改过的文件"
+      include_output:
+        en_US: "Include current terminal output"
+        zh_CN: "附带当前终端输出"
+      include_output_desc:
+        en_US: "Lets the AI see recent output such as error messages and command results."
+        zh_CN: "让 AI 能看到报错信息、命令结果等当前终端中的内容。"
+      output_risk:
+        en_US: "Privacy risk: the output will be sent to the AI service. Check it below for secrets before asking."
+        zh_CN: "存在隐私风险：终端输出会发送给 AI 服务，发送前请先在下方的预览中确认没有敏感信息。"
+      no_terminal:
+        en_US: "No terminal is active, so the terminal output option is unavailable."
+        zh_CN: "当前没有可用的终端页，因此无法附带终端输出。"
+      output_preview:
+        en_US: "Output to be sent"
+        zh_CN: "将要发送的输出"
+      preview_show:
+        en_US: "Show"
+        zh_CN: "展开"
+      preview_hide:
+        en_US: "Hide"
+        zh_CN: "收起"
+      output_empty:
+        en_US: "(No terminal output captured)"
+        zh_CN: "（未取到终端输出）"
+      chars:
+        en_US: "chars"
+        zh_CN: "字符"
+      refresh:
+        en_US: "Refresh"
+        zh_CN: "重新抓取"
+      result_hint:
+        en_US: "No suggestions yet. Describe your task above and click Ask."
+        zh_CN: "还没有生成结果，请在上方描述你的需求后点击“询问”。"
+      footer_hint:
+        en_US: "Up / Down to select, Enter to insert into the terminal, Esc to close"
+        zh_CN: "上下键选择，回车填入终端，Esc 关闭"
+      empty_input:
+        en_US: "Please describe the task first"
+        zh_CN: "请先描述你要做的事"
+      unconfigured:
+        en_US: "AI is not configured yet. Set Base URL, API key and model in Settings -> Quick Cmd Hint -> AI."
+        zh_CN: "尚未配置 AI：请在“设置 - 快速命令提示 - AI”中填写 Base URL、API Key 与模型名称。"
     # 失败原因提示（通知中心）
     error:
       not_configured:
@@ -336,6 +389,9 @@ ogac:
     send:
       en_US: "Send"
       zh_CN: "发送"
+    close:
+      en_US: "Close"
+      zh_CN: "关闭"
 
   # 插件介绍和说明
   intro:

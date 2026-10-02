@@ -210,15 +210,22 @@ export class SimpleManager extends BaseManager {
         // FIX: 有时state捕捉到空白行的问题
         const lines = allStateStr.split("\n");
         const lastRawStateLineStr = lines.slice(-1).join("\n");
+        // full 始终计算，便于 AI 弹窗等外部场景按需取用
+        const fullStateStr = cleanedAllStateStr.trim().slice(-RECENT_OUTPUT_MAX_LENGTH);
         const result = {
             "raw": lastRawStateLineStr, 
             "cleaned": lastCleanedStateLineStr,
-            "full": this.needRecentOutput()
-                ? cleanedAllStateStr.trim().slice(-RECENT_OUTPUT_MAX_LENGTH)
-                : "",
+            "full": fullStateStr,
         } as LastStateLinesObj;
-        this.recentOutputFull = result.full;
+        this.recentOutputFull = this.needRecentOutput() ? fullStateStr : "";
         return result;
+    }
+
+    /**
+     * 当前工作目录（依赖 shell 集成上报），供 AI 请求上下文使用。
+     */
+    public get cwd(): string {
+        return this.currentCwd ?? "";
     }
 
     /**

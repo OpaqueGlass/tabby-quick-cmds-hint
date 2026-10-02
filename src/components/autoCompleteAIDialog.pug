@@ -1,19 +1,61 @@
-.modal-body
+.modal-header
+    h5.modal-title {{translate('ogac.ai.dialog.title')}}
+    button.btn-close(type='button', aria-label='Close', (click)='close()')
+
+.modal-body.og-ac-ai-dialog
+    p.ai-dialog-desc {{translate('ogac.ai.dialog.desc')}}
+
+    .alert.alert-warning.small(*ngIf='isAIUnconfigured()')
+        span {{translate('ogac.ai.dialog.unconfigured')}}
+
     div.askInputArea
         input.form-control.quickCmd(
             type='text', 
             [(ngModel)]='askUserInput', 
             autofocus, 
-            [placeholder]="translate('ogac.ui.ask_ai')", 
+            [placeholder]="translate('ogac.ai.dialog.placeholder')", 
             (keyup)='handleKeydown($event)',
         )
-        button.btn.btn-outline-primary((click)='ask()') {{translate('ogac.ui.ask')}}
-    div(*ngIf='loadingFlag')
+        button.btn.btn-primary((click)='ask()', [disabled]='loadingFlag') {{translate('ogac.ui.ask')}}
+
+    .form-check.mt-2
+        input.form-check-input(
+            type='checkbox',
+            id='ogacAiIncludeOutput',
+            [ngModel]='includeTerminalOutput',
+            (ngModelChange)='onIncludeOutputChanged($event)',
+            [disabled]='!terminalAvailable || loadingFlag',
+        )
+        label.form-check-label(for='ogacAiIncludeOutput') {{translate('ogac.ai.dialog.include_output')}}
+        .option-desc {{translate('ogac.ai.dialog.include_output_desc')}}
+    .option-desc.text-warning(*ngIf='includeTerminalOutput && terminalAvailable')
+        span {{translate('ogac.ai.dialog.output_risk')}}
+    .option-desc.text-muted(*ngIf='!terminalAvailable')
+        span {{translate('ogac.ai.dialog.no_terminal')}}
+
+    .output-preview(*ngIf='includeTerminalOutput && terminalAvailable')
+        .preview-bar
+            span.preview-title {{translate('ogac.ai.dialog.output_preview')}}
+            span.preview-size ({{getOutputLength()}} {{translate('ogac.ai.dialog.chars')}})
+            button.btn.btn-sm.btn-link((click)='refreshRecentOutput()', [disabled]='loadingFlag') {{translate('ogac.ai.dialog.refresh')}}
+            button.btn.btn-sm.btn-link((click)='togglePreview()') {{previewVisible ? translate('ogac.ai.dialog.preview_hide') : translate('ogac.ai.dialog.preview_show')}}
+        pre.output-content(*ngIf='previewVisible') {{isValidStr(getPreviewText()) ? getPreviewText() : translate('ogac.ai.dialog.output_empty')}}
+
+    div.mt-3.d-flex.align-items-center(*ngIf='loadingFlag')
         .spinner-border.text-primary(role='status')
             span.sr-only {{translate('ogac.ui.loading')}}
-    div(*ngIf='isValidStr(notReady)')
+        span.loading-text {{translate('ogac.ui.loading')}}
+
+    .alert.alert-info.mt-3(*ngIf='isValidStr(notice)')
+        span {{notice}}
+
+    .alert.alert-danger.mt-3(*ngIf='isValidStr(notReady)')
         span {{translate('ogac.ui.error_occurred', {"desp": notReady})}} 
-    .list-group.mt-3.connections-list
+
+    p.result-hint(*ngIf='!loadingFlag && commands.length === 0 && !isValidStr(notReady) && !isValidStr(notice)')
+        span {{translate('ogac.ai.dialog.result_hint')}}
+
+    .list-group.mt-3.connections-list(*ngIf='commands.length > 0')
         ng-container(*ngFor='let cmd of commands; let i = index')
             .list-group-item.list-group-item-action.d-flex.align-items-center.rounded-rectangle(
                 [ngClass]="{'active': i === selectedIndex}", 
@@ -22,6 +64,9 @@
                 .mr-auto
                     div 
                         code.command-text {{cmd.command}}
-                        //- .text-muted {{cmd.text}}{{cmd.appendCR ? "\\n" : ""}}
                         .description {{cmd.desp}}
                         .danger-rating([ngClass]="getRatingColor(cmd)") {{translate('ogac.ui.danger_rating')}}: {{cmd.dangerRating}}
+
+.modal-footer.justify-content-between
+    small.footer-hint {{translate('ogac.ai.dialog.footer_hint')}}
+    button.btn.btn-secondary((click)='close()') {{translate('ogac.ui.close')}}
