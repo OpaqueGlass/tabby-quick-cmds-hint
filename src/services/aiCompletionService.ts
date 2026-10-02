@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from 'tabby-core';
 import OpenAI from 'openai';
+import { jsonrepair } from 'jsonrepair';
 import { AICommandItem, AICompletionResult, AIConnectionTestResult, AIErrorInfo } from '../api/aiType';
 import { MyLogger } from './myLogService';
 import { isValidStr } from '../utils/commonUtils';
@@ -178,7 +179,7 @@ export class AICompletionService {
 
         let parsed: any;
         try {
-            parsed = JSON.parse(content.trim());
+            parsed = this.parseJson(content);
         } catch (err) {
             this.logger.warn('Failed to parse AI response as JSON', err);
             return {
@@ -207,6 +208,46 @@ export class AICompletionService {
             return { items: [], error: { kind: 'empty', message: 'No usable command in the response' } };
         }
         return { items: items };
+    }
+
+    /**
+     * 把 AI 返回的内容解析为 JSON。
+     *
+     * 先用标准 JSON.parse；失败时交给 jsonrepair 修复后再解析
+     *
+     * @throws 修复仍然失败时抛出异常，由调用方归类为 parse 错误
+     */
+    private parseJson(content: string): any {
+        const text = (content ?? '').trim();
+        try {
+            return JSON.parse(text);
+        } catch (err) {
+            this.logger.debug('JSON.parse failed, fallback to jsonrepair', err);
+        }
+        try {
+            const repaired = jsonrepair(text);
+            this.logger.debug('AI response repaired by jsonrepair');
+            return JSON.parse(repaired);
+        } catch (err) {
+            this.logger.debug('jsonrepair failed on full content, retry on the inner JSON part', err);
+        }
+        // 前后夹杂说明文字时，截取最外层 JSON 片段再修复
+        const inner = this.extractJsonPart(text);
+        return JSON.parse(jsonrepair(inner));
+    }
+
+    /**
+     * 截取最外层的 JSON 片段：首个 [ 或 { 到最后一个 ] 或 }。
+     * 无法识别时原样返回，交由 jsonrepair 处理并报错。
+     */
+    private extractJsonPart(text: string): string {
+        const starts = [text.indexOf('['), text.indexOf('{')].filter(index => index >= 0);
+        if (starts.length === 0) {
+            return text;
+        }
+        const start = Math.min(...starts);
+        const end = Math.max(text.lastIndexOf(']'), text.lastIndexOf('}'));
+        return end > start ? text.slice(start, end + 1) : text.slice(start);
     }
 
     /**

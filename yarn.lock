@@ -1422,6 +1422,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jsonrepair@npm:^3.15.0":
+  version: 3.15.0
+  resolution: "jsonrepair@npm:3.15.0"
+  bin:
+    jsonrepair: bin/cli.js
+  checksum: 10c0/9e3e18e6ab1d00731731bd21bffba4e3f0238c581da7824a0b28c410690ecf52601c6fae3f4913a49d03daed6b47f807ac3ede938990168ed08aef87e2bf58d2
+  languageName: node
+  linkType: hard
+
 "jstransformer@npm:1.0.0":
   version: 1.0.0
   resolution: "jstransformer@npm:1.0.0"
@@ -2307,6 +2316,7 @@ __metadata:
     css-loader: "npm:^7.1.2"
     fuse.js: "npm:^7.0.0"
     js-yaml: "npm:^4.1.0"
+    jsonrepair: "npm:^3.15.0"
     openai: "npm:^4.67.1"
     pug: "npm:^3.0.3"
     pug-loader: "npm:^2.4.0"
