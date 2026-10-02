@@ -42,6 +42,17 @@ export interface AICompletionResult {
 }
 
 /**
+ * 测试连接的结果。ok 为 true 时 kind 固定为 'ok'。
+ */
+export interface AIConnectionTestResult {
+    ok: boolean;
+    kind: AIErrorKind | 'ok';
+    message: string;
+    detail?: string;
+    latencyMs: number;
+}
+
+/**
  * AI 功能的启用档位。
  * - off: 完全关闭，AI provider 不产出任何条目
  * - manual: 仅通过列表内的 "ask AI" 入口项或快捷键弹窗显式触发

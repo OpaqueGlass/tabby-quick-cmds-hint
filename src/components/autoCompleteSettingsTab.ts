@@ -3,6 +3,7 @@ import { AutoCompleteTranslateService } from 'services/translateService';
 import { PlatformService, TranslateService } from "tabby-core";
 import { ConfigService } from 'tabby-core'
 import { AIPromptService } from 'services/aiPromptService';
+import { AICompletionService } from 'services/aiCompletionService';
 import { AIRequestContext, EnvTag } from 'api/aiType';
 import { DEFAULT_AI_PROMPT_TEMPLATE, AI_TEMPLATE_PLACEHOLDERS } from 'static/aiPromptTemplate';
 import { isValidStr } from '../utils/commonUtils';
@@ -22,6 +23,10 @@ export class AutoCompleteSettingsTabComponent {
     previewProfileId: string = "";
     /** 环境标签区块是否展开 */
     showEnvTags: boolean = false;
+    /** 是否正在测试连接 */
+    testingConnection: boolean = false;
+    /** 最近一次测试连接的结果，null 表示尚未测试 */
+    connectionTestResult: { ok: boolean; text: string } | null = null;
     /** 单个环境标签的详情是否展开，key = tag.id */
     expandedTags: { [tagId: string]: boolean } = {};
 
@@ -30,6 +35,7 @@ export class AutoCompleteSettingsTabComponent {
         private translate: AutoCompleteTranslateService,
         private platform: PlatformService,
         private aiPrompt: AIPromptService,
+        private aiCompletion: AICompletionService,
         private translateService: TranslateService,
     ) {
         // console.log(this.translate.instant('Application'));
@@ -56,6 +62,35 @@ export class AutoCompleteSettingsTabComponent {
 
     isAutoMode(): boolean {
         return this.aiPrompt.getEnableMode() === 'auto';
+    }
+
+    /**
+     * 测试连接。结果只显示在按钮旁的文本，不弹通知，避免打扰。
+     */
+    async testConnection() {
+        if (this.testingConnection) {
+            return;
+        }
+        this.testingConnection = true;
+        this.connectionTestResult = null;
+        try {
+            const result = await this.aiCompletion.testConnection();
+            if (result.ok) {
+                this.connectionTestResult = {
+                    ok: true,
+                    text: `${this.t('ogac.ai.test_ok')} · ${result.latencyMs}ms`,
+                };
+                return;
+            }
+            const reason = this.t(`ogac.ai.error.${result.kind}`);
+            const detail = (result.detail ?? '').slice(0, 120);
+            this.connectionTestResult = {
+                ok: false,
+                text: isValidStr(detail) ? `${reason} · ${detail}` : reason,
+            };
+        } finally {
+            this.testingConnection = false;
+        }
     }
 
     // ---------- 环境标签 ----------

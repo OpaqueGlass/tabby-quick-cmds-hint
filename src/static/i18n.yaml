@@ -143,6 +143,22 @@ ogac:
       unknown:
         en_US: "AI request failed"
         zh_CN: "AI 请求失败"
+    # 测试连接
+    test_title:
+      en_US: "Connection test"
+      zh_CN: "连接测试"
+    test_connection_desc:
+      en_US: "Sends a minimal request to verify the API key, base URL and model"
+      zh_CN: "发送一个最小请求，验证 API Key、Base URL 与模型是否可用"
+    test:
+      en_US: "Test connection"
+      zh_CN: "测试连接"
+    testing:
+      en_US: "Testing..."
+      zh_CN: "测试中..."
+    test_ok:
+      en_US: "Connection OK"
+      zh_CN: "连接成功"
 
   # 环境标签
   envTags:

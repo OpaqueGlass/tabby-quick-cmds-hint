@@ -97,6 +97,22 @@ h3(translate='ogac.ai.title')
         (ngModelChange)='config.save()',
     )
 
+.form-line
+    .header
+        .title(translate='ogac.ai.test_title')
+        .description(translate='ogac.ai.test_connection_desc')
+    button.btn.btn-outline-secondary.btn-sm(
+        type='button',
+        [disabled]='testingConnection',
+        (click)='testConnection()',
+    ) {{testingConnection ? t("ogac.ai.testing") : t("ogac.ai.test")}}
+
+.og-ac-test-result(
+    *ngIf='connectionTestResult != null',
+    [class.text-success]='connectionTestResult.ok',
+    [class.text-danger]='!connectionTestResult.ok',
+) {{connectionTestResult.text}}
+
 
 .alert.alert-warning(*ngIf='!isAutoMode() && aiConfig?.includeLastOutput')
     div(translate='ogac.ai.output_manual_only_hint')

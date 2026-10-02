@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from 'tabby-core';
 import OpenAI from 'openai';
-import { AICommandItem, AICompletionResult, AIErrorInfo } from '../api/aiType';
+import { AICommandItem, AICompletionResult, AIConnectionTestResult, AIErrorInfo } from '../api/aiType';
 import { MyLogger } from './myLogService';
 import { isValidStr } from '../utils/commonUtils';
 
@@ -111,6 +111,52 @@ export class AICompletionService {
             const error = this.classifyError(err);
             this.logger.warn('AI request failed', error);
             return { items: [], error: error };
+        } finally {
+            clearTimeout(timer);
+        }
+    }
+
+    /**
+     * 测试当前 AI 配置是否可用：发一个最小请求验证 Key / baseURL / model。
+     * 不写入缓存，不修改任何配置。
+     */
+    async testConnection(): Promise<AIConnectionTestResult> {
+        const client = this.createClient();
+        if (client == null) {
+            return { ok: false, kind: 'not_configured', message: 'openAIKey is empty', latencyMs: 0 };
+        }
+
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), this.getTimeout());
+        const startedAt = Date.now();
+        try {
+            const response = await client.chat.completions.create({
+                model: this.aiConfig.openAIModel,
+                messages: [{ role: 'user', content: 'ping' }],
+                max_tokens: 1,
+            }, { signal: controller.signal });
+
+            // @ts-ignore 部分兼容实现会把错误放在 response.error 里
+            if (response?.error) {
+                // @ts-ignore
+                throw new Error(JSON.stringify(response.error));
+            }
+            return {
+                ok: true,
+                kind: 'ok',
+                message: String(response?.model ?? ''),
+                latencyMs: Date.now() - startedAt,
+            };
+        } catch (err: any) {
+            const error = this.classifyError(err);
+            this.logger.warn('AI connection test failed', error);
+            return {
+                ok: false,
+                kind: error.kind,
+                message: error.message,
+                detail: error.detail,
+                latencyMs: Date.now() - startedAt,
+            };
         } finally {
             clearTimeout(timer);
         }
