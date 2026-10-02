@@ -10,6 +10,38 @@ export interface AICommandItem {
 }
 
 /**
+ * AI 请求失败的分类。只用于向用户展示可读提示，不参与任何逻辑分支。
+ */
+export type AIErrorKind =
+    | 'not_configured'  // 未填写 API Key
+    | 'timeout'         // 超过配置的超时时间
+    | 'auth'            // 401 / 403，Key 无效
+    | 'model'           // 404，模型名不存在
+    | 'rate_limit'      // 429，限流或配额不足
+    | 'network'         // 连不上 baseURL
+    | 'parse'           // 返回内容不是约定格式
+    | 'empty'           // 请求成功，但没有可用建议
+    | 'unknown';
+
+/**
+ * AI 请求失败信息。message 是面向排查的英文原文，展示文案由调用方按 kind 取 i18n。
+ */
+export interface AIErrorInfo {
+    kind: AIErrorKind;
+    message: string;
+    /** 排查详情：HTTP 状态、原始错误、响应片段 */
+    detail?: string;
+}
+
+/**
+ * AI 请求结果。请求成功但无可用建议时 items 为空且 error.kind === 'empty'。
+ */
+export interface AICompletionResult {
+    items: AICommandItem[];
+    error?: AIErrorInfo;
+}
+
+/**
  * AI 功能的启用档位。
  * - off: 完全关闭，AI provider 不产出任何条目
  * - manual: 仅通过列表内的 "ask AI" 入口项或快捷键弹窗显式触发

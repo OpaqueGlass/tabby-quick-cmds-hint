@@ -114,6 +114,35 @@ ogac:
       never_ask:
         en_US: "Don't ask again in this session"
         zh_CN: "本次会话内不再询问"
+    # 失败原因提示（通知中心）
+    error:
+      not_configured:
+        en_US: "AI is not configured: set the API key in the plugin settings"
+        zh_CN: "AI 未配置：请先在插件设置中填写 API Key"
+      timeout:
+        en_US: "AI request timed out"
+        zh_CN: "AI 请求超时"
+      auth:
+        en_US: "AI authentication failed: check the API key"
+        zh_CN: "AI 鉴权失败：请检查 API Key"
+      model:
+        en_US: "AI model unavailable: check the model name"
+        zh_CN: "AI 模型不可用：请检查模型名称"
+      rate_limit:
+        en_US: "AI rate limit or quota exceeded"
+        zh_CN: "AI 请求被限流或配额不足"
+      network:
+        en_US: "Cannot reach the AI service: check the base URL and network"
+        zh_CN: "无法连接 AI 服务：请检查 Base URL 与网络"
+      parse:
+        en_US: "AI returned a response in an unexpected format"
+        zh_CN: "AI 返回的内容格式不符合预期"
+      empty:
+        en_US: "AI returned no usable command suggestions"
+        zh_CN: "AI 没有返回可用的命令建议"
+      unknown:
+        en_US: "AI request failed"
+        zh_CN: "AI 请求失败"
 
   # 环境标签
   envTags:
@@ -121,8 +150,8 @@ ogac:
       en_US: "Environment tags"
       zh_CN: "环境标签"
     desc:
-      en_US: "Bind profiles that share the same shell or system to a tag. A profile can match multiple tags; matched contents are concatenated in order, and per-server settings are applied last."
-      zh_CN: "把使用相同 shell 或系统的连接配置绑定到同一个标签。一个服务器可以命中多个标签，命中的内容按顺序拼接，服务器自身的设置最后生效。"
+      en_US: "Bind profiles that share the same shell or system to a tag. A profile can match multiple tags; matched contents are concatenated in order."
+      zh_CN: "把使用相同 shell 或系统的连接配置绑定到同一个标签。一个服务器可以命中多个标签，命中的内容按顺序拼接。"
     system_version:
       en_US: "System version"
       zh_CN: "系统版本"

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfigService } from 'tabby-core';
-import { AICommandItem, AIRequestContext } from "../../api/aiType";
+import { ConfigService, NotificationsService, TranslateService } from 'tabby-core';
+import { AICommandItem, AIErrorInfo, AIRequestContext } from "../../api/aiType";
 import { EnvBasicInfo, OptionItem } from "../../api/pluginType";
 import { AIPromptConfirmDialogComponent } from "components/aiPromptConfirmDialog";
 import { MyLogger } from "services/myLogService";
@@ -42,6 +42,8 @@ export class AIContentProvider extends BaseContentProvider {
         private ngbModal: NgbModal,
         private aiPrompt: AIPromptService,
         private aiCompletion: AICompletionService,
+        private notifications: NotificationsService,
+        private translate: TranslateService,
     ) {
         super(logger, configService);
     }
@@ -117,15 +119,17 @@ export class AIContentProvider extends BaseContentProvider {
             content: cmd,
             desp: "",
             type: AIContentProvider.providerTypeKey,
-            callback: () => this.generateAsync(cmd, envBasicInfo, true),
+            // manual 档由用户主动触发，失败时要给出提示
+            callback: () => this.generateAsync(cmd, envBasicInfo, true, true),
         };
     }
 
     /**
      * 生成 AI 候选条目。
      * @param allowConfirm 是否允许弹出"发送前确认"窗口。auto 档恒为 false。
+     * @param notify 失败/无结果时是否通过通知中心告知用户。auto 档恒为 false，避免输入过程被打扰。
      */
-    async generateAsync(cmd: string, envBasicInfo: EnvBasicInfo, allowConfirm: boolean): Promise<OptionItem[] | null> {
+    async generateAsync(cmd: string, envBasicInfo: EnvBasicInfo, allowConfirm: boolean, notify: boolean = false): Promise<OptionItem[] | null> {
         const ctx: AIRequestContext = {
             ...envBasicInfo,
             inputCmd: cmd,
@@ -144,11 +148,40 @@ export class AIContentProvider extends BaseContentProvider {
             prompt = confirmed;
         }
 
-        const items = await this.aiCompletion.requestCommands(prompt, envBasicInfo?.sessionId ?? '', cmd);
-        if (items == null || items.length === 0) {
+        const result = await this.aiCompletion.requestCommands(prompt, envBasicInfo?.sessionId ?? '', cmd);
+        if (result.error != null) {
+            if (result.error.kind === 'empty') {
+                if (notify) {
+                    this.notifications.info(this.t('ogac.ai.error.empty'));
+                }
+                return null;
+            }
+            // auto 档静默：用户没有主动发起请求，弹通知会干扰输入
+            if (notify) {
+                this.notifyAIError(result.error);
+            } else {
+                this.logger.warn('AI request failed silently', result.error);
+            }
             return null;
         }
-        return items.map(item => this.toOptionItem(item));
+        if (result.items.length === 0) {
+            if (notify) {
+                this.notifications.info(this.t('ogac.ai.error.empty'));
+            }
+            return null;
+        }
+        return result.items.map(item => this.toOptionItem(item));
+    }
+
+    /**
+     * 通过 tabby 通知中心提示 AI 失败原因，详情可供用户复制排查。
+     */
+    private notifyAIError(error: AIErrorInfo) {
+        this.notifications.error(this.t(`ogac.ai.error.${error.kind}`), error.detail);
+    }
+
+    private t(key: string): string {
+        return this.translate.instant(key);
     }
 
     /**

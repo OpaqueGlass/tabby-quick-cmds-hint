@@ -1,6 +1,6 @@
 import { Component, forwardRef, Inject } from '@angular/core';
 import { AICommandItem, AIRequestContext } from 'api/aiType';
-import { AppService, ConfigService, TranslateService } from 'tabby-core';
+import { AppService, ConfigService, NotificationsService, TranslateService } from 'tabby-core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MyLogger } from 'services/myLogService';
 import { AddMenuService } from 'services/menuService';
@@ -34,6 +34,7 @@ export class AutoCompleteAIDialogComponent {
         protected autoCompleteTranslate: AutoCompleteTranslateService,
         protected aiPromptService: AIPromptService,
         protected aiCompletion: AICompletionService,
+        protected notifications: NotificationsService,
     ) {
 
     }
@@ -49,14 +50,16 @@ export class AutoCompleteAIDialogComponent {
         const ctx = this.buildRequestContext();
         const prompt = this.aiPromptService.buildPrompt(ctx);
         this.aiCompletion.requestCommands(prompt, '', this.askUserInput)
-            .then((commands) => {
+            .then((result) => {
                 this.loadingFlag = false;
-                if (commands && commands.length > 0) {
-                    this.commands = commands;
-                } else {
+                if (result.error != null) {
                     this.commands = [];
-                    this.notReady = "Can't recognize the response from AI";
+                    this.notReady = this.translate(`ogac.ai.error.${result.error.kind}`);
+                    // 弹窗内已有提示，同时发一条通知，避免用户关掉弹窗后无从得知失败原因
+                    this.notifications.error(this.notReady, result.error.detail);
+                    return;
                 }
+                this.commands = result.items;
             }).catch(err => {
                 this.logger.error("While asking to gpt, an error occured", err);
                 this.notReady = err.message;

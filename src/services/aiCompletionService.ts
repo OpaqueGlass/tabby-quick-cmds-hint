@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from 'tabby-core';
 import OpenAI from 'openai';
-import { AICommandItem } from '../api/aiType';
+import { AICommandItem, AICompletionResult, AIErrorInfo } from '../api/aiType';
 import { MyLogger } from './myLogService';
 import { isValidStr } from '../utils/commonUtils';
 
@@ -70,20 +70,21 @@ export class AICompletionService {
 
     /**
      * 请求 AI 生成命令建议。
-     * @returns 解析后的命令列表；任何失败情况返回空数组（不抛异常）
+     * 失败一律归类为 AIErrorInfo 返回，不向调用方抛异常，
+     * 以免异步结果打断用户正在进行的输入。
      */
-    async requestCommands(prompt: string, sessionId: string, inputCmd: string): Promise<AICommandItem[]> {
+    async requestCommands(prompt: string, sessionId: string, inputCmd: string): Promise<AICompletionResult> {
         const client = this.createClient();
         if (client == null) {
             this.logger.warn('AI not configured: openAIKey is empty, skip request');
-            return [];
+            return { items: [], error: { kind: 'not_configured', message: 'openAIKey is empty' } };
         }
 
         const cacheKey = `${sessionId ?? ''}|${inputCmd ?? ''}`;
         const cached = this.cache.get(cacheKey);
         if (cached) {
             this.logger.debug('AI result from cache', cacheKey);
-            return cached;
+            return { items: cached };
         }
 
         const controller = new AbortController();
@@ -101,16 +102,15 @@ export class AICompletionService {
             }
             const raw = response?.choices?.[0]?.message?.content ?? '';
             this.logger.debug('AI raw response', raw);
-            const items = this.parseResponse(raw);
-            this.putCache(cacheKey, items);
-            return items;
-        } catch (err: any) {
-            if (err?.name === 'AbortError') {
-                this.logger.warn('AI request timed out');
-            } else {
-                this.logger.warn('AI request failed', err);
+            const result = this.parseResponse(raw);
+            if (result.error == null && result.items.length > 0) {
+                this.putCache(cacheKey, result.items);
             }
-            return [];
+            return result;
+        } catch (err: any) {
+            const error = this.classifyError(err);
+            this.logger.warn('AI request failed', error);
+            return { items: [], error: error };
         } finally {
             clearTimeout(timer);
         }
@@ -118,32 +118,37 @@ export class AICompletionService {
 
     /**
      * 解析 AI 响应：取出 ```json 代码块（或直接是 JSON），转换为命令列表。
-     * - 非法 JSON 返回空数组
      * - 过滤 command 为空的条目
      * - dangerRating 收敛到 0-5 的整数
      * - 条数截断到 inlineMaxCount
      */
-    parseResponse(raw: string): AICommandItem[] {
+    parseResponse(raw: string): AICompletionResult {
         if (!isValidStr(raw)) {
-            return [];
+            return { items: [], error: { kind: 'empty', message: 'Empty response' } };
         }
         const codeBlockRegex = /```(?:json|yaml)?([\s\S]*?)```/;
         const match = raw.match(codeBlockRegex);
         const content = match ? match[1] : raw;
 
-        let parsed: any[];
+        let parsed: any;
         try {
             parsed = JSON.parse(content.trim());
         } catch (err) {
             this.logger.warn('Failed to parse AI response as JSON', err);
-            return [];
+            return {
+                items: [],
+                error: { kind: 'parse', message: 'Response is not valid JSON', detail: raw.trim().slice(0, 300) },
+            };
         }
         if (!Array.isArray(parsed)) {
             this.logger.warn('AI response is not an array');
-            return [];
+            return {
+                items: [],
+                error: { kind: 'parse', message: 'Response is not a JSON array', detail: raw.trim().slice(0, 300) },
+            };
         }
 
-        return parsed
+        const items = parsed
             .filter(item => item && isValidStr(String(item.command ?? '').trim()))
             .map(item => ({
                 command: String(item.command).trim(),
@@ -151,6 +156,60 @@ export class AICompletionService {
                 dangerRating: this.clampRating(item.dangerRating),
             }))
             .slice(0, this.getMaxCount());
+
+        if (items.length === 0) {
+            return { items: [], error: { kind: 'empty', message: 'No usable command in the response' } };
+        }
+        return { items: items };
+    }
+
+    /**
+     * 把原始异常归类为可展示的错误信息。
+     * 识别顺序：AbortError → HTTP 状态码 → 消息关键字。
+     */
+    private classifyError(err: any): AIErrorInfo {
+        const detail = this.errorDetail(err);
+        if (err?.name === 'AbortError') {
+            return { kind: 'timeout', message: `Timed out after ${this.getTimeout()}ms`, detail: detail };
+        }
+        const status = Number(err?.status ?? err?.response?.status ?? err?.error?.status);
+        if (status === 401 || status === 403) {
+            return { kind: 'auth', message: 'Authentication failed', detail: detail };
+        }
+        if (status === 404) {
+            return { kind: 'model', message: 'Model not found', detail: detail };
+        }
+        if (status === 429) {
+            return { kind: 'rate_limit', message: 'Rate limit or quota exceeded', detail: detail };
+        }
+        const text = String(err?.message ?? err ?? '').toLowerCase();
+        if (text.includes('timeout')) {
+            return { kind: 'timeout', message: String(err?.message ?? 'Timeout'), detail: detail };
+        }
+        if (text.includes('fetch') || text.includes('econnrefused') || text.includes('enotfound') || text.includes('network')) {
+            return { kind: 'network', message: String(err?.message ?? 'Network error'), detail: detail };
+        }
+        return { kind: 'unknown', message: String(err?.message ?? err ?? 'Unknown error'), detail: detail };
+    }
+
+    /**
+     * 抽取排查用详情：HTTP 状态 + 服务端错误消息 + 原始 message。
+     */
+    private errorDetail(err: any): string {
+        const parts: string[] = [];
+        const status = err?.status ?? err?.response?.status ?? err?.error?.status;
+        if (status != null) {
+            parts.push(`HTTP ${status}`);
+        }
+        const serverMessage = err?.error?.message ?? err?.response?.data?.error?.message;
+        if (isValidStr(String(serverMessage ?? ''))) {
+            parts.push(String(serverMessage));
+        }
+        const raw = String(err?.message ?? err ?? '');
+        if (isValidStr(raw)) {
+            parts.push(raw);
+        }
+        return parts.join(' | ').slice(0, 300);
     }
 
     private clampRating(value: any): number {
