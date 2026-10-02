@@ -36,6 +36,9 @@ export class AutoCompleteConfigProvider extends ConfigProvider {
                 timeout: 15000,
                 includeCwd: true,
                 includeLastOutput: false,
+                // 采集终端输出的上限：只取末尾 N 行，且总字符数不超过 M
+                recentOutputMaxLines: 40,
+                recentOutputMaxChars: 2000,
                 promptTemplate: DEFAULT_AI_PROMPT_TEMPLATE,
             },
             // 环境标签。数组顺序即提示词拼接顺序

@@ -194,6 +194,31 @@ ng-container(*ngIf='isAutoMode()')
         (ngModelChange)='config.save()',
     )
 
+.form-line(*ngIf='aiConfig.includeLastOutput')
+    .header
+        .title(translate='ogac.ai.recent_output_max_lines')
+        .description(translate='ogac.ai.recent_output_max_lines_desc')
+    input.form-control(
+        type='number',
+        min=1,
+        max=200,
+        [(ngModel)]='aiConfig.recentOutputMaxLines',
+        (ngModelChange)='config.save()',
+    )
+
+.form-line(*ngIf='aiConfig.includeLastOutput')
+    .header
+        .title(translate='ogac.ai.recent_output_max_chars')
+        .description(translate='ogac.ai.recent_output_max_chars_desc')
+    input.form-control(
+        type='number',
+        min=200,
+        max=20000,
+        step=100,
+        [(ngModel)]='aiConfig.recentOutputMaxChars',
+        (ngModelChange)='config.save()',
+    )
+
 h4(translate='ogac.envTags.title')
 
 .form-line

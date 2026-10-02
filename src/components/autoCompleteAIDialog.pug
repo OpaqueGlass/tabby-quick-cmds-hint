@@ -36,10 +36,11 @@
     .output-preview(*ngIf='includeTerminalOutput && terminalAvailable')
         .preview-bar
             span.preview-title {{translate('ogac.ai.dialog.output_preview')}}
-            span.preview-size ({{getOutputLength()}} {{translate('ogac.ai.dialog.chars')}})
+            span.preview-size ({{getOutputLineCount()}} {{translate('ogac.ai.dialog.lines')}} / {{getOutputLength()}} {{translate('ogac.ai.dialog.chars')}})
             button.btn.btn-sm.btn-link((click)='refreshRecentOutput()', [disabled]='loadingFlag') {{translate('ogac.ai.dialog.refresh')}}
             button.btn.btn-sm.btn-link((click)='togglePreview()') {{previewVisible ? translate('ogac.ai.dialog.preview_hide') : translate('ogac.ai.dialog.preview_show')}}
         pre.output-content(*ngIf='previewVisible') {{isValidStr(getPreviewText()) ? getPreviewText() : translate('ogac.ai.dialog.output_empty')}}
+        .option-desc {{translate('ogac.ai.dialog.output_send_same')}}
 
     div.mt-3.d-flex.align-items-center(*ngIf='loadingFlag')
         .spinner-border.text-primary(role='status')

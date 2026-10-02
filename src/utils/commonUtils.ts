@@ -8,6 +8,69 @@ export function isValidStr(input: string) {
     return input !== undefined && input !== null && input !== '';
 }
 
+/**
+ * 采集终端输出时的默认最大行数。
+ * 终端缓冲区可能有上千行，全量发送会显著抬高 token 消耗，故只取末尾若干行。
+ * 实际取值来自设置项 ai.recentOutputMaxLines，此处仅作为缺省值。
+ */
+export const RECENT_OUTPUT_MAX_LINES = 40;
+
+/**
+ * 采集终端输出时的默认最大字符数（行数上限之外的第二道保险）。
+ * 实际取值来自设置项 ai.recentOutputMaxChars，此处仅作为缺省值。
+ */
+export const RECENT_OUTPUT_MAX_CHARS = 2000;
+
+/**
+ * 把终端输出收敛到「末尾 maxLines 行 + 最多 maxChars 字符」。
+ *
+ * 从最后一行往前按整行累加，超出字符预算就停止，因此不会截出半行内容；
+ * 单行本身就超过预算时（例如超长日志行）只保留该行末尾 maxChars 个字符。
+ *
+ * 所有采集渠道都必须经过本函数，保证"预览看到的"与"实际发送的"是同一个字符串。
+ */
+export function truncateTerminalOutput(
+    input: string,
+    maxLines: number = RECENT_OUTPUT_MAX_LINES,
+    maxChars: number = RECENT_OUTPUT_MAX_CHARS,
+): string {
+    if (!isValidStr(input)) {
+        return '';
+    }
+    const lineLimit = Number(maxLines) > 0 ? Math.floor(maxLines) : RECENT_OUTPUT_MAX_LINES;
+    const charLimit = Number(maxChars) > 0 ? Math.floor(maxChars) : RECENT_OUTPUT_MAX_CHARS;
+
+    const lines = input.replace(/\r/g, '').split('\n');
+    while (lines.length > 0 && lines[lines.length - 1].trim() === '') {
+        lines.pop();
+    }
+    if (lines.length === 0) {
+        return '';
+    }
+
+    const kept: string[] = [];
+    let used = 0;
+    for (let i = lines.length - 1; i >= 0; i--) {
+        if (kept.length >= lineLimit) {
+            break;
+        }
+        const line = lines[i];
+        // 换行符也计入预算；至少保留最后一行
+        const cost = line.length + (kept.length > 0 ? 1 : 0);
+        if (kept.length > 0 && used + cost > charLimit) {
+            break;
+        }
+        kept.unshift(line);
+        used += cost;
+    }
+
+    let result = kept.join('\n');
+    if (result.length > charLimit) {
+        result = result.slice(result.length - charLimit);
+    }
+    return result;
+}
+
 export function cleanTerminalText(input: string) {
     const cleanNotVisibleExp = /[\x1b\x07]\[(?:[0-9]{1,2}(?:;[0-9]{1,2})*)?[a-zA-Z]|[\x1b\x07]\].*?\x07|[\x1b\x07]\[\?.*?[hl]|[\x1b\x07]\[>4;m|[\x1b\x07]\>|\x1B\(B|\x1b\[\>\d+;\d+m/g;
     // fish (B

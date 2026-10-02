@@ -103,6 +103,18 @@ ogac:
     output_manual_only_hint:
       en_US: "Recent terminal output is only used when triggering manually from the hint list, never for inline auto completion."
       zh_CN: "最近的终端输出仅在通过提示列表手动触发时使用，输入自动补全时不会采集。"
+    recent_output_max_lines:
+      en_US: "Max output lines"
+      zh_CN: "终端输出最大行数"
+    recent_output_max_lines_desc:
+      en_US: "Only the last N lines of the terminal are collected. Smaller values mean fewer tokens."
+      zh_CN: "只采集终端末尾的 N 行。行数越小，消耗的 token 越少。"
+    recent_output_max_chars:
+      en_US: "Max output characters"
+      zh_CN: "终端输出最大字符数"
+    recent_output_max_chars_desc:
+      en_US: "Second limit besides the line count: the collected text is capped at M characters (keeping the tail). Smaller values mean fewer tokens."
+      zh_CN: "行数之外的第二道上限：采集到的文本最多 M 个字符（保留末尾部分）。数值越小，消耗的 token 越少。"
     # 发送前确认
     confirm:
       title:
@@ -129,8 +141,8 @@ ogac:
         en_US: "Include current terminal output"
         zh_CN: "附带当前终端输出"
       include_output_desc:
-        en_US: "Lets the AI see recent output such as error messages and command results."
-        zh_CN: "让 AI 能看到报错信息、命令结果等当前终端中的内容。"
+        en_US: "Lets the AI see error messages and command results. Only the tail is collected, limited by \"Max output lines\" / \"Max output characters\" in settings."
+        zh_CN: "让 AI 能看到报错信息、命令结果等。仅采集末尾部分，上限见设置项“终端输出最大行数”与“终端输出最大字符数”。"
       output_risk:
         en_US: "Privacy risk: the output will be sent to the AI service. Check it below for secrets before asking."
         zh_CN: "存在隐私风险：终端输出会发送给 AI 服务，发送前请先在下方的预览中确认没有敏感信息。"
@@ -138,8 +150,11 @@ ogac:
         en_US: "No terminal is active, so the terminal output option is unavailable."
         zh_CN: "当前没有可用的终端页，因此无法附带终端输出。"
       output_preview:
-        en_US: "Output to be sent"
-        zh_CN: "将要发送的输出"
+        en_US: "Output that will be sent with your question"
+        zh_CN: "将随提问一起发送的输出"
+      output_send_same:
+        en_US: "Shown above is exactly what will be sent - no extra truncation. Click Refresh to re-capture."
+        zh_CN: "上方内容即实际发送的内容，不做额外截断；需要更新请点“重新抓取”。"
       preview_show:
         en_US: "Show"
         zh_CN: "展开"
@@ -152,6 +167,9 @@ ogac:
       chars:
         en_US: "chars"
         zh_CN: "字符"
+      lines:
+        en_US: "lines"
+        zh_CN: "行"
       refresh:
         en_US: "Refresh"
         zh_CN: "重新抓取"

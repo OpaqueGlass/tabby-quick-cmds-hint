@@ -16,7 +16,16 @@
 *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { cleanTerminalText, cleanTextByNewXterm, generateUUID, isValidStr, simpleHash } from "utils/commonUtils";
+import {
+    cleanTerminalText,
+    cleanTextByNewXterm,
+    generateUUID,
+    isValidStr,
+    RECENT_OUTPUT_MAX_CHARS,
+    RECENT_OUTPUT_MAX_LINES,
+    simpleHash,
+    truncateTerminalOutput,
+} from "utils/commonUtils";
 import { BaseManager } from "./baseManager";
 import { BaseTerminalProfile, BaseTerminalTabComponent } from "tabby-terminal";
 import { MyLogger } from "services/myLogService";
@@ -27,12 +36,12 @@ import { MySignalService } from "services/signalService";
 interface LastStateLinesObj {
     raw: string;
     cleaned: string;
-    /** 清理后的整屏文本，仅在需要采集终端输出时非空，且已截断 */
+    /**
+     * 清理后的终端输出（末尾若干行，已按行数与字符数双重截断）。
+     * 内联补全与 AI 弹窗两个渠道都取这个字段，保证"预览看到的"与"实际发送的"是同一个字符串。
+     */
     full: string;
 }
-
-/** 采集终端输出时的最大字符数 */
-const RECENT_OUTPUT_MAX_LENGTH = 2000;
 export class SimpleManager extends BaseManager {
     // 命令输入状态，由enter清除，由匹配到prefix开始
     private cmdStatusFlag: boolean;
@@ -211,7 +220,11 @@ export class SimpleManager extends BaseManager {
         const lines = allStateStr.split("\n");
         const lastRawStateLineStr = lines.slice(-1).join("\n");
         // full 始终计算，便于 AI 弹窗等外部场景按需取用
-        const fullStateStr = cleanedAllStateStr.trim().slice(-RECENT_OUTPUT_MAX_LENGTH);
+        const fullStateStr = truncateTerminalOutput(
+            cleanedAllStateStr,
+            this.getRecentOutputMaxLines(),
+            this.getRecentOutputMaxChars(),
+        );
         const result = {
             "raw": lastRawStateLineStr, 
             "cleaned": lastCleanedStateLineStr,
@@ -236,6 +249,30 @@ export class SimpleManager extends BaseManager {
     private needRecentOutput(): boolean {
         const ai = this.configService.store?.ogAutoCompletePlugin?.ai;
         return ai?.enable === 'manual' && ai?.includeLastOutput === true;
+    }
+
+    /**
+     * 采集终端输出的最大行数，可在设置中调整（ai.recentOutputMaxLines）。
+     * 非法值回退到默认值。
+     */
+    private getRecentOutputMaxLines(): number {
+        return this.readPositiveNumberConfig('recentOutputMaxLines', RECENT_OUTPUT_MAX_LINES);
+    }
+
+    /**
+     * 采集终端输出的最大字符数，可在设置中调整（ai.recentOutputMaxChars）。
+     * 行数限制之外的第二道保险，非法值回退到默认值。
+     */
+    private getRecentOutputMaxChars(): number {
+        return this.readPositiveNumberConfig('recentOutputMaxChars', RECENT_OUTPUT_MAX_CHARS);
+    }
+
+    /**
+     * 读取 ai 配置中的正整数项，缺失或非法时返回默认值。
+     */
+    private readPositiveNumberConfig(key: string, fallback: number): number {
+        const n = Number(this.configService.store?.ogAutoCompletePlugin?.ai?.[key]);
+        return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
     }
     /**
      * 从输入字符串中，获取用户输入的命令

@@ -10,9 +10,6 @@ import { AutoCompleteTranslateService } from 'services/translateService';
 import { TerminalContextService } from 'services/terminalContextService';
 import { isValidStr, sendInput } from 'utils/commonUtils';
 
-/** 预览区最多展示的字符数，避免几百行输出把弹窗撑爆 */
-const PREVIEW_MAX_LENGTH = 800;
-
 /**
  * AI 问答弹窗（快捷键 ogautocomplete_ask_ai 打开）。
  * 
@@ -86,15 +83,16 @@ export class AutoCompleteAIDialogComponent {
     }
 
     /**
-     * 重新抓取当前终端的输出。
+     * 重新抓取当前终端的输出，并更新预览。
+     * 抓取结果与预览、与下一次发送的内容是同一个字符串。
      */
-    refreshRecentOutput() {
+    refreshRecentOutput(): Promise<void> {
         const tab = this.getActiveTerminalTab();
         if (tab == null) {
             this.recentOutput = "";
-            return;
+            return Promise.resolve();
         }
-        this.terminalContext.captureRecentOutput(tab).then((output) => {
+        return this.terminalContext.captureRecentOutput(tab).then((output) => {
             this.recentOutput = output ?? "";
             this.logger.debug("Recent terminal output captured", this.recentOutput.length);
         });
@@ -105,20 +103,21 @@ export class AutoCompleteAIDialogComponent {
     }
 
     /**
-     * 预览展示（截断）后的输出内容。
+     * 预览区展示的内容。
      */
     getPreviewText(): string {
-        if (!isValidStr(this.recentOutput)) {
-            return "";
-        }
-        if (this.recentOutput.length <= PREVIEW_MAX_LENGTH) {
-            return this.recentOutput;
-        }
-        return `${this.recentOutput.slice(0, PREVIEW_MAX_LENGTH)}\n…`;
+        return this.recentOutput ?? "";
     }
 
     getOutputLength(): number {
         return this.recentOutput?.length ?? 0;
+    }
+
+    getOutputLineCount(): number {
+        if (!isValidStr(this.recentOutput)) {
+            return 0;
+        }
+        return this.recentOutput.split("\n").length;
     }
 
     // ---------- 请求 ----------
@@ -144,11 +143,14 @@ export class AutoCompleteAIDialogComponent {
         this.commands = [];
         this.selectedIndex = -1;
 
-        // 勾选了才抓取，保证发送的是提问当下的最新输出
+        // 直接发送预览中展示的那一份内容，不再重新抓取，
+        // 否则用户看到与实际发出的不是同一段文本。需要更新时点"重新抓取"。
         let recentOutput = "";
         if (this.includeTerminalOutput) {
-            recentOutput = await this.terminalContext.captureRecentOutput(this.getActiveTerminalTab());
-            this.recentOutput = recentOutput;
+            if (!isValidStr(this.recentOutput)) {
+                await this.refreshRecentOutput();
+            }
+            recentOutput = this.recentOutput ?? "";
         }
         const ctx = this.buildRequestContext(input, recentOutput);
         const prompt = this.aiPromptService.buildPrompt(ctx, this.includeTerminalOutput);
