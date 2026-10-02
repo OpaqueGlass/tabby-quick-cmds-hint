@@ -252,14 +252,20 @@ export class AddMenuService {
             this.logger.debug("Ignore sended cmd for menuStatus == false")
             return;
         }
-        if (this.recentHistoryJumpStatus) {
-            this.logger.debug("Ignored due to recent history input");
-            return;
-        }
-        if (this.lastCmd === text && this.lastCursorIndexAt === cursorIndexAt && this.currentSessionId == sessionId) {
-            // 和上一个一致，无需处理
-            this.logger.debug("和上一个一致，无需处理");
-            return;
+        // ignoreStatus（force）为用户通过快捷键主动呼出，跳过检查
+        if (ignoreStatus) {
+            // 主动呼出同时结束"历史跳转"抑制状态
+            this.recentHistoryJumpStatus = false;
+        } else {
+            if (this.recentHistoryJumpStatus) {
+                this.logger.debug("Ignored due to recent history input");
+                return;
+            }
+            if (this.lastCmd === text && this.lastCursorIndexAt === cursorIndexAt && this.currentSessionId == sessionId) {
+                // 和上一个一致，无需处理
+                this.logger.debug("和上一个一致，无需处理");
+                return;
+            }
         }
         if (text.length < 2) {
             this.hideMenu();

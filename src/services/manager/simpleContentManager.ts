@@ -375,7 +375,8 @@ export class SimpleManager extends BaseManager {
             && lastStateLineObj.cleaned.includes(this.recentCleanPrompt)) {
             this.escapeDismissed = false;
         }
-        if (isValidStr(cmd) && this.cmdStatusFlag) {
+        // force（快捷键主动呼出）时不再要求 cmdStatusFlag，跳过检查
+        if (isValidStr(cmd) && (force || this.cmdStatusFlag)) {
             this.logger.messyDebug("命令为", cmd);
             this.sendCmd(cmd, cursorIndexAt, force);
         } else if (this.tab.hasFocus) {
@@ -390,7 +391,12 @@ export class SimpleManager extends BaseManager {
         // 用户用快捷键主动呼出，解除 Escape 屏蔽
         this.escapeDismissed = false;
         this.recentUuid = generateUUID();
-        this.getCmdAndSuggest(await this.getLastStateLine(), true);
+        try {
+            await this.getCmdAndSuggest(await this.getLastStateLine(), true);
+        } catch (err) {
+            // 取终端状态失败时不要抛到调用方（会变成未处理的 Promise 异常），记录即可
+            this.logger.error("Suggest now failed", err);
+        }
     }
     handleSessionChanged = (session) => {
         this.logger.log("session changed", session);
