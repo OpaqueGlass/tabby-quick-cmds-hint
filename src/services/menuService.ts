@@ -40,6 +40,7 @@ import { AutoCompleteTranslateService } from './translateService';
 import { StyleService } from './styleService';
 import { ArgumentsContentProvider } from './provider/argumentsContentProvider';
 import { AIContentProvider } from './provider/aiContentProvider';
+import { MenuHidePauseService } from './menuPauseService';
 
 @Injectable({
     providedIn: 'root'
@@ -78,7 +79,8 @@ export class AddMenuService {
         // openAIContentProvider: OpenAIContentProvider,
         // private buttonProvider: ButtonProvider, // 直接引用会卡在Cannot access 'AddMenuService' before initialization
         private signalService: MySignalService,
-        private cssService: StyleService
+        private cssService: StyleService,
+        private menuHidePause: MenuHidePauseService,
     ) {
         this.menuStatus = configService.store.ogAutoCompletePlugin.enableCompleteWithCompleteStart;
         document.addEventListener("keydown", this.handleKeyDown.bind(this), true);
@@ -131,7 +133,15 @@ export class AddMenuService {
         this.componentRef.instance.showAutocompleteList(this.document.querySelector('.xterm-helper-textarea'));
     }
 
-    public hideMenu() {
+    /**
+     * 隐藏菜单。
+     * @param force 为 true 时忽略其他组件请求暂停弹窗隐藏（用户主动取消 / 关闭插件 时，必须隐藏菜单）
+     */
+    public hideMenu(force: boolean = false) {
+        if (!force && this.menuHidePause.isPaused()) {
+            this.logger.debug("Menu hide skipped: paused by modal dialog");
+            return;
+        }
         // fix componentRef is undefined in constructor
         this.componentRef?.instance?.hideAutocompleteList();
         this.clearCurrentTabCache();
@@ -205,7 +215,7 @@ export class AddMenuService {
 
     public disable() {
         this.menuStatus = false;
-        this.hideMenu();
+        this.hideMenu(true);
         this.menuStatusNotificationSubject.next(this.menuStatus);
         this.document.querySelector(".og-tac-tool-btn")?.setAttribute("stroke", "purple");
     }
@@ -309,14 +319,14 @@ export class AddMenuService {
             } else {
                 this.logger.debug("up 不操作");
                 this.recentHistoryJumpStatus = true;
-                this.hideMenu();
+                this.hideMenu(true);
             }
         } else if (key === 'ArrowDown' && !this.hasFloatWnd()) {
             if (this.componentRef.instance.selectDown() !== null) {
                 actFlag = true;
             } else {
                 this.recentHistoryJumpStatus = true;
-                this.hideMenu();
+                this.hideMenu(true);
             }
         } else if (key === 'Enter' && !this.hasFloatWnd()) {
             const currentIndex = this.componentRef.instance.currentItemIndex;
@@ -326,13 +336,13 @@ export class AddMenuService {
                 actFlag = true;
                 this.logger.debug("handle enter: input")
             } else {
-                this.hideMenu();
+                this.hideMenu(true);
                 this.logger.debug("handle enter: hide")
             }
         } else if (key === 'Escape') {
             this.recentBlockedUuid = this.recentUuid;
             if (this.componentRef.instance.showingFlag) {
-                this.hideMenu();
+                this.hideMenu(true);
                 actFlag = true;
             }
         } else if (key === 'Tab' && !this.hasFloatWnd()) {

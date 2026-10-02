@@ -15,15 +15,15 @@
 *  You should have received a copy of the GNU Affero General Public License
 *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-import { Injectable } from '@angular/core'
-import { bufferTime, Subscription } from 'rxjs'
-import { AddMenuService } from 'services/menuService';
+import { Injectable } from '@angular/core';
+import { bufferTime } from 'rxjs';
 import { SimpleManager } from 'services/manager/simpleContentManager';
+import { AddMenuService } from 'services/menuService';
 import { MyLogger } from 'services/myLogService';
-import { AppService, ConfigService, NotificationsService } from 'tabby-core';
-import { TerminalDecorator, BaseTerminalTabComponent, BaseTerminalProfile } from 'tabby-terminal'
-import { cleanTerminalText, generateUUID, inputInitScripts, sleep } from 'utils/commonUtils';
 import { MySignalService } from 'services/signalService';
+import { AppService, ConfigService, NotificationsService } from 'tabby-core';
+import { BaseTerminalProfile, BaseTerminalTabComponent, TerminalDecorator } from 'tabby-terminal';
+import { inputInitScripts, sleep } from 'utils/commonUtils';
 
 
 @Injectable()

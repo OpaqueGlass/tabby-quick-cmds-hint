@@ -7,6 +7,7 @@ import { AIPromptConfirmDialogComponent } from "components/aiPromptConfirmDialog
 import { MyLogger } from "services/myLogService";
 import { AICompletionService } from "services/aiCompletionService";
 import { AIPromptService } from "services/aiPromptService";
+import { MenuHidePauseService } from "services/menuPauseService";
 import { isValidStr, sleep } from "utils/commonUtils";
 import { BaseContentProvider, OptionItemResultWrap } from "./baseProvider";
 
@@ -44,6 +45,7 @@ export class AIContentProvider extends BaseContentProvider {
         private aiCompletion: AICompletionService,
         private notifications: NotificationsService,
         private translate: TranslateService,
+        private menuPause: MenuHidePauseService,
     ) {
         super(logger, configService);
     }
@@ -189,6 +191,9 @@ export class AIContentProvider extends BaseContentProvider {
      */
     private confirmPrompt(prompt: string, sessionId: string, tab?: any): Promise<string | null> {
         return new Promise<string | null>((resolve) => {
+            // 弹窗打开会让终端失焦从而触发菜单隐藏，导致结果到达时无处渲染，
+            // 故弹窗期间暂停菜单的被动隐藏
+            this.menuPause.pause();
             const ref = this.ngbModal.open(AIPromptConfirmDialogComponent, { backdrop: 'static' });
             ref.componentInstance.promptText = prompt;
             ref.result.then((result: any) => {
@@ -200,6 +205,7 @@ export class AIContentProvider extends BaseContentProvider {
                 this.logger.debug("AI prompt confirmation cancelled");
                 resolve(null);
             }).finally(() => {
+                this.menuPause.resume();
                 // 弹窗关闭后把焦点还给终端，避免用户需要手动点回终端
                 setTimeout(() => this.refocusTerminal(tab), 0);
             });

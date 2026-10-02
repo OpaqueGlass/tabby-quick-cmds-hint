@@ -224,7 +224,10 @@ export class AutoCompleteHintMenuComponent {
             return;
         }
         const listEl = this.elRef.nativeElement.children[0];
-        this.recentTargetElement = targetElement;
+        // 目标元素取不到时保留上一次的参考（弹窗刚关闭、终端尚未重新聚焦时会发生）
+        if (targetElement) {
+            this.recentTargetElement = targetElement;
+        }
         // make sure adjustPosition is called after the list is shown
         setTimeout(this.adjustPosition.bind(this), 0);
         // 显示自动完成列表
@@ -235,6 +238,10 @@ export class AutoCompleteHintMenuComponent {
 
     adjustPosition() {
         const listEl = this.elRef.nativeElement.children[0];
+        if (!this.recentTargetElement) {
+            this.logger.debug("No target element for menu position, skipped");
+            return;
+        }
         const targetRect = this.recentTargetElement.getBoundingClientRect();
         // 获取窗口的高度
         const viewportHeight = window.document.querySelector("ssh-tab .terminal.xterm")?.clientHeight || window.innerHeight;

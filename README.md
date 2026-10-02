@@ -28,6 +28,8 @@ This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://g
 2. Download and enable `tabby-quick-cmds` plugin. Add some commands.
 3. Start annoying hint experience.
 
+> If this is helpful to you, please consider starring this project.
+
 ## Reference & Appreciations
 
 > Some *developers* or *packages directly used in this plugin* are not listed. Please refer to the contributors list or `package.json`.
