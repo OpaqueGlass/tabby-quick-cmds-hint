@@ -20,8 +20,6 @@ export class AutoCompleteSettingsTabComponent {
     previewCmd: string = "ls -la";
     /** 提示词预览使用的 profile */
     previewProfileId: string = "";
-    /** 服务器自定义区块是否展开 */
-    showProfileOverrides: boolean = false;
     /** 环境标签区块是否展开 */
     showEnvTags: boolean = false;
     /** 单个环境标签的详情是否展开，key = tag.id */
@@ -214,34 +212,4 @@ export class AutoCompleteSettingsTabComponent {
         return this.aiPrompt.previewPrompt(ctx).missingKeys;
     }
 
-    // ---------- 服务器（profile）自定义 ----------
-
-    toggleProfileOverrides() {
-        this.showProfileOverrides = !this.showProfileOverrides;
-    }
-
-    /**
-     * 必须走 AIPromptService 访问器读取，避免直接持有 store 中可能被 ConfigProxy 丢弃的临时副本。
-     */
-    getProfileSystemVersion(profileId: string): string {
-        return this.aiPrompt.getProfileOverride(profileId).systemVersion;
-    }
-
-    getProfileExtraNote(profileId: string): string {
-        return this.aiPrompt.getProfileOverride(profileId).extraNote;
-    }
-
-    setProfileSystemVersion(profileId: string, value: string) {
-        this.aiPrompt.setProfileOverride(profileId, {
-            systemVersion: value ?? '',
-            extraNote: this.getProfileExtraNote(profileId),
-        });
-    }
-
-    setProfileExtraNote(profileId: string, value: string) {
-        this.aiPrompt.setProfileOverride(profileId, {
-            systemVersion: this.getProfileSystemVersion(profileId),
-            extraNote: value ?? '',
-        });
-    }
 }

@@ -30,16 +30,6 @@ export interface EnvTag {
 }
 
 /**
- * 服务器（profile）级别的覆盖配置。
- * systemVersion: 非空时整体覆盖 tag 拼接出来的值
- * extraNote: 追加在 tag 提示词之后的额外说明
- */
-export interface ProfileOverride {
-    systemVersion: string;
-    extraNote: string;
-}
-
-/**
  * 渲染提示词模板时可用的占位符取值集合。
  */
 export interface AIEnvContext {

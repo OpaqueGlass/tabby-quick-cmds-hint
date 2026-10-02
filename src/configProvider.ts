@@ -40,10 +40,6 @@ export class AutoCompleteConfigProvider extends ConfigProvider {
             },
             // 环境标签。数组顺序即提示词拼接顺序
             envTags: presetEnvTags(),
-            // { [profileId]: { systemVersion, extraNote } }
-            // 注意：必须保持为空对象默认值，且读写统一走 AIPromptService 访问器，
-            // 否则会命中 tabby ConfigProxy 的"等于默认值不落盘"逻辑导致数据丢失
-            profileOverrides: {},
             appearance: {
                 "fontSize": 15,
             },

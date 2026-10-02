@@ -291,35 +291,6 @@ h4(translate='ogac.promptTemplate.title')
         code(*ngFor='let key of getMissingPlaceholderKeys()') {{key}}
     button.btn.btn-outline-secondary.btn-sm.mt-1((click)='resetPromptTemplate()', translate='ogac.promptTemplate.reset')
 
-h4(translate='ogac.profileOverrides.title')
-
-.form-line
-    .header
-        .title(translate='ogac.profileOverrides.title')
-        .description(translate='ogac.profileOverrides.desc')
-    button.btn.btn-outline-secondary.btn-sm((click)='toggleProfileOverrides()', translate='ogac.profileOverrides.toggle')
-
-ng-container(*ngIf='showProfileOverrides')
-    .og-ac-profile-override(*ngFor='let profile of getProfiles()')
-        .og-ac-profile-override-name {{profile.name}}
-        .form-line
-            .header
-                .title(translate='ogac.profileOverrides.system_version')
-                .description(translate='ogac.profileOverrides.system_version_desc')
-            input.form-control(
-                type='text',
-                [ngModel]='getProfileSystemVersion(profile.id)',
-                (ngModelChange)='setProfileSystemVersion(profile.id, $event)',
-            )
-        .form-line
-            .header
-                .title(translate='ogac.profileOverrides.extra_note')
-                .description(translate='ogac.profileOverrides.extra_note_desc')
-            textarea.form-control(
-                rows='2',
-                [ngModel]='getProfileExtraNote(profile.id)',
-                (ngModelChange)='setProfileExtraNote(profile.id, $event)',
-            )
 
 h3(translate='ogac.appearance.title')
 

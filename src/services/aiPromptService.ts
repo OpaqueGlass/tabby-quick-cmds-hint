@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from 'tabby-core';
-import { AIEnvContext, AITemplateRenderResult, AIRequestContext, EnvTag, ProfileOverride } from '../api/aiType';
+import { AIEnvContext, AITemplateRenderResult, AIRequestContext, EnvTag } from '../api/aiType';
 import { MyLogger } from './myLogService';
 import {
     AI_TEMPLATE_PLACEHOLDERS,
@@ -12,13 +12,10 @@ import {
 import { isValidStr } from '../utils/commonUtils';
 
 /**
- * AI 提示词构建与环境标签 / 服务器覆盖配置的读写服务。
+ * AI 提示词构建与环境标签配置的读写服务。
  *
  * 重要约束（tabby ConfigProxy 行为导致，见技术方案 4.3）：
- * 1. envTags 是数组，tabby 会在首次读取时物化进真实 store，可直接读写，但必须"整体赋值"回写。
- * 2. profileOverrides 默认值为空对象 {}，ConfigProxy 下读取返回的是临时深拷贝、且赋值 {} 会被 delete。
- *    因此任何读写都必须经过本服务的 getProfileOverride / setProfileOverride，
- *    禁止在调用方就地修改 store.profileOverrides。
+ * envTags 是数组，tabby 会在首次读取时物化进真实 store，可直接读写，但必须"整体赋值"回写。
  */
 @Injectable({ providedIn: 'root' })
 export class AIPromptService {
@@ -111,44 +108,6 @@ export class AIPromptService {
         })));
     }
 
-    /**
-     * 读取某个 profile 的覆盖配置。永远返回非 null 对象。
-     */
-    getProfileOverride(profileId: string): ProfileOverride {
-        if (!isValidStr(profileId)) {
-            return { systemVersion: '', extraNote: '' };
-        }
-        const all = this.pluginConfig?.profileOverrides ?? {};
-        const item = all[profileId];
-        return {
-            systemVersion: item?.systemVersion ?? '',
-            extraNote: item?.extraNote ?? '',
-        };
-    }
-
-    /**
-     * 写入某个 profile 的覆盖配置。
-     * 必须整体赋值回写，否则会命中 ConfigProxy 的"等于默认值不落盘"分支而丢失。
-     */
-    setProfileOverride(profileId: string, value: Partial<ProfileOverride>) {
-        if (!isValidStr(profileId) || !this.pluginConfig) {
-            return;
-        }
-        const all = { ...(this.pluginConfig.profileOverrides ?? {}) };
-        const next: ProfileOverride = {
-            systemVersion: value.systemVersion ?? '',
-            extraNote: value.extraNote ?? '',
-        };
-        if (!isValidStr(next.systemVersion) && !isValidStr(next.extraNote)) {
-            // 两项都为空则移除该条目，保持配置整洁
-            delete all[profileId];
-        } else {
-            all[profileId] = next;
-        }
-        this.pluginConfig.profileOverrides = all;
-        this.config.save();
-    }
-
     // ---------- 环境上下文 ----------
 
     /**
@@ -164,14 +123,13 @@ export class AIPromptService {
     /**
      * 构建模板渲染所需的占位符取值。
      * 规则：
-     * - sysVersion: 命中 tag 的 systemVersion 按数组顺序拼接去重；profile 覆盖非空则整体覆盖
+     * - sysVersion: 命中 tag 的 systemVersion 按数组顺序拼接去重
      * - shell: 命中 tag 的 name 逗号连接
-     * - customPrompt: 命中 tag 的 customPrompt 顺序拼接，再追加 profile 的 extraNote
+     * - customPrompt: 命中 tag 的 customPrompt 顺序拼接
      */
     buildEnvContext(ctx: AIRequestContext): AIEnvContext {
         const profileId = ctx.tab?.profile?.id ?? '';
         const matched = this.getMatchedTags(profileId);
-        const override = this.getProfileOverride(profileId);
 
         const tagVersions = matched
             .map(t => (t.systemVersion ?? '').trim())
@@ -181,15 +139,12 @@ export class AIPromptService {
         const tagPrompts = matched
             .map(t => (t.customPrompt ?? '').trim())
             .filter(v => isValidStr(v));
-        if (isValidStr(override.extraNote?.trim())) {
-            tagPrompts.push(override.extraNote.trim());
-        }
 
         const includeCwd = this.aiConfig?.includeCwd !== false;
 
         return {
             cmd: ctx.inputCmd ?? '',
-            sysVersion: isValidStr(override.systemVersion?.trim()) ? override.systemVersion.trim() : tagVersions.join('\n'),
+            sysVersion: tagVersions.join('\n'),
             shell: matched.map(t => t.name).join(', '),
             hostName: ctx.tab?.profile?.name ?? '',
             customPrompt: tagPrompts.join('\n'),
