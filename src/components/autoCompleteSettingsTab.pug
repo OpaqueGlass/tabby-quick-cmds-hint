@@ -18,6 +18,9 @@ h3(translate='ogac.settings.title')
                 span(translate='ogac.intro.tab_action') 
                 code(translate='ogac.intro.enter_key') 
                 span(translate='ogac.intro.enter_action')
+            div.mt-1
+                span(translate='ogac.intro.readme_prefix') 
+                a.og-tac-a((click)='openReadme()',translate='ogac.intro.readme_link')
 
 .alert.alert-info.d-flex.align-items-center(*ngIf='!isQuickCmdsInstalled()')
     .me-auto

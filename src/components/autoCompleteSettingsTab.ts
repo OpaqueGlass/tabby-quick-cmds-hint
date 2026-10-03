@@ -50,6 +50,9 @@ export class AutoCompleteSettingsTabComponent {
     openNewIssue() {
         this.platform.openExternal('https://github.com/OpaqueGlass/tabby-quick-cmds-hint/issues/new/choose')
     }
+    openReadme() {
+        this.platform.openExternal('https://github.com/OpaqueGlass/tabby-quick-cmds-hint#readme')
+    }
     isQuickCmdsInstalled() {
         return this.config.store["qc"] && Object.keys(this.config.store["qc"]).length > 0
     }
