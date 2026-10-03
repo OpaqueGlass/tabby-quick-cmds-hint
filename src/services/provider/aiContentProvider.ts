@@ -65,8 +65,9 @@ export class AIContentProvider extends BaseContentProvider {
         }
 
         if (mode === 'manual') {
+            const cached = this.buildCachedItems(cmd, envBasicInfo);
             return {
-                optionItem: [this.buildManualEntry(cmd, envBasicInfo)],
+                optionItem: [...(cached ?? []), this.buildManualEntry(cmd, envBasicInfo)],
                 envBasicInfo: envBasicInfo,
                 type: AIContentProvider.providerTypeKey
             };
@@ -81,6 +82,19 @@ export class AIContentProvider extends BaseContentProvider {
 
         const requestKey = `${envBasicInfo?.sessionId ?? ''}|${cmd}`;
         this.latestRequestKey = requestKey;
+
+        // 同一会话里输入过同样的命令：直接把上次的结果交给菜单，
+        // 既不用等 debounce，也不用再打一次 AI 请求；入口项一并保留，便于重新请求
+        const cachedItems = this.buildCachedItems(cmd, envBasicInfo);
+        if (cachedItems != null) {
+            return {
+                optionItem: [...cachedItems, this.buildManualEntry(cmd, envBasicInfo)],
+                envBasicInfo: envBasicInfo,
+                type: AIContentProvider.providerTypeKey,
+                // 同样是异步补结果，菜单已隐藏则丢弃
+                dropIfMenuHidden: true,
+            };
+        }
 
         await sleep(debounce);
         if (!this.isStillLatest(requestKey)) {
@@ -97,7 +111,7 @@ export class AIContentProvider extends BaseContentProvider {
             return null;
         }
         return {
-            optionItem: items,
+            optionItem: [...items, this.buildManualEntry(cmd, envBasicInfo)],
             envBasicInfo: envBasicInfo,
             type: AIContentProvider.providerTypeKey,
             // 自动补全是异步到达的，菜单已隐藏则丢弃
@@ -112,8 +126,31 @@ export class AIContentProvider extends BaseContentProvider {
         return this.latestRequestKey === requestKey;
     }
 
+    private buildRequestContext(cmd: string, envBasicInfo: EnvBasicInfo): AIRequestContext {
+        return {
+            ...envBasicInfo,
+            inputCmd: cmd,
+        };
+    }
+
     /**
-     * manual 档的入口项。选中后由菜单渲染 loading 占位，结果到达后整组替换。
+     * 取本次输入在内存里的缓存结果并转成候选项；未命中返回 null。
+     *
+     * 命中条件为「同一会话 + 同一条输入命令」。
+     */
+    private buildCachedItems(cmd: string, envBasicInfo: EnvBasicInfo): OptionItem[] | null {
+        const cacheKey = this.aiCompletion.buildCacheKey(envBasicInfo?.sessionId ?? '', cmd);
+        const cached = this.aiCompletion.getCached(cacheKey);
+        if (cached == null || cached.length === 0) {
+            return null;
+        }
+        this.logger.debug('AI cached result reused', cmd);
+        return cached.map(item => this.toOptionItem(item));
+    }
+
+    /**
+     * 入口项。选中后一定重新请求一次（不读缓存），结果到达后整组替换。
+     * 有缓存时结果已直接展示在菜单里，入口项的作用就是"再问一次"。
      */
     private buildManualEntry(cmd: string, envBasicInfo: EnvBasicInfo): OptionItem {
         return {
@@ -121,22 +158,40 @@ export class AIContentProvider extends BaseContentProvider {
             content: cmd,
             desp: "",
             type: AIContentProvider.providerTypeKey,
-            // manual 档由用户主动触发，失败时要给出提示
-            callback: () => this.generateAsync(cmd, envBasicInfo, true, true),
+            // 由用户主动触发，失败时要给出提示
+            callback: () => this.requestByEntry(cmd, envBasicInfo),
         };
+    }
+
+    /**
+     * 入口项的处理：强制重新请求，并在结果后面重新保留入口项，方便再次请求。
+     */
+    private async requestByEntry(cmd: string, envBasicInfo: EnvBasicInfo): Promise<OptionItem[] | null> {
+        const items = await this.generateAsync(cmd, envBasicInfo, true, true, true);
+        if (items == null || items.length === 0) {
+            return null;
+        }
+        return [...items, this.buildManualEntry(cmd, envBasicInfo)];
     }
 
     /**
      * 生成 AI 候选条目。
      * @param allowConfirm 是否允许弹出"发送前确认"窗口。auto 档恒为 false。
      * @param notify 失败/无结果时是否通过通知中心告知用户。auto 档恒为 false，避免输入过程被打扰。
+     * @param force 忽略已有缓存，强制重新请求
      */
-    async generateAsync(cmd: string, envBasicInfo: EnvBasicInfo, allowConfirm: boolean, notify: boolean = false): Promise<OptionItem[] | null> {
-        const ctx: AIRequestContext = {
-            ...envBasicInfo,
-            inputCmd: cmd,
-        };
+    async generateAsync(cmd: string, envBasicInfo: EnvBasicInfo, allowConfirm: boolean, notify: boolean = false, force: boolean = false): Promise<OptionItem[] | null> {
+        const ctx = this.buildRequestContext(cmd, envBasicInfo);
         let prompt = this.aiPrompt.buildPrompt(ctx);
+        const sessionId = envBasicInfo?.sessionId ?? '';
+
+        // 已有上次的结果就不再打扰用户（确认弹窗也省掉）；入口项触发时 force 为 true，直接重新请求
+        if (!force) {
+            const cachedBeforeConfirm = this.buildCachedItems(cmd, envBasicInfo);
+            if (cachedBeforeConfirm != null) {
+                return cachedBeforeConfirm;
+            }
+        }
 
         if (allowConfirm
             && this.aiConfig?.includeLastOutput === true
@@ -150,7 +205,7 @@ export class AIContentProvider extends BaseContentProvider {
             prompt = confirmed;
         }
 
-        const result = await this.aiCompletion.requestCommands(prompt, envBasicInfo?.sessionId ?? '', cmd);
+        const result = await this.aiCompletion.requestCommands(prompt, sessionId, cmd, force);
         if (result.error != null) {
             if (result.error.kind === 'empty') {
                 if (notify) {

@@ -12,15 +12,20 @@ const DEFAULT_MAX_COUNT = 3;
 
 /**
  * AI（OpenAI 兼容接口）请求服务。
- * 负责：客户端创建、超时控制、响应解析、结果缓存、会话级"发送前确认"记忆。
+ * 负责：客户端创建、超时控制、响应解析、结果缓存（仅内存、不落盘）、会话级"发送前确认"记忆。
  *
  * 所有异常都在本服务内部消化并降级为空数组，调用方无需 try-catch，
  * 以免异步结果打断了用户正在进行的输入。
  */
 @Injectable({ providedIn: 'root' })
 export class AICompletionService {
-    /** key = `${sessionId}|${cmd}` */
+    /**
+     * 结果缓存。仅存在于内存：
+     * - key 为「会话 + 输入命令」，同一会话内重复输入同一条命令直接复用上次结果；
+     * - 上限 CACHE_MAX 条，超出按写入顺序（近似 LRU）淘汰。
+     */
     private cache = new Map<string, AICommandItem[]>();
+    /** 缓存写入顺序，用于淘汰最旧的一条 */
     private cacheKeys: string[] = [];
 
     /** 已选择"本次会话内不再询问"的会话 */
@@ -70,22 +75,48 @@ export class AICompletionService {
     }
 
     /**
-     * 请求 AI 生成命令建议。
-     * 失败一律归类为 AIErrorInfo 返回，不向调用方抛异常，
-     * 以免异步结果打断用户正在进行的输入。
+     * 生成缓存 key：会话 id + 输入命令。
      */
-    async requestCommands(prompt: string, sessionId: string, inputCmd: string): Promise<AICompletionResult> {
+    buildCacheKey(sessionId: string, inputCmd: string): string {
+        return `${sessionId ?? ''}|${(inputCmd ?? '').trim()}`;
+    }
+
+    /**
+     * 读取内存中的缓存结果（只读使用）。
+     * 未命中或内容为空时返回 null；命中会刷新该条目的淘汰顺序。
+     *
+     */
+    getCached(cacheKey: string): AICommandItem[] | null {
+        if (!isValidStr(cacheKey)) {
+            return null;
+        }
+        const cached = this.cache.get(cacheKey);
+        if (!cached || cached.length === 0) {
+            return null;
+        }
+        this.touchCacheKey(cacheKey);
+        this.logger.debug('AI cache hit', cacheKey);
+        return cached;
+    }
+
+    /**
+     * 请求 AI 生成命令建议
+     *
+     * @param force 忽略已有缓存，强制重新请求；新结果会覆盖同一 key 的旧缓存
+     */
+    async requestCommands(prompt: string, sessionId: string, inputCmd: string, force: boolean = false): Promise<AICompletionResult> {
         const client = this.createClient();
         if (client == null) {
             this.logger.warn('AI not configured: openAIKey is empty, skip request');
             return { items: [], error: { kind: 'not_configured', message: 'openAIKey is empty' } };
         }
 
-        const cacheKey = `${sessionId ?? ''}|${inputCmd ?? ''}`;
-        const cached = this.cache.get(cacheKey);
-        if (cached) {
-            this.logger.debug('AI result from cache', cacheKey);
-            return { items: cached };
+        const key = this.buildCacheKey(sessionId, inputCmd);
+        if (!force) {
+            const cached = this.getCached(key);
+            if (cached) {
+                return { items: cached };
+            }
         }
 
         const controller = new AbortController();
@@ -105,7 +136,7 @@ export class AICompletionService {
             this.logger.debug('AI raw response', raw);
             const result = this.parseResponse(raw);
             if (result.error == null && result.items.length > 0) {
-                this.putCache(cacheKey, result.items);
+                this.putCache(key, result.items);
             }
             return result;
         } catch (err: any) {
@@ -308,6 +339,7 @@ export class AICompletionService {
     }
 
     private putCache(key: string, items: AICommandItem[]) {
+        this.removeCacheKey(key);
         this.cache.set(key, items);
         this.cacheKeys.push(key);
         while (this.cacheKeys.length > CACHE_MAX) {
@@ -315,6 +347,21 @@ export class AICompletionService {
             if (oldest !== undefined) {
                 this.cache.delete(oldest);
             }
+        }
+    }
+
+    /**
+     * 刷新 key 的淘汰顺序：已存在的条目移到队尾，避免刚被用到的结果先被淘汰。
+     */
+    private touchCacheKey(key: string) {
+        this.removeCacheKey(key);
+        this.cacheKeys.push(key);
+    }
+
+    private removeCacheKey(key: string) {
+        const index = this.cacheKeys.indexOf(key);
+        if (index >= 0) {
+            this.cacheKeys.splice(index, 1);
         }
     }
 
@@ -334,8 +381,14 @@ export class AICompletionService {
 
     /**
      * 会话断开时清理记忆，避免 sessionId 无限增长。
+     * 同时丢弃该会话的结果缓存，避免跨会话复用。
      */
     forgetSession(sessionId: string) {
         this.confirmedSessions.delete(sessionId ?? '');
+        const prefix = `${sessionId ?? ''}|`;
+        this.cacheKeys.filter(key => key.startsWith(prefix)).forEach(key => {
+            this.cache.delete(key);
+            this.removeCacheKey(key);
+        });
     }
 }

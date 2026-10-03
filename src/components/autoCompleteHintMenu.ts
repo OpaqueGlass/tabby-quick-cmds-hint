@@ -155,7 +155,10 @@ export class AutoCompleteHintMenuComponent {
         // AI 组追加在最后，条数仅由 ai.inlineMaxCount 决定
         const aiItems = this.contentGroups[AI_PROVIDER_TYPE_KEY];
         if (aiItems && aiItems.length > 0) {
-            this.options = this.options.concat(aiItems.slice(0, this.getAIMaxCount()));
+            // ask ai 入口不能受到条目数量限制
+            const generatedItem = aiItems.filter(item => typeof item.callback !== 'function');
+            const callbackItem = aiItems.filter(item => typeof item.callback === 'function');
+            this.options = this.options.concat(generatedItem.slice(0, this.getAIMaxCount()), callbackItem);
         }
         if (this.options.length == 0) {
             this.hideAutocompleteList();
