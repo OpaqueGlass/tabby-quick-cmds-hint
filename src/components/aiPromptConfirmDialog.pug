@@ -14,5 +14,5 @@
         )
         label.form-check-label(for='ogacAiNeverAsk') {{t('ogac.ai.confirm.never_ask')}}
     .d-flex.justify-content-end.mt-3
-        button.btn.btn-secondary.mr-2((click)='cancel()') {{t('ogac.ui.cancel')}}
+        button.btn.btn-secondary.mr-2((click)='cancel()' ngbAutofocus) {{t('ogac.ui.cancel')}}
         button.btn.btn-primary((click)='confirm()') {{t('ogac.ui.send')}}
