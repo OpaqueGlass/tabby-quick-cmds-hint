@@ -154,7 +154,7 @@ export class AIContentProvider extends BaseContentProvider {
      */
     private buildManualEntry(cmd: string, envBasicInfo: EnvBasicInfo): OptionItem {
         return {
-            name: "ask ai for help",
+            name: this.t('ogac.ai.menu.ask_ai'),
             content: cmd,
             desp: "",
             type: AIContentProvider.providerTypeKey,

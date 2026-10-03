@@ -185,6 +185,11 @@ ogac:
       unconfigured:
         en_US: "AI is not configured yet. Set Base URL, API key and model in Settings -> Quick Cmd Hint -> AI."
         zh_CN: "尚未配置 AI：请在“设置 - 快速命令提示 - AI”中填写 Base URL、API Key 与模型名称。"
+    # 上下文菜单中的 AI 入口项
+    menu:
+      ask_ai:
+        en_US: "AI Command Generation"
+        zh_CN: "由AI生成命令建议"
     # 失败原因提示（通知中心）
     error:
       not_configured:

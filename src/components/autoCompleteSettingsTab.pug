@@ -114,8 +114,6 @@ h3(translate='ogac.ai.title')
 ) {{connectionTestResult.text}}
 
 
-.alert.alert-warning(*ngIf='!isAutoMode() && aiConfig?.includeLastOutput')
-    div(translate='ogac.ai.output_manual_only_hint')
 
 .form-line
     .header
@@ -184,6 +182,9 @@ ng-container(*ngIf='isAutoMode()')
         [(ngModel)]='aiConfig.includeCwd',
         (ngModelChange)='config.save()',
     )
+
+.alert.alert-warning(*ngIf='!isAutoMode() && aiConfig?.includeLastOutput')
+    div(translate='ogac.ai.output_manual_only_hint')
 
 .form-line
     .header
