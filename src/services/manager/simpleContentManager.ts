@@ -1,6 +1,6 @@
 /*  
 *  tabby-quick-cmds-hint: A simple complete hint plugin for tabby.
-*  Copyright (C) 2025 OpaqueGlass and other developers
+*  Copyright (C) 2025 OpaqueGlass
 *
 *  This program is free software: you can redistribute it and/or modify
 *  it under the terms of the GNU Affero General Public License as published
@@ -126,6 +126,7 @@ export class SimpleManager extends BaseManager {
             this.logger.messyDebug("由于重复，本次不响应", last5Line, recentStateLinesHash);
             return
         } else {
+            this.logger.messyDebug("本次响应", outputString, recentStateLinesHash);
             this.recentStateLineHash = recentStateLinesHash;
         }
         // 正则匹配获取prompt prefix，先执行
@@ -148,6 +149,7 @@ export class SimpleManager extends BaseManager {
             }
         }
         // 从 转移序列 获取prompt prefix
+        this.logger.messyDebug("最后一行原文本", outputString.split("\n").slice(-1)[0])
         if (outputString.match(new RegExp("]1337;CurrentDir="))) {
             // 获取最后一行
             const lastRawLine = outputString.split("\n").slice(-1)[0];

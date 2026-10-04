@@ -1,6 +1,6 @@
 /*  
 *  tabby-quick-cmds-hint: A simple complete hint plugin for tabby.
-*  Copyright (C) 2025 OpaqueGlass and other developers
+*  Copyright (C) 2025 OpaqueGlass
 *
 *  This program is free software: you can redistribute it and/or modify
 *  it under the terms of the GNU Affero General Public License as published
