@@ -26,32 +26,35 @@ jobs:
           cache: "yarn"
 
       - name: Update npm
-        run: npm install -g npm@latest
+        run: npm install -g npm@11
 
       - name: Setup yarn
-        run: npm i -g yarn
+        run: |
+          npm install -g corepack
+          yarn set version berry
 
-      # Install dependencies
       - name: Install dependencies
         run: yarn install
 
-      # Build for production
       - name: Build for production
-        run: yarn build
+        run: |
+          yarn build
+        env:
+          TSC_COMPILE_ON_ERROR: true
+          ESLINT_NO_DEV_ERRORS: true
 
       # Package as zip file
       - name: Zip it
         run: zip -r dist.zip dist/
 
       # Get changelog
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-
       - name: Get CHANGELOGS
-        run: python ./scripts/release_note.py
+        run: node ./scripts/release_note.js
       
+      - name: publish on npm
+        if: ${{ ! (contains(github.ref, 'beta') || contains(github.ref, 'alpha') || contains(github.ref, 'dev')) }}
+        run: npm stage publish --provenance
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -59,7 +62,3 @@ jobs:
           prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') || contains(github.ref, 'dev') }}
           token: ${{ secrets.GITHUB_TOKEN }}
           files: dist.zip
-
-      - name: publish on npm
-        if: ${{ ! (contains(github.ref, 'beta') || contains(github.ref, 'alpha') || contains(github.ref, 'dev')) }}
-        run: npm publish --provenance
