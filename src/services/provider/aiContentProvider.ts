@@ -54,7 +54,7 @@ export class AIContentProvider extends BaseContentProvider {
         return this.configService.store?.ogAutoCompletePlugin?.ai;
     }
 
-    async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
+    async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap | null> {
         const mode = this.aiPrompt.getEnableMode();
         const userInputCmd = inputCmd.substring(0, cursorIndexAt);
         if (mode === 'off') {

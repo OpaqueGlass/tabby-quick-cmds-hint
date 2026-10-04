@@ -10,8 +10,8 @@ ogac:
       en_US: "Use regular expressions to identify shell prompts"
       zh_CN: "使用正则表达式识别shell prompt"
     use_regexp_prompt_desc:
-      en_US: "When enabled, the prompt may be triggered by mistake, or the wrong command may be captured, but it can avoid modifying the shell configuration file"
-      zh_CN: "启用后，可能错误地触发提示，或捕获到错误的命令，但可以避免修改shell配置文件"
+      en_US: "When enabled, the prompt may be triggered by mistake, or the wrong command may be captured, but it can avoid modifying the shell configuration file. The default value is only applicable to Ubuntu + Bash, other shell users please refer to README to modify the shell configuration file and enable the automatic running of the initialization script, or customize the matching regular expression."
+      zh_CN: "启用后，可能错误地触发提示，或捕获到错误的命令，但可以避免修改shell配置文件。默认值仅适用于 Ubuntu + Bash，其他shell用户请参考README修改shell配置文件，开启自动运行初始化脚本，或自定义匹配正则表达式。"
     auto_init:
       en_US: "Try to run init scripts when session connected"
       zh_CN: "在每次连接后，自动尝试运行初始化脚本"
@@ -28,26 +28,26 @@ ogac:
       en_US: Max Hint Item Count
       zh_CN: 提示菜单显示数量限制
     menu_show_item_max_desc:
-      en_US: When there are enough matches, regardless of the settings, at least 3 items of each enabled type will be displayed.
-      zh_CN: 匹配数量足够的情况下，无论如何设定，各启用类型至少显示3个。
+      en_US: When there are enough matches, regardless of the settings, at least 3 items of each enabled type will be displayed. This item does not control the AI suggestion part.
+      zh_CN: 匹配数量足够的情况下，无论如何设定，各启用类型至少显示3个。此项不管控AI建议部分。
 
   # AI相关设置
   ai:
     title:
-      en_US: "AI"
-      zh_CN: "AI"
+      en_US: "AI Command Suggestion"
+      zh_CN: "AI 命令建议"
     openai_base_url:
-      en_US: "Open AI Base URL"
-      zh_CN: "Open AI Base URL"
+      en_US: "Base URL (Only support Open AI API format)"
+      zh_CN: "Base URL (仅支持Open AI API格式)"
     openai_key:
-      en_US: "Open AI Key"
-      zh_CN: "Open AI Key"
+      en_US: "API Key"
+      zh_CN: "API Key"
     openai_key_desc:
       en_US: "Note that all information will be saved in plain text locally"
       zh_CN: "请注意所有信息将明文保存在本地"
     openai_model:
-      en_US: "Open AI Model name"
-      zh_CN: "Open AI 模型名称"
+      en_US: "Model name"
+      zh_CN: "模型名称"
     # AI 触发模式
     enable:
       en_US: "AI completion mode"
@@ -463,6 +463,12 @@ ogac:
     enter_action:
       en_US: "will input the selected item into the terminal and execute it by pressing enter."
       zh_CN: "将输入选择的项目到终端，并回车执行它。"
+    readme_prefix:
+      en_US: "📖 Full usage and settings are documented in the project "
+      zh_CN: "📖 完整的用法与设置说明见项目 "
+    readme_link:
+      en_US: "README"
+      zh_CN: "README"
 
   # 菜单和工具
   menu:

@@ -169,7 +169,7 @@ export class AddMenuService {
         return false;
     }
 
-    private optionItemTypePostProcess(resultWrap: OptionItemResultWrap) {
+    private optionItemTypePostProcess(resultWrap: OptionItemResultWrap | null) {
         if (resultWrap == null) {
             this.logger.debug("Reject for no response");
             return;
@@ -292,10 +292,12 @@ export class AddMenuService {
             recentOutput: extra?.recentOutput ?? '',
         }
         this.contentProviderList.forEach((provider) => {
-            provider.getQuickCmdList(text, cursorIndexAt, envBasicInfo)
-             .then(this.optionItemTypePostProcess.bind(this)).catch((err)=>{
-                this.logger.error("获取快捷命令列表失败", err);
-             });
+            // getQuickCmdList 可能是 Promise、同步结果或 null，统一归一化成 Promise 后再处理
+            Promise.resolve(provider.getQuickCmdList(text, cursorIndexAt, envBasicInfo))
+                .then(this.optionItemTypePostProcess.bind(this))
+                .catch((err) => {
+                    this.logger.error("获取快捷命令列表失败", err);
+                });
         });
         
         this.componentRef.instance.test(userInputCmd);

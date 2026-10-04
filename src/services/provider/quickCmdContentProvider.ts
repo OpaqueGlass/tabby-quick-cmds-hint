@@ -17,7 +17,7 @@ export class QuickCmdContentProvider extends BaseContentProvider {
         super(logger, configService);
     }
     
-    async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
+    async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap | null> {
         const result: OptionItem[] = [];
         const userInputCmd = inputCmd.substring(0, cursorIndexAt);
         const options = {

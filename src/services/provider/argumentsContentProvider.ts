@@ -142,7 +142,7 @@ export class ArgumentsContentProvider extends BaseContentProvider {
         return result;
     }
     
-    async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
+    async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap | null> {
         if (!envBasicInfo.config.store.ogAutoCompletePlugin.arguments.enable) {
             return null;
         }

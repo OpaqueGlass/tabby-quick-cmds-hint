@@ -32,7 +32,7 @@ export class HistoryContentProvider extends BaseContentProvider {
             this.logger.error("打开数据库失败", err);
         });
     }
-    async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
+    async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap | null> {
         if (this.db == null) {
             return null;
         }
