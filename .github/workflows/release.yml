@@ -24,6 +24,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Setup npm
+        run: npm install -g npm@11
+
       - name: Enable Corepack
         run: corepack enable
 
