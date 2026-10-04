@@ -25,6 +25,7 @@ This is a simple complete hint (i.e. auto-complete) plugin for [Tabby](https://g
          ```bash
          export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
          ```
+   - For other SHELL users, please refer to [docs/INIT.md](./docs/INIT_en-US.md) for more info.
 2. Download and enable `tabby-quick-cmds` plugin. Add some commands.
 3. Start annoying hint experience.
 

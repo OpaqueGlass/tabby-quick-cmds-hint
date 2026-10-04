@@ -14,15 +14,15 @@
 
 > [!NOTE]
 > 
-> - 插件仅针对 “ssh连接运行Ubuntu、Shell为bash的服务器” 进行测试和开发，其他情况可能存在问题。阅读[docs/INIT_zh-CN.md](./docs/INIT_zh-CN.md)了解更多信息。
+> - 插件仅针对 “ssh连接运行Ubuntu、Shell为bash的服务器” 进行测试和开发，其他情况需要修改Shell配置文件。阅读[docs/INIT_zh-CN.md](./docs/INIT_zh-CN.md)了解更多信息。
 > - 在控制台输出的日志比较乱。
 
 1. 
-   - 对于 `bash` 用户：  
-      - 基本功能：在 `~/.bashrc` 中添加以下脚本
-         ```bash
-         export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
-         ```
+   - 对于 `bash` 用户，本插件理论上是开箱即用的，如果不能触发，请在 `~/.bashrc` 中添加以下脚本
+      ```bash
+      export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
+      ```
+   - 其他 SHELL 用户，请阅读[docs/INIT_zh-CN.md](./docs/INIT_zh-CN.md)了解更多设置建议。
 2. 下载并启用 `tabby-quick-cmds` 插件，本插件主要检索 `tabby-quick-cmds` 中保存的命令。添加一些命令。
 3. 开启令人烦躁的提示体验。
 
