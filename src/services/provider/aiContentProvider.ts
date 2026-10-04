@@ -56,10 +56,11 @@ export class AIContentProvider extends BaseContentProvider {
 
     async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
         const mode = this.aiPrompt.getEnableMode();
+        const userInputCmd = inputCmd.substring(0, cursorIndexAt);
         if (mode === 'off') {
             return null;
         }
-        const cmd = (inputCmd ?? '').trim();
+        const cmd = (userInputCmd ?? '').trim();
         if (!isValidStr(cmd)) {
             return null;
         }

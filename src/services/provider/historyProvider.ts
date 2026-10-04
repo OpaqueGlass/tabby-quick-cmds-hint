@@ -39,6 +39,8 @@ export class HistoryContentProvider extends BaseContentProvider {
         if (!this.configService.store.ogAutoCompletePlugin.history.enable) {
             return null;
         }
+        const curCmd = inputCmd.substring(0, cursorIndexAt);
+
         const result: OptionItem[] = [];
         // FIXME: 控制检索范围
         const dbList = await this.getHistoryFromDB(this.db, envBasicInfo.tab.profile.id, 1000, null, null, 3);
@@ -50,7 +52,7 @@ export class HistoryContentProvider extends BaseContentProvider {
             includeScore: true // 包含得分
         };
         const fuse = new Fuse(dbList, options);
-        const searchResult = fuse.search(inputCmd);
+        const searchResult = fuse.search(curCmd);
         this.logger.log("匹配结果", searchResult);
         result.push(...searchResult.slice(0, 7).map((value)=>{
             return {

@@ -247,7 +247,8 @@ export class AddMenuService {
      * @param extra 附加的终端运行态信息（当前目录 / 最近输出），供 AI provider 使用
      */
     public sendCurrentText(text: string, cursorIndexAt: number, uuid: string, sessionId: string, tab: BaseTerminalTabComponent<BaseTerminalProfile>, ignoreStatus, extra?: { cwd?: string, recentOutput?: string }) {
-        this.currentCmd = text;
+        let userInputCmd = text.substring(0, cursorIndexAt);
+        this.currentCmd = userInputCmd;
         if (!this.menuStatus && !ignoreStatus) {
             this.logger.debug("Ignore sended cmd for menuStatus == false")
             return;
@@ -261,13 +262,13 @@ export class AddMenuService {
                 this.logger.debug("Ignored due to recent history input");
                 return;
             }
-            if (this.lastCmd === text && this.lastCursorIndexAt === cursorIndexAt && this.currentSessionId == sessionId) {
+            if (this.lastCmd === userInputCmd && this.lastCursorIndexAt === cursorIndexAt && this.currentSessionId == sessionId) {
                 // 和上一个一致，无需处理
                 this.logger.debug("和上一个一致，无需处理");
                 return;
             }
         }
-        if (text.length < 2) {
+        if (userInputCmd.length < 2) {
             this.hideMenu();
             return;
         }
@@ -275,7 +276,7 @@ export class AddMenuService {
             this.logger.debug("uuid被阻止");
             return;
         }
-        this.logger.debug("进入处理", text)
+        this.logger.debug("进入处理", userInputCmd)
         this.recentUuid = uuid;
         this.currentSessionId = sessionId;
         
@@ -297,8 +298,8 @@ export class AddMenuService {
              });
         });
         
-        this.componentRef.instance.test(text);
-        this.lastCmd = text;
+        this.componentRef.instance.test(userInputCmd);
+        this.lastCmd = userInputCmd;
         this.lastCursorIndexAt = cursorIndexAt;
     }
 

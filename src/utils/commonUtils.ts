@@ -175,11 +175,11 @@ export function resetAndClearXterm(xterm: Terminal) {
     xterm.write('\x1b[2J');
 }
 
-export function cleanTextByNewXterm(input: string) {
+export function cleanTextByNewXterm(input: string, cols = 500, rows = 24) {
     // 15ms
     return new Promise<string>((resolve) => {
-        let term = new Terminal();
-        let dom = null;
+        let term = new Terminal( {cols, rows, scrollback: 0} );
+        let dom: any = null;
         const existDom = document.getElementById("ogmytempxterm");
         if (existDom) {
             dom = existDom;

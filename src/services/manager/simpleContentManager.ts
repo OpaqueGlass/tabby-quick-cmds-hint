@@ -343,7 +343,7 @@ export class SimpleManager extends BaseManager {
      * 发送命令，给出提示菜单
      * @param cmd 提示的命令
      */
-    sendCmd(cmd: string, cursorIndexAt = -1, force: boolean = false) {
+    sendCmd(cmd: string, cursorIndexAt: number, force: boolean = false) {
         if (this.escapeDismissed) {
             // 用户已用 Escape 取消本行提示，不再推送内容给菜单
             this.logger.debug("Skipped hint: dismissed by Escape in this line");
@@ -415,7 +415,7 @@ export class SimpleManager extends BaseManager {
         //     this.notification.error("[tabbyquick-hint-debug-report]清理不一致");
         //     this.logger.warn("清理不一致", cleanByRegExp + " != " + cleanByXterm);
         // }
-        return cleanByXterm;
+        return cleanByXterm.trim();
 
     }
     loadRegExp() {

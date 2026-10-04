@@ -19,6 +19,7 @@ export class QuickCmdContentProvider extends BaseContentProvider {
     
     async getQuickCmdList(inputCmd: string, cursorIndexAt: number, envBasicInfo: EnvBasicInfo): Promise<OptionItemResultWrap> {
         const result: OptionItem[] = [];
+        const userInputCmd = inputCmd.substring(0, cursorIndexAt);
         const options = {
             keys: ['name'], // 搜索的字段
             threshold: 0.3, // 控制匹配的模糊度
@@ -36,8 +37,8 @@ export class QuickCmdContentProvider extends BaseContentProvider {
             } as OptionItem;
         });
         const fuse = new Fuse(dataList, options);
-        this.logger.log("匹配结果", fuse.search(inputCmd));
-        result.push(...fuse.search(inputCmd).map((value)=>value.item as OptionItem));
+        this.logger.log("匹配结果", fuse.search(userInputCmd));
+        result.push(...fuse.search(userInputCmd).map((value)=>value.item as OptionItem));
         return {
             optionItem: result,
             envBasicInfo: envBasicInfo,
